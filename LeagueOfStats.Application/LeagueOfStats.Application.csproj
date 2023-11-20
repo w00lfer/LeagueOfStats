@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Camille.RiotGames" Version="3.0.0-nightly-2023-11-11-6dcc80abc0" />
+      <PackageReference Include="MediatR" Version="12.1.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\LeagueOfStats.Domain\LeagueOfStats.Domain.csproj" />
+      <ProjectReference Include="..\LeagueOfStats.Persistence\LeagueOfStats.Persistence.csproj" />
+    </ItemGroup>
+
+</Project>
