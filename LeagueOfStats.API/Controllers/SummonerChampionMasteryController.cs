@@ -1,5 +1,4 @@
-using System.Threading.Tasks;
-using Camille.Enums;
+using CSharpFunctionalExtensions;
 using LeagueOfStats.Application.SummonerChampionMastery.Queries.GetSummonerChampionMastery;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -18,9 +17,8 @@ namespace LeagueOfStats.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(string server, string summonerName)
-        {
-            return Ok(await _mediator.Send(new GetSummonerChampionMasterRequest(server, summonerName)));
-        }
+        public async Task<IActionResult> Get(string server, string summonerName) =>
+            (await _mediator.Send(new GetSummonerChampionMasteryRequest(server, summonerName)))
+            .Match(r => Ok(r), () => BadRequest("There was an error") as IActionResult);
     }
 }

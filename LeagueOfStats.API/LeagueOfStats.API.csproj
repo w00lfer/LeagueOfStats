@@ -9,6 +9,7 @@
 
     <ItemGroup>
         <PackageReference Include="Camille.RiotGames" Version="3.0.0-nightly-2023-11-16-6dcc80abc0" />
+        <PackageReference Include="CSharpFunctionalExtensions" Version="2.40.3" />
         <PackageReference Include="MediatR" Version="12.1.1" />
         <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9"/>

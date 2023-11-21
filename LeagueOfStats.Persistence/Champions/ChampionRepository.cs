@@ -17,13 +17,19 @@ namespace LeagueOfStats.Persistence.Champions
                 var champions = JsonSerializer.Deserialize<ChampionConfigurationModel>(r.ReadToEnd());
                 
                 // TODO THROW ERROR WHEN NULL OR EMPTY!
-                
-                _championsById = champions!.ChampionDataConfigurationModels.ToImmutableDictionary(c => Int32.Parse(c.Value.Id), c =>
-                    new Champion
-                    {
-                        Id = Int32.Parse(c.Value.Id), 
-                        Name = c.Value.Name
-                    });
+
+                _championsById = champions!.ChampionDataConfigurationModels.ToImmutableDictionary(
+                    c => Int32.Parse(c.Value.Id), c =>
+                        new Champion(
+                            Int32.Parse(c.Value.Id),
+                            c.Value.Name,
+                            c.Value.Title,
+                            c.Value.Description,
+                            new ChampionImage(
+                                c.Value.ChampionConfigurationImageModel.FullFileName,
+                                c.Value.ChampionConfigurationImageModel.SpriteFileName,
+                                c.Value.ChampionConfigurationImageModel.Height,
+                                c.Value.ChampionConfigurationImageModel.Width)));
             }
         }
 
