@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Text.Json;
 using LeagueOfStats.Domain.Champions;
+using LeagueOfStats.Persistence.Extensions;
 using LeagueOfStats.Persistence.JsonConfigurations;
 
 namespace LeagueOfStats.Persistence.Champions
@@ -26,16 +27,14 @@ namespace LeagueOfStats.Persistence.Champions
             }
         }
 
-        public Champion? GetById(int id)
-        {
-            var hasChampion = _championsById.ContainsKey(id);
-
-            return hasChampion
-                ? _championsById[id]
+        public Champion? GetById(int id) =>
+            _championsById.TryGetValue(id, out var champion)
+                ? champion
                 : null;
-        }
 
-        public IEnumerable<Champion> GetAll() =>
-            _championsById.Values;
+        public IEnumerable<Champion> GetAll(params int[] ids) =>
+            ids.Length > 0
+                ? _championsById.GetMultiple(ids)
+                : _championsById.Values;
     }
 }
