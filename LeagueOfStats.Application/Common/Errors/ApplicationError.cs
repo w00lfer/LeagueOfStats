@@ -1,11 +1,10 @@
 using LeagueOfStats.Domain.Common.Errors;
 
-namespace LeagueOfStats.Application.Common.Errors
+namespace LeagueOfStats.Application.Common.Errors;
+
+public class ApplicationError : Error
 {
-    public class ApplicationError : Error
+    public ApplicationError(string errorMessage) : base(errorMessage)
     {
-        public ApplicationError(string errorMessage) : base(errorMessage)
-        {
-        }
     }
 }

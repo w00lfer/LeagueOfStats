@@ -1,7 +1,6 @@
-namespace LeagueOfStats.API.Infrastructure.Constants
+namespace LeagueOfStats.API.Infrastructure.Constants;
+
+public class ConfigurationConstants
 {
-    public class ConfigurationConstants
-    {
-        public const string RiotApiKey = "RiotApiKey";
-    }
+    public const string RiotApiKey = "RiotApiKey";
 }

@@ -3,27 +3,21 @@ using LeagueOfStats.Application.SummonerChampionMastery.Queries.GetSummonerChamp
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LeagueOfStats.API.Controllers
+namespace LeagueOfStats.API.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class SummonerChampionMasteryController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class SummonerChampionMasteryController : ControllerBase
+    private readonly IMediator _mediator;
+
+    public SummonerChampionMasteryController(IMediator mediator)
     {
-        private readonly IMediator _mediator;
-
-        public SummonerChampionMasteryController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Get(string server, string summonerName)
-        {
-            // var r = await _mediator.Send(new GetSummonerChampionMasteryRequest(server, summonerName));
-            // r.Match()
-
-            return (await _mediator.Send(new GetSummonerChampionMasteryRequest(server, summonerName)))
-                .ToIActionResult(this);
-        }
+        _mediator = mediator;
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(string server, string summonerName) =>
+        (await _mediator.Send(new GetSummonerChampionMasteryRequest(server, summonerName)))
+        .ToIActionResult(this);
 }

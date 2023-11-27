@@ -1,8 +1,7 @@
-namespace LeagueOfStats.Domain.Common.Repositories
+namespace LeagueOfStats.Domain.Common.Repositories;
+
+public interface IAsyncRepository<T> : IAsyncReadOnlyRepository<T> where T: class
 {
-    public interface IAsyncRepository<T> : IAsyncReadOnlyRepository<T> where T: class
-    {
-        Task AddAsync(T entity);
-        Task DeleteAsync(T entity);
-    }
+    Task AddAsync(T entity);
+    Task DeleteAsync(T entity);
 }

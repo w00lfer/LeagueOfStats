@@ -1,8 +1,7 @@
-namespace LeagueOfStats.Domain.Common.Repositories
+namespace LeagueOfStats.Domain.Common.Repositories;
+
+public interface IAsyncReadOnlyRepository<T> where T : class
 {
-    public interface IAsyncReadOnlyRepository<T> where T : class
-    {
-        Task<T?> GetByIdAsync(int id);
-        Task<IEnumerable<T>> GetAllAsync(params int[] ids);
-    }
+    Task<T?> GetByIdAsync(int id);
+    Task<IEnumerable<T>> GetAllAsync(params int[] ids);
 }

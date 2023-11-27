@@ -1,8 +1,7 @@
 using LeagueOfStats.Domain.Common.Repositories;
 
-namespace LeagueOfStats.Domain.Champions
+namespace LeagueOfStats.Domain.Champions;
+
+public interface IChampionRepository : IReadOnlyRepository<Champion>
 {
-    public interface IChampionRepository : IReadOnlyRepository<Champion>
-    {
-    }
 }

@@ -1,12 +1,11 @@
-namespace LeagueOfStats.Domain.Common.Errors
+namespace LeagueOfStats.Domain.Common.Errors;
+
+public abstract class Error
 {
-    public abstract class Error
+    protected Error(string errorMessage)
     {
-        public Error(string errorMessage)
-        {
-            ErrorMessage = errorMessage;
-        }
-        
-        public string ErrorMessage { get; }
+        ErrorMessage = errorMessage;
     }
+        
+    public string ErrorMessage { get; }
 }

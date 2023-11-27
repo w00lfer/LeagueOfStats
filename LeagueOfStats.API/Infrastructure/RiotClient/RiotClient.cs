@@ -9,79 +9,82 @@ using LeagueOfStats.API.Infrastructure.Constants;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Errors;
 
-namespace LeagueOfStats.API.Infrastructure.RiotClient
+namespace LeagueOfStats.API.Infrastructure.RiotClient;
+
+public class RiotClient : IRiotClient
 {
-    public class RiotClient : IRiotClient
+    private readonly IConfiguration _configuration;
+    private readonly ILogger<RiotClient> _logger;
+    private readonly RiotGamesApi _riotGamesApi;
+        
+    public RiotClient(
+        ILogger<RiotClient> logger,
+        IConfiguration configuration)
     {
-        private readonly IConfiguration _configuration;
-        private readonly ILogger<RiotClient> _logger;
-        private readonly RiotGamesApi _riotGamesApi;
-        
-        public RiotClient(
-            ILogger<RiotClient> logger,
-            IConfiguration configuration)
+        _logger = logger;
+        _configuration = configuration;
+        _riotGamesApi = GetConfiguredRiotGamesApi();
+    }
+
+    public async Task<Either<Error, Summoner>> GetSummonerAsync(string server, string summonerName)
+    {
+        var doesPlatformRouteExist = Enum.TryParse(server, out PlatformRoute platformRoute);
+
+        if (doesPlatformRouteExist is false)
         {
-            _logger = logger;
-            _configuration = configuration;
-            _riotGamesApi = GetConfiguredRiotGamesApi();
+            return new ApiError("Server name is invalid.");
         }
 
-        public async Task<Either<Error, Summoner>> GetSummonerAsync(string server, string summonerName)
+        Summoner? summoner;
+        try
+        { 
+            summoner = await _riotGamesApi.SummonerV4().GetBySummonerNameAsync(platformRoute, summonerName);
+        }
+        catch (RiotResponseException riotResponseException)
         {
-            bool doesPlatformRouteExist = Enum.TryParse(server, out PlatformRoute platformRoute);
-
-            if (doesPlatformRouteExist is false)
-                return new ApiError("Server name is invalid.");
-
-            Summoner? summoner;
-            try
-            { 
-                summoner = await _riotGamesApi.SummonerV4().GetBySummonerNameAsync(platformRoute, summonerName);
-            }
-            catch (RiotResponseException riotResponseException)
-            {
-                _logger.LogError(riotResponseException.ToString());
-                return new ApiError("There are problems on Riot API side");
-            }
+            _logger.LogError(riotResponseException.ToString());
+            return new ApiError("There are problems on Riot API side");
+        }
             
-            return summoner is null
-                ? new ApiError("Summoner does not exist.")
-                : Either<Error, Summoner>.Right(summoner);
-        }
+        return summoner is null
+            ? new ApiError("Summoner does not exist.")
+            : Either<Error, Summoner>.Right(summoner);
+    }
 
-        public async Task<Either<Error, ChampionMastery[]>> GetChampionMasteryAsync(string server, string puuid)
+    public async Task<Either<Error, ChampionMastery[]>> GetChampionMasteryAsync(string server, string puuid)
+    {
+        var doesPlatformRouteExist = Enum.TryParse(server, out PlatformRoute platformRoute);
+
+        if (doesPlatformRouteExist is false)
         {
-            bool doesPlatformRouteExist = Enum.TryParse(server, out PlatformRoute platformRoute);
-
-            if (doesPlatformRouteExist is false)
-                return new ApiError("Server name is invalid.");
-            
-            ChampionMastery[] championMastery;
-            try
-            {
-                championMastery = await _riotGamesApi.ChampionMasteryV4().GetAllChampionMasteriesByPUUIDAsync(platformRoute, puuid);
-            }
-            catch (RiotResponseException riotResponseException)
-            {
-                _logger.LogError(riotResponseException.ToString());
-                return new ApiError("There are problems on Riot API side");
-            }
-
-
-            // There must be always champion mastery for existing player. So either PUUID is invalid or there were other network problems with Camille
-            return championMastery is null
-                ? new ApiError("Champion masteries for given summoner does not exist.")
-                : Either<Error, ChampionMastery[]>.Right(championMastery);
+            return new ApiError("Server name is invalid.");
         }
+
+        ChampionMastery[] championMasteries;
+        try
+        {
+            championMasteries = await _riotGamesApi.ChampionMasteryV4().GetAllChampionMasteriesByPUUIDAsync(platformRoute, puuid);
+        }
+        catch (RiotResponseException riotResponseException)
+        {
+            _logger.LogError(riotResponseException.ToString());
+            return new ApiError("There are problems on Riot API side");
+        }
+
+
+        // There must be always champion mastery for existing player. So either PUUID is invalid or there were other network problems with Camille
+        return championMasteries is null
+            ? new ApiError("Champion masteries for given summoner does not exist.")
+            : Either<Error, ChampionMastery[]>.Right(championMasteries);
+    }
         
-        private RiotGamesApi GetConfiguredRiotGamesApi()
+    private RiotGamesApi GetConfiguredRiotGamesApi()
+    {
+        var config = new RiotGamesApiConfig.Builder(_configuration.GetRequiredSection(ConfigurationConstants.RiotApiKey).Value!)
         {
-            var config = new RiotGamesApiConfig.Builder(_configuration.GetRequiredSection(ConfigurationConstants.RiotApiKey).Value!)
-            {
                 
-            }.Build();
+        }.Build();
             
-            return RiotGamesApi.NewInstance(config);
-        }
+        return RiotGamesApi.NewInstance(config);
     }
 }
