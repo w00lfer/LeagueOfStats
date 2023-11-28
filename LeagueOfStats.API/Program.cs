@@ -1,7 +1,7 @@
 using LeagueOfStats.API.Infrastructure.RiotClient;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Champions;
-using LeagueOfStats.Persistence.Champions;
+using LeagueOfStats.Infrastructure.Champions;
 
 var builder = WebApplication.CreateBuilder(args);
 

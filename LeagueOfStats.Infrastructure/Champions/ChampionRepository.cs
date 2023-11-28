@@ -1,10 +1,10 @@
 using System.Collections.Immutable;
 using System.Text.Json;
 using LeagueOfStats.Domain.Champions;
-using LeagueOfStats.Persistence.Extensions;
-using LeagueOfStats.Persistence.JsonConfigurations;
+using LeagueOfStats.Infrastructure.Extensions;
+using LeagueOfStats.Infrastructure.JsonConfigurations;
 
-namespace LeagueOfStats.Persistence.Champions;
+namespace LeagueOfStats.Infrastructure.Champions;
 
 public class ChampionRepository : IChampionRepository
 {

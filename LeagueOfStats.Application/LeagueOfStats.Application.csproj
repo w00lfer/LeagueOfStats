@@ -15,7 +15,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\LeagueOfStats.Domain\LeagueOfStats.Domain.csproj" />
-      <ProjectReference Include="..\LeagueOfStats.Persistence\LeagueOfStats.Persistence.csproj" />
+      <ProjectReference Include="..\LeagueOfStats.Infrastructure\LeagueOfStats.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

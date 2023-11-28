@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Application",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Domain", "LeagueOfStats.Domain\LeagueOfStats.Domain.csproj", "{6EB6CCA0-F8F4-4FC4-8873-9D39C6AC52F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Persistence", "LeagueOfStats.Persistence\LeagueOfStats.Persistence.csproj", "{8D7682BC-E818-487B-BB4A-0CC2B56C5F6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Infrastructure", "LeagueOfStats.Infrastructure\LeagueOfStats.Infrastructure.csproj", "{8D7682BC-E818-487B-BB4A-0CC2B56C5F6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

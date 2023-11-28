@@ -1,4 +1,4 @@
-namespace LeagueOfStats.Persistence.JsonConfigurations;
+namespace LeagueOfStats.Infrastructure.JsonConfigurations;
 
 public static class ConfigurationPaths
 {

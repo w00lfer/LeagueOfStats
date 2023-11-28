@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 
-namespace LeagueOfStats.Persistence.Extensions;
+namespace LeagueOfStats.Infrastructure.Extensions;
 
 public static class ImmutableDictionaryExtensions
 {

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace LeagueOfStats.Persistence.Champions;
+namespace LeagueOfStats.Infrastructure.Champions;
 
 public record ChampionConfigurationImageModel(
     [property: JsonPropertyName("full")] string FullFileName,
