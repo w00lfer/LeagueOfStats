@@ -16,8 +16,6 @@ public class ChampionRepository : IChampionRepository
         {
             var champions = JsonSerializer.Deserialize<ChampionConfigurationModel>(r.ReadToEnd());
                 
-            // TODO THROW ERROR WHEN NULL OR EMPTY!
-
             _championsById = champions!.ChampionDataConfigurationModels.ToImmutableDictionary(
                 c => Int32.Parse(c.Value.Id), c =>
                     new Champion(
@@ -33,13 +31,14 @@ public class ChampionRepository : IChampionRepository
         }
     }
 
-    public Champion? GetById(int id) =>
-        _championsById.TryGetValue(id, out var champion)
-            ? champion
-            : null;
+    public Task<Champion?> GetByIdAsync(int id) =>
+        Task.FromResult(
+            _championsById.TryGetValue(id, out var champion)
+                ? champion
+                : null);
 
-    public IEnumerable<Champion> GetAll(params int[] ids) =>
-        ids.Length > 0
+    public Task<IEnumerable<Champion>> GetAllAsync(params int[] ids) =>
+        Task.FromResult(ids.Length > 0
             ? _championsById.GetMultiple(ids)
-            : _championsById.Values;
+            : _championsById.Values);
 }

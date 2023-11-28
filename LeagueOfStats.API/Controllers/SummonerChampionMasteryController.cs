@@ -16,8 +16,8 @@ public class SummonerChampionMasteryController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Get(string server, string summonerName) =>
-        (await _mediator.Send(new GetSummonerChampionMasteryRequest(server, summonerName)))
+    [HttpGet("{puuid}")]
+    public async Task<IActionResult> Get(string puuid, string region) =>
+        (await _mediator.Send(new GetSummonerChampionMasteryRequest(puuid, region)))
         .ToIActionResult(this);
 }

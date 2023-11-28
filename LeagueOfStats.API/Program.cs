@@ -1,7 +1,5 @@
 using LeagueOfStats.API.Infrastructure.RiotClient;
 using LeagueOfStats.Application.RiotClient;
-using LeagueOfStats.Domain.Champions;
-using LeagueOfStats.Infrastructure.Champions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +12,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IRiotClient, RiotClient>();
 
-builder.Services.AddSingleton<IChampionRepository, ChampionRepository>();
-
-// TODO MOVE IT AND REGISTER PROPERLY IN APP LAYER
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<IRiotClient>());
+LeagueOfStats.Application.DependencyInjection.AddApplicationDI(builder.Services, builder.Configuration);
+LeagueOfStats.Infrastructure.DependencyInjection.AddInfrastructureDI(builder.Services, builder.Configuration);
+LeagueOfStats.Domain.DependencyInjection.AddDomainDI(builder.Services, builder.Configuration);
 
 var app = builder.Build();
 

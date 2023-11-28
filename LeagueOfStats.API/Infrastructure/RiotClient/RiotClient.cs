@@ -1,11 +1,13 @@
-using Camille.Enums;
 using Camille.RiotGames;
+using Camille.RiotGames.AccountV1;
 using Camille.RiotGames.ChampionMasteryV4;
 using Camille.RiotGames.SummonerV4;
 using Camille.RiotGames.Util;
 using LanguageExt;
 using LeagueOfStats.API.Common.Errors;
 using LeagueOfStats.API.Infrastructure.Constants;
+using LeagueOfStats.Application.Enums;
+using LeagueOfStats.Application.Extensions;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Errors;
 
@@ -26,19 +28,12 @@ public class RiotClient : IRiotClient
         _riotGamesApi = GetConfiguredRiotGamesApi();
     }
 
-    public async Task<Either<Error, Summoner>> GetSummonerAsync(string server, string summonerName)
+    public async Task<Either<Error, Summoner>> GetSummonerByPuuidAsync(string puuid, Region region)
     {
-        var doesPlatformRouteExist = Enum.TryParse(server, out PlatformRoute platformRoute);
-
-        if (doesPlatformRouteExist is false)
-        {
-            return new ApiError("Server name is invalid.");
-        }
-
         Summoner? summoner;
         try
         { 
-            summoner = await _riotGamesApi.SummonerV4().GetBySummonerNameAsync(platformRoute, summonerName);
+            summoner = await _riotGamesApi.SummonerV4().GetByPUUIDAsync(region.ToPlatformRoute(), puuid);
         }
         catch (RiotResponseException riotResponseException)
         {
@@ -51,19 +46,35 @@ public class RiotClient : IRiotClient
             : Either<Error, Summoner>.Right(summoner);
     }
 
-    public async Task<Either<Error, ChampionMastery[]>> GetChampionMasteryAsync(string server, string puuid)
+    public async Task<Either<Error, Summoner>> GetSummonerByGameNameAndTaglineAsync(string gameName, string tagLine, Region region)
     {
-        var doesPlatformRouteExist = Enum.TryParse(server, out PlatformRoute platformRoute);
-
-        if (doesPlatformRouteExist is false)
+        Summoner summoner;
+        try
         {
-            return new ApiError("Server name is invalid.");
-        }
+            Account? account = await _riotGamesApi.AccountV1().GetByRiotIdAsync(region.ToRegionalRoute(), gameName, tagLine);
 
+            if (account is null)
+            {
+                return new ApiError($"There is no such account: {gameName}#{tagLine}");
+            }
+
+            summoner = await _riotGamesApi.SummonerV4().GetByPUUIDAsync(region.ToPlatformRoute(), account.Puuid);
+        }
+        catch (RiotResponseException riotResponseException)
+        {
+            _logger.LogError(riotResponseException.ToString());
+            return new ApiError("There are problems on Riot API side");
+        }
+        
+        return Either<Error, Summoner>.Right(summoner);
+    }
+
+    public async Task<Either<Error, ChampionMastery[]>> GetChampionMasteryAsync(string puuid, Region region)
+    {
         ChampionMastery[] championMasteries;
         try
         {
-            championMasteries = await _riotGamesApi.ChampionMasteryV4().GetAllChampionMasteriesByPUUIDAsync(platformRoute, puuid);
+            championMasteries = await _riotGamesApi.ChampionMasteryV4().GetAllChampionMasteriesByPUUIDAsync(region.ToPlatformRoute(), puuid);
         }
         catch (RiotResponseException riotResponseException)
         {

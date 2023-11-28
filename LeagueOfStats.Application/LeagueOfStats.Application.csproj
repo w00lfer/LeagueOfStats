@@ -11,6 +11,9 @@
       <PackageReference Include="LanguageExt.Core" Version="4.4.7" />
       <PackageReference Include="LanguageExt.Transformers" Version="4.4.7" />
       <PackageReference Include="MediatR" Version="12.1.1" />
+      <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
     </ItemGroup>
 
     <ItemGroup>

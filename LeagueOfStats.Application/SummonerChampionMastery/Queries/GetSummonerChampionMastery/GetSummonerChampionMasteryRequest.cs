@@ -1,6 +1,7 @@
 using Camille.RiotGames.ChampionMasteryV4;
 using LanguageExt;
 using LeagueOfStats.Application.Common.Errors;
+using LeagueOfStats.Application.Enums;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Errors;
@@ -9,8 +10,8 @@ using MediatR;
 namespace LeagueOfStats.Application.SummonerChampionMastery.Queries.GetSummonerChampionMastery;
 
 public record GetSummonerChampionMasteryRequest(
-        string Server,
-        string SummonerName)
+        string Puuid,
+        string Region)
     : IRequest<Either<Error, IEnumerable<SummonerChampionMasteryDto>>>;
 
 public class GetSummonerChampionMasteryRequestHandler : IRequestHandler<GetSummonerChampionMasteryRequest, Either<Error, IEnumerable<SummonerChampionMasteryDto>>>
@@ -25,15 +26,21 @@ public class GetSummonerChampionMasteryRequestHandler : IRequestHandler<GetSummo
     }
 
     public Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> Handle(GetSummonerChampionMasteryRequest request, CancellationToken cancellationToken) =>
-        _riotClient.GetSummonerAsync(request.Server, request.SummonerName)
-            .BindAsync(summoner => _riotClient.GetChampionMasteryAsync(request.Server, summoner.Puuid))
+        GetRegion(request.Region)
+            .BindAsync(region => _riotClient.GetSummonerByPuuidAsync(request.Puuid, region)
+                .BindAsync(summoner => _riotClient.GetChampionMasteryAsync(summoner.Puuid, region)))
             .BindAsync(MapToSummonerChampionMasteryDtos);
 
-    private Either<Error, IEnumerable<SummonerChampionMasteryDto>> MapToSummonerChampionMasteryDtos(ChampionMastery[] championMasteries)
+    private Either<Error, Region> GetRegion(string regionString) =>
+        Enum.TryParse<Region>(regionString, out var region)
+            ? region
+            : new ApplicationError("Region does not exist.");
+    
+    private async Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(ChampionMastery[] championMasteries)
     {
         var championMasteriesByChampionId = championMasteries.ToDictionary(championMastery => (int)championMastery.ChampionId, championMastery => championMastery);
 
-        var championsByChampionId = _championRepository.GetAll().ToDictionary(champion => champion.Id, champion => champion);
+        var championsByChampionId = (await _championRepository.GetAllAsync()).ToDictionary(champion => champion.Id, champion => champion);
 
         if (championMasteriesByChampionId.Keys.All(championsByChampionId.Keys.Contains) is false)
         {

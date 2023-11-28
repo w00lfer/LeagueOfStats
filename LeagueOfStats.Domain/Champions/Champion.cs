@@ -1,6 +1,8 @@
+using LeagueOfStats.Domain.Common.Entities;
+
 namespace LeagueOfStats.Domain.Champions;
 
-public class Champion
+public class Champion : Entity, IAggregateRoot
 {
     public Champion(int id, string name, string title, string description, ChampionImage championImage)
     {

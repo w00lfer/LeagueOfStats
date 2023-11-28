@@ -1,13 +1,12 @@
+using LeagueOfStats.Domain.Common.Entities;
 using NodaTime;
 
 namespace LeagueOfStats.Domain.Summoners;
 
-// Aggregate root
-public class Summoner
+public class Summoner : Entity, IAggregateRoot
 {
-    public Summoner(int id, string accountId, string name, int profileIconId, string puuid, long revisionDate, long summonerLevel, LocalDate lastUpdated, IEnumerable<SummonerChampionMastery> summonerChampionMasteries)
+    public Summoner(string accountId, string name, int profileIconId, string puuid, long summonerLevel, LocalDate lastUpdated, IEnumerable<SummonerChampionMastery> summonerChampionMasteries)
     {
-        Id = id;
         AccountId = accountId;
         Name = name;
         ProfileIconId = profileIconId;
@@ -32,4 +31,9 @@ public class Summoner
     public LocalDate LastUpdated { get; }
 
     public IEnumerable<SummonerChampionMastery> SummonerChampionMasteries { get; }
+
+    public void UpdateSummonerChampionMasteries(IEnumerable<SummonerChampionMastery> SummonerChampionMasteries)
+    {
+        
+    }
 }
