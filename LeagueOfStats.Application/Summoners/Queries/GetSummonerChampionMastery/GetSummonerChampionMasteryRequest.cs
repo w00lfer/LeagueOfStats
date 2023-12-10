@@ -4,6 +4,7 @@ using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Summoners;
 using MediatR;
 
 namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
@@ -28,13 +29,12 @@ public class GetSummonerChampionMasteryRequestHandler : IRequestHandler<GetSummo
     }
 
     public Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> Handle(GetSummonerChampionMasteryRequest request, CancellationToken cancellationToken) =>
-        _summonerApplicationService.GetSummonerById(request.Id)
-            .BindAsync(summoner => _riotClient.GetChampionMasteryAsync(summoner.Puuid, summoner.Region))
+        _summonerApplicationService.GetSummonerChampionMasteriesBySummonerId(request.Id)
             .BindAsync(MapToSummonerChampionMasteryDtos);
     
-    private async Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(ChampionMastery[] championMasteries)
+    private async Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(IEnumerable<SummonerChampionMastery> summonerChampionMasteries)
     {
-        var championMasteriesByRiotChampionId = championMasteries.ToDictionary(championMastery => (int)championMastery.ChampionId, championMastery => championMastery);
+        var championMasteriesByRiotChampionId = summonerChampionMasteries.ToDictionary(championMastery => (int)championMastery.RiotChampionId, championMastery => championMastery);
 
         var championsByRiotChampionId = (await _championRepository.GetAllAsync()).ToDictionary(champion => champion.RiotChampionId, champion => champion);
 

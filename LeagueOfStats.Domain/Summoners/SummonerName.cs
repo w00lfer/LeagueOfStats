@@ -5,7 +5,7 @@ namespace LeagueOfStats.Domain.Summoners;
 // TODO Maybe it should be called RiotName???
 public class SummonerName : ValueObject
 {
-    public static SummonerName Create(string gameName, string tagLine) =>
+    internal static SummonerName Create(string gameName, string tagLine) =>
         new SummonerName(gameName, tagLine);
     
     public string GameName { get; }

@@ -12,5 +12,5 @@ public interface IRiotClient
 
     Task<Either<Error, Summoner>> GetSummonerByGameNameAndTaglineAsync(string gameName, string tagLine, Region region);
         
-    Task<Either<Error, ChampionMastery[]>> GetChampionMasteryAsync(string puuid, Region region);
+    Task<Either<Error, ChampionMastery[]>> GetSummonerChampionMasteryByPuuid(string puuid, Region region);
 }

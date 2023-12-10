@@ -1,5 +1,3 @@
-using LeagueOfStats.Domain.Common;
-using LeagueOfStats.Domain.Common.Constants;
 using LeagueOfStats.Domain.Common.Entities;
 using LeagueOfStats.Domain.Common.Enums;
 using NodaTime;
@@ -8,7 +6,9 @@ namespace LeagueOfStats.Domain.Summoners;
 
 public class Summoner : AggregateRoot
 {
-    public Summoner(string summonerId, string accountId, string name, int profileIconId, string puuid, long summonerLevel, SummonerName summonerName, Region region)
+    private readonly List<SummonerChampionMastery> _summonerChampionMasteries = new();
+    
+    internal Summoner(string summonerId, string accountId, string name, int profileIconId, string puuid, long summonerLevel, SummonerName summonerName, Region region, Instant lastUpdated)
         : base (Guid.NewGuid())
     {
         SummonerId = summonerId;
@@ -19,9 +19,8 @@ public class Summoner : AggregateRoot
         Puuid = puuid;
         SummonerLevel = summonerLevel;
         Region = region;
-        LastUpdated = Clock.GetCurrentInstant();
+        LastUpdated = lastUpdated;
     }
-    
     
     public string SummonerId { get; }
     
@@ -42,19 +41,47 @@ public class Summoner : AggregateRoot
     
     public Instant LastUpdated { get; private set; }
 
-    public bool CanBeUpdated =>
-        Clock.GetCurrentInstant().Minus(LastUpdated).TotalMinutes >= UpdateLockoutConstants.GetSummonerUpdateLockoutInMinutes;
+    public List<SummonerChampionMastery> SummonerChampionMasteries => _summonerChampionMasteries.ToList();
 
-    public void Update(int profileIconId, long summonerLevel)
+    internal void Update(int profileIconId, long summonerLevel, Instant lastUpdated)
     {
-        // TODO Think how to split this into dev, prod and tests (read it as options?)
-        if (CanBeUpdated is false)
-        {
-            return;
-        }
-        
         ProfileIconId = profileIconId;
         SummonerLevel = summonerLevel;
-        LastUpdated = Clock.GetCurrentInstant();
+        LastUpdated = lastUpdated;
+    }
+
+    internal void UpdateSummonerChampionMasteries(IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos, Instant lastUpdated)
+    {
+        var existingMasteryForChampionIds = _summonerChampionMasteries.Select(c => c.RiotChampionId).ToList();
+        var championMasteriesForUpdate = updateChampionMasteryDtos.Where(c => existingMasteryForChampionIds.Contains(c.RiotChampionId));
+        foreach (var championMasteryForUpdate in championMasteriesForUpdate)
+        { 
+            var updateChampionMasteryDto = _summonerChampionMasteries.Single(c => c.RiotChampionId == championMasteryForUpdate.RiotChampionId);
+            updateChampionMasteryDto.Update(
+                updateChampionMasteryDto.ChampionLevel,
+                updateChampionMasteryDto.ChampionPoints,
+                updateChampionMasteryDto.ChampionPointsSinceLastLevel,
+                updateChampionMasteryDto.ChampionPointsUntilNextLevel,
+                updateChampionMasteryDto.ChestGranted,
+                updateChampionMasteryDto.LastPlayTime,
+                updateChampionMasteryDto.TokensEarned);
+        }
+        
+        var championMasteriesForAdd = updateChampionMasteryDtos.Where(c => existingMasteryForChampionIds.Contains(c.RiotChampionId) is false);
+        foreach (var championMasteryForAdd in championMasteriesForAdd)
+        {
+            _summonerChampionMasteries.Add(
+                new SummonerChampionMastery(
+                    championMasteryForAdd.RiotChampionId,
+                    championMasteryForAdd.ChampionLevel,
+                    championMasteryForAdd.ChampionPoints,
+                    championMasteryForAdd.ChampionPointsSinceLastLevel,
+                    championMasteryForAdd.ChampionPointsUntilNextLevel,
+                    championMasteryForAdd.ChestGranted,
+                    championMasteryForAdd.LastPlayTime,
+                    championMasteryForAdd.TokensEarned));
+        }
+
+        LastUpdated = lastUpdated;
     }
 }

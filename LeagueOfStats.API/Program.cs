@@ -1,5 +1,10 @@
+using LeagueOfStats.API.Environments;
 using LeagueOfStats.API.Infrastructure.RiotClient;
+using LeagueOfStats.Application;
+using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.RiotClient;
+using LeagueOfStats.Domain;
+using LeagueOfStats.Infrastructure;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,11 +19,15 @@ builder.Services.AddSwaggerGen(c =>
     c.AddEnumsWithValuesFixFilters();
 });
 
+builder.Services.Configure<EntityUpdateLockoutOptions>(
+    builder.Configuration.GetSection(nameof(EntityUpdateLockoutOptions)));
+
+builder.Services.AddSingleton<IEntityUpdateLockoutService, EntityUpdateLockoutService>();
 builder.Services.AddScoped<IRiotClient, RiotClient>();
 
-LeagueOfStats.Application.DependencyInjection.AddApplicationDI(builder.Services, builder.Configuration);
-LeagueOfStats.Infrastructure.DependencyInjection.AddInfrastructureDI(builder.Services, builder.Configuration);
-LeagueOfStats.Domain.DependencyInjection.AddDomainDI(builder.Services, builder.Configuration);
+builder.Services.AddApplicationDI(builder.Configuration);
+builder.Services.AddInfrastructureDI(builder.Configuration);
+builder.Services.AddDomainDI(builder.Configuration);
 
 var app = builder.Build();
 

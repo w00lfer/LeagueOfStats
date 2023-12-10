@@ -1,73 +1,121 @@
 using LanguageExt;
+using LanguageExt.Pretty;
+using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Errors;
 using LeagueOfStats.Domain.Summoners;
+using NodaTime;
 
 namespace LeagueOfStats.Application.Summoners;
 
+// TODO Think about how to design solution when we need to have data synced with riot api but store it on our side
+// TODO Updating stuff in Get method does not feel good...
 public class SummonerApplicationService : ISummonerApplicationService
 {
-    private readonly ISummonerRepository _summonerRepository;
+    private readonly ISummonerDomainService _summonerDomainService;
     private readonly IRiotClient _riotClient;
+    private readonly IEntityUpdateLockoutService _entityUpdateLockoutService;
+    private readonly IClock _clock;
 
-    public SummonerApplicationService(ISummonerRepository summonerRepository, IRiotClient riotClient)
+    public SummonerApplicationService(
+        ISummonerDomainService summonerDomainService,
+        IRiotClient riotClient,
+        IEntityUpdateLockoutService entityUpdateLockoutService,
+        IClock clock)
     {
-        _summonerRepository = summonerRepository;
+        _summonerDomainService = summonerDomainService;
         _riotClient = riotClient;
+        _entityUpdateLockoutService = entityUpdateLockoutService;
+        _clock = clock;
     }
 
+    // TODO Think about if fetch locko
     public Task<Either<Error, Summoner>> GetSummonerByGameNameAndTagLineAndRegion(string gameName, string tagLine, Region region) =>
         _riotClient.GetSummonerByGameNameAndTaglineAsync(gameName, tagLine, region)
-            .BindAsync(async summonerFromRiotApi =>
+            .BindAsync(async summonerFromRiotApi => await (await _summonerDomainService.GetByPuuidAsync(summonerFromRiotApi.Puuid))
+                .MatchAsync(
+                    async summoner =>
+                    {
+                        if (CanSummonerCanBeUpdatedWithRiotData(summoner))
+                        {
+                            await _summonerDomainService.UpdateDetailsAsync(summoner, new UpdateDetailsSummonerDto(summoner.ProfileIconId, summoner.SummonerLevel));
+                        }
+
+                        return Either<Error, Summoner>.Right(summoner);
+                    },
+                    async error =>
+                    {
+                        var summoner = await _summonerDomainService.CreateAsync(new CreateSummonerDto(
+                            summonerFromRiotApi.Id,
+                            summonerFromRiotApi.AccountId,
+                            summonerFromRiotApi.Name,
+                            summonerFromRiotApi.ProfileIconId,
+                            summonerFromRiotApi.Puuid,
+                            summonerFromRiotApi.SummonerLevel,
+                            gameName,
+                            tagLine,
+                            region));
+
+                        return Either<Error, Summoner>.Right(summoner);
+                    }));
+    
+    public Task<Either<Error, Summoner>> GetSummonerById(Guid id) =>
+        _summonerDomainService.GetByIdAsync(id)
+            .BindAsync(async summoner =>
             {
-                Summoner? summoner = await _summonerRepository.GetByPuuid(summonerFromRiotApi.Puuid);
-
-                if (summoner is null)
+                if (CanSummonerCanBeUpdatedWithRiotData(summoner))
                 {
-                    summoner = new Summoner(
-                        summonerFromRiotApi.Id,
-                        summonerFromRiotApi.AccountId,
-                        summonerFromRiotApi.Name,
-                        summonerFromRiotApi.ProfileIconId,
-                        summonerFromRiotApi.Puuid,
-                        summonerFromRiotApi.SummonerLevel,
-                        SummonerName.Create(gameName, tagLine),
-                        region);
-                    
-                    await _summonerRepository.AddAsync(summoner);
-                }
-                else
-                {
-                    // not sure if name should be updated for now
-                    summoner.Update(summonerFromRiotApi.ProfileIconId, summonerFromRiotApi.SummonerLevel);
-                    await _summonerRepository.UpdateAsync(summoner);
-                }
+                    return await _riotClient.GetSummonerByPuuidAsync(summoner.Puuid, summoner.Region)
+                        .BindAsync(async summonerFromRiotApi =>
+                        {
+                            await _summonerDomainService.UpdateDetailsAsync(
+                                summoner,
+                                new UpdateDetailsSummonerDto(summonerFromRiotApi.ProfileIconId, summonerFromRiotApi.SummonerLevel));
 
+                            return Either<Error, Summoner>.Right(summoner);
+                        });
+                }
+                
                 return Either<Error, Summoner>.Right(summoner);
             });
-    
-    public async Task<Either<Error, Summoner>> GetSummonerById(Guid id)
-    {
-        Summoner? summoner = await _summonerRepository.GetByIdAsync(id);
 
-        if (summoner is null)
-        { 
-            return new EntityNotFoundError($"Summoner with Id={id} does not exist.");
-        }
-
-        if (summoner.CanBeUpdated)
-        {
-            return await _riotClient.GetSummonerByPuuidAsync(summoner.Puuid, summoner.Region)
-                .BindAsync(async summonerFromRiotApi =>
+    public Task<Either<Error, IEnumerable<SummonerChampionMastery>>> GetSummonerChampionMasteriesBySummonerId(Guid summonerId) =>
+        _summonerDomainService.GetByIdAsync(summonerId)
+            .BindAsync(async summoner =>
+            {
+                if (CanSummonerCanBeUpdatedWithRiotData(summoner))
                 {
-                    summoner.Update(summonerFromRiotApi.ProfileIconId, summonerFromRiotApi.SummonerLevel);
-                    await _summonerRepository.UpdateAsync(summoner);
-                    
-                    return Either<Error, Summoner>.Right(summoner); 
-                });
-        }
+                    return await _riotClient.GetSummonerByPuuidAsync(summoner.Puuid, summoner.Region)
+                        .BindAsync(summonerFromRiotApi => _riotClient.GetSummonerChampionMasteryByPuuid(summonerFromRiotApi.Puuid, summoner.Region)
+                            .BindAsync(async summonerChampionMasteriesFromRiotApi =>
+                            {
+                                await _summonerDomainService.UpdateDetailsAsync(
+                                    summoner,
+                                    new UpdateDetailsSummonerDto(summonerFromRiotApi.ProfileIconId,
+                                        summonerFromRiotApi.SummonerLevel));
 
-        return Either<Error, Summoner>.Right(summoner);
-    }
+                                await _summonerDomainService.UpdateChampionMasteriesAsync(
+                                    summoner,
+                                    summonerChampionMasteriesFromRiotApi.Select(c =>
+                                        new UpdateChampionMasteryDto(
+                                            (int)c.ChampionId,
+                                            c.ChampionLevel,
+                                            c.ChampionPoints,
+                                            c.ChampionPointsSinceLastLevel,
+                                            c.ChampionPointsUntilNextLevel,
+                                            c.ChestGranted,
+                                            c.LastPlayTime,
+                                            c.Puuid,
+                                            c.SummonerId,
+                                            c.TokensEarned)));
+
+                                return Either<Error, IEnumerable<SummonerChampionMastery>>.Right(summoner.SummonerChampionMasteries);
+                            }));
+                }
+                return Either<Error, IEnumerable<SummonerChampionMastery>>.Right(summoner.SummonerChampionMasteries);
+            });
+
+    private bool CanSummonerCanBeUpdatedWithRiotData(Summoner summoner) =>
+        _clock.GetCurrentInstant().Minus(summoner.LastUpdated).TotalMinutes >= _entityUpdateLockoutService.GetSummonerUpdateLockoutInMinutes();
 }
