@@ -27,7 +27,7 @@ public class GetSummonerByGameNameAndTagLineAndRegionRequestHandler : IRequestHa
 
     private SummonerDto MapToSummonerDto(Summoner summoner) => 
         new(
-            summoner.Id.Value,
+            summoner.Id,
             summoner.AccountId,
             summoner.SummonerId,
             summoner.Name,

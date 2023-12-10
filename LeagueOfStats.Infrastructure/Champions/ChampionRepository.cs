@@ -8,7 +8,7 @@ namespace LeagueOfStats.Infrastructure.Champions;
 
 public class ChampionRepository : IChampionRepository
 {
-    private readonly ImmutableDictionary<ChampionId, Champion> _championsById;
+    private readonly ImmutableDictionary<Guid, Champion> _championsById;
 
     public ChampionRepository()
     {
@@ -31,13 +31,13 @@ public class ChampionRepository : IChampionRepository
         }
     }
 
-    public Task<Champion?> GetByIdAsync(ChampionId id) =>
+    public Task<Champion?> GetByIdAsync(Guid id) =>
         Task.FromResult(
             _championsById.TryGetValue(id, out var champion)
                 ? champion
                 : null);
 
-    public Task<IEnumerable<Champion>> GetAllAsync(params ChampionId[] ids) =>
+    public Task<IEnumerable<Champion>> GetAllAsync(params Guid[] ids) =>
         Task.FromResult(ids.Length > 0
             ? _championsById.GetMultiple(ids)
             : _championsById.Values);

@@ -3,51 +3,53 @@ using LanguageExt;
 using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Champions;
-using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Errors;
 using MediatR;
 
 namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
 
 public record GetSummonerChampionMasteryRequest(
-        string Puuid,
-        Region Region)
+        Guid Id)
     : IRequest<Either<Error, IEnumerable<SummonerChampionMasteryDto>>>;
 
 public class GetSummonerChampionMasteryRequestHandler : IRequestHandler<GetSummonerChampionMasteryRequest, Either<Error, IEnumerable<SummonerChampionMasteryDto>>>
 {
+    private readonly ISummonerApplicationService _summonerApplicationService;
     private readonly IRiotClient _riotClient;
     private readonly IChampionRepository _championRepository;
 
-    public GetSummonerChampionMasteryRequestHandler(IRiotClient riotClient, IChampionRepository championRepository)
-    {
-        _riotClient = riotClient;
+    public GetSummonerChampionMasteryRequestHandler(
+        ISummonerApplicationService summonerApplicationService,
+        IChampionRepository championRepository, IRiotClient riotClient)
+    { 
+        _summonerApplicationService = summonerApplicationService;
         _championRepository = championRepository;
+        _riotClient = riotClient;
     }
 
     public Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> Handle(GetSummonerChampionMasteryRequest request, CancellationToken cancellationToken) =>
-        _riotClient.GetSummonerByPuuidAsync(request.Puuid, request.Region)
-            .BindAsync(summoner => _riotClient.GetChampionMasteryAsync(summoner.Puuid, request.Region))
+        _summonerApplicationService.GetSummonerById(request.Id)
+            .BindAsync(summoner => _riotClient.GetChampionMasteryAsync(summoner.Puuid, summoner.Region))
             .BindAsync(MapToSummonerChampionMasteryDtos);
     
     private async Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(ChampionMastery[] championMasteries)
     {
-        var championMasteriesByChampionId = championMasteries.ToDictionary(championMastery => (int)championMastery.ChampionId, championMastery => championMastery);
+        var championMasteriesByRiotChampionId = championMasteries.ToDictionary(championMastery => (int)championMastery.ChampionId, championMastery => championMastery);
 
-        var championsByChampionId = (await _championRepository.GetAllAsync()).ToDictionary(champion => champion.Id, champion => champion);
+        var championsByRiotChampionId = (await _championRepository.GetAllAsync()).ToDictionary(champion => champion.RiotChampionId, champion => champion);
 
-        if (championMasteriesByChampionId.Keys.All(c => championsByChampionId.Keys.Select(k => k.Value).Contains(c)) is false)
+        if (championMasteriesByRiotChampionId.Keys.All(c => championsByRiotChampionId.Keys.Select(k => k).Contains(c)) is false)
         {
             return new ApplicationError("Champions from masteries differ than champions from domain");
         }
 
-        var summonerChampionMasteryDtos = championMasteriesByChampionId.Select(championMasteryByChampionId =>
+        var summonerChampionMasteryDtos = championMasteriesByRiotChampionId.Select(championMasteryByRiotChampionId =>
         {
-            championsByChampionId.TryGetValue(new ChampionId(championMasteryByChampionId.Key), out var champion);
-            var championMastery = championMasteryByChampionId.Value;
+            championsByRiotChampionId.TryGetValue(championMasteryByRiotChampionId.Key, out var champion);
+            var championMastery = championMasteryByRiotChampionId.Value;
 
             return new SummonerChampionMasteryDto(
-                champion!.Id.Value,
+                champion!.RiotChampionId,
                 champion.Name,
                 champion.Title,
                 champion.Description,

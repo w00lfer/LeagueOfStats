@@ -46,11 +46,10 @@ public class SummonerApplicationService : ISummonerApplicationService
 
                 return Either<Error, Summoner>.Right(summoner);
             });
-
-    // TODO I'm not sure if I should pass guid id here and create a new SummonerId class based on it just to search
+    
     public async Task<Either<Error, Summoner>> GetSummonerById(Guid id)
     {
-        Summoner? summoner = await _summonerRepository.GetByIdAsync(new SummonerId(id));
+        Summoner? summoner = await _summonerRepository.GetByIdAsync(id);
 
         if (summoner is null)
         { 

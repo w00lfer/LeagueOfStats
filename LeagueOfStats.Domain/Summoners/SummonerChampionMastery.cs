@@ -4,10 +4,10 @@ using LeagueOfStats.Domain.Common.Entities;
 namespace LeagueOfStats.Domain.Summoners;
 
 // Aggregate member of Summoner
-public class SummonerChampionMastery : Entity<SummonerChampionMasteryId>
+public class SummonerChampionMastery : Entity
 {
-    public SummonerChampionMastery(ChampionId championId, int championLevel, int championPoints, long championPointsSinceLastLevel, long championPointsUntilNextLevel, bool chestGranted, long lastPlayTime, int tokensEarned)
-        : base (new SummonerChampionMasteryId(Guid.NewGuid()))
+    public SummonerChampionMastery(Guid championId, int championLevel, int championPoints, long championPointsSinceLastLevel, long championPointsUntilNextLevel, bool chestGranted, long lastPlayTime, int tokensEarned)
+        : base (Guid.NewGuid())
     {
         ChampionId = championId;
         ChampionLevel = championLevel;
@@ -19,7 +19,7 @@ public class SummonerChampionMastery : Entity<SummonerChampionMasteryId>
         TokensEarned = tokensEarned;
     }
     
-    public ChampionId ChampionId { get; }
+    public Guid ChampionId { get; }
     
     public int ChampionLevel { get; }
     

@@ -2,11 +2,10 @@ using LeagueOfStats.Domain.Common.Entities;
 
 namespace LeagueOfStats.Domain.Common.Repositories;
 
-public interface IAsyncReadOnlyRepository<T, TId>
-    where T : AggregateRoot<TId> 
-    where TId: notnull
+public interface IAsyncReadOnlyRepository<T>
+    where T : AggregateRoot
 {
-    Task<T?> GetByIdAsync(TId id);
+    Task<T?> GetByIdAsync(Guid id);
     
-    Task<IEnumerable<T>> GetAllAsync(params TId[] ids);
+    Task<IEnumerable<T>> GetAllAsync(params Guid[] ids);
 }

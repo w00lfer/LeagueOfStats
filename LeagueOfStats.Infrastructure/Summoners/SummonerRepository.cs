@@ -6,13 +6,13 @@ public class SummonerRepository : ISummonerRepository
 {
     private List<Summoner> _summoners = new();
 
-    public Task<Summoner?> GetByIdAsync(SummonerId id) =>
+    public Task<Summoner?> GetByIdAsync(Guid id) =>
         Task.FromResult(_summoners.SingleOrDefault(s => s.Id == id));
 
     public Task<Summoner?> GetByPuuid(string puuid) =>
         Task.FromResult(_summoners.SingleOrDefault(s => s.Puuid == puuid));
     
-    public Task<IEnumerable<Summoner>> GetAllAsync(params SummonerId[] ids) =>
+    public Task<IEnumerable<Summoner>> GetAllAsync(params Guid[] ids) =>
         Task.FromResult(ids.Length > 0
             ? _summoners.Where(s => ids.Contains(s.Id))
             : _summoners);

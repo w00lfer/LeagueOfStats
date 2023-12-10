@@ -6,10 +6,10 @@ using NodaTime;
 
 namespace LeagueOfStats.Domain.Summoners;
 
-public class Summoner : AggregateRoot<SummonerId>
+public class Summoner : AggregateRoot
 {
     public Summoner(string summonerId, string accountId, string name, int profileIconId, string puuid, long summonerLevel, SummonerName summonerName, Region region)
-        : base (new SummonerId(Guid.NewGuid()))
+        : base (Guid.NewGuid())
     {
         SummonerId = summonerId;
         AccountId = accountId;

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LeagueOfStats.API.Controllers;
 
 [ApiController]
-[Route("summoner/{puuid}/[controller]")]
+[Route("Summoner/{id}/[controller]")]
 public class SummonerChampionMasteryController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -18,7 +18,7 @@ public class SummonerChampionMasteryController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(string puuid, [FromQuery] Region region) =>
-        (await _mediator.Send(new GetSummonerChampionMasteryRequest(puuid, region)))
+    public async Task<IActionResult> GetAll(Guid id) =>
+        (await _mediator.Send(new GetSummonerChampionMasteryRequest(id)))
         .ToIActionResult(this);
 }
