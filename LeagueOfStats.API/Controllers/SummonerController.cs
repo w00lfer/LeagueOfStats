@@ -1,5 +1,7 @@
 using LeagueOfStats.API.Extensions;
-using LeagueOfStats.Application.SummonerChampionMastery.Queries.GetSummonersByName;
+using LeagueOfStats.Application.Summoners.Queries.GetSummonerByGameNameAndTagLineAndRegion;
+using LeagueOfStats.Application.Summoners.Queries.GetSummonerById;
+using LeagueOfStats.Domain.Common.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,8 +18,13 @@ public class SummonerController : ControllerBase
         _mediator = mediator;
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(Guid id) =>
+        (await _mediator.Send(new GetSummonerByIdRequest(id)))
+        .ToIActionResult(this);
+    
     [HttpGet]
-    public async Task<IActionResult> GetByGameNameAndTagLine(string gameName, string tagLine, string region) => 
-        (await _mediator.Send(new GetSummonerRequest(gameName, tagLine, region)))
+    public async Task<IActionResult> GetByGameNameAndTagLine([FromQuery] string gameName, [FromQuery] string tagLine, [FromQuery] Region region) => 
+        (await _mediator.Send(new GetSummonerByGameNameAndTagLineAndRegionRequest(gameName, tagLine, region)))
         .ToIActionResult(this);
 }

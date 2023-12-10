@@ -1,39 +1,60 @@
+using LeagueOfStats.Domain.Common;
+using LeagueOfStats.Domain.Common.Constants;
 using LeagueOfStats.Domain.Common.Entities;
+using LeagueOfStats.Domain.Common.Enums;
 using NodaTime;
 
 namespace LeagueOfStats.Domain.Summoners;
 
-public class Summoner : Entity, IAggregateRoot
+public class Summoner : AggregateRoot<SummonerId>
 {
-    public Summoner(string accountId, string name, int profileIconId, string puuid, long summonerLevel, LocalDate lastUpdated, IEnumerable<SummonerChampionMastery> summonerChampionMasteries)
+    public Summoner(string summonerId, string accountId, string name, int profileIconId, string puuid, long summonerLevel, SummonerName summonerName, Region region)
+        : base (new SummonerId(Guid.NewGuid()))
     {
+        SummonerId = summonerId;
         AccountId = accountId;
+        SummonerName = summonerName;
         Name = name;
         ProfileIconId = profileIconId;
         Puuid = puuid;
         SummonerLevel = summonerLevel;
-        LastUpdated = lastUpdated;
-        SummonerChampionMasteries = summonerChampionMasteries;
+        Region = region;
+        LastUpdated = Clock.GetCurrentInstant();
     }
-
-    public int Id { get; }
+    
+    
+    public string SummonerId { get; }
     
     public string AccountId { get; }
+
+    // TODO Think about how to update summoner name and how to know it's changed
+    public SummonerName SummonerName { get; private set; }
     
     public string Name { get; }
     
     public string Puuid { get; }
     
-    public int ProfileIconId { get; }
+    public int ProfileIconId { get; private set; }
     
-    public long SummonerLevel { get; }
+    public long SummonerLevel { get; private set; }
     
-    public LocalDate LastUpdated { get; }
+    public Region Region { get; }
+    
+    public Instant LastUpdated { get; private set; }
 
-    public IEnumerable<SummonerChampionMastery> SummonerChampionMasteries { get; }
+    public bool CanBeUpdated =>
+        Clock.GetCurrentInstant().Minus(LastUpdated).TotalMinutes >= UpdateLockoutConstants.GetSummonerUpdateLockoutInMinutes;
 
-    public void UpdateSummonerChampionMasteries(IEnumerable<SummonerChampionMastery> SummonerChampionMasteries)
+    public void Update(int profileIconId, long summonerLevel)
     {
+        // TODO Think how to split this into dev, prod and tests (read it as options?)
+        if (CanBeUpdated is false)
+        {
+            return;
+        }
         
+        ProfileIconId = profileIconId;
+        SummonerLevel = summonerLevel;
+        LastUpdated = Clock.GetCurrentInstant();
     }
 }

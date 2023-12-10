@@ -1,11 +1,13 @@
+using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Entities;
 
 namespace LeagueOfStats.Domain.Summoners;
 
 // Aggregate member of Summoner
-public class SummonerChampionMastery : Entity
+public class SummonerChampionMastery : Entity<SummonerChampionMasteryId>
 {
-    public SummonerChampionMastery(int championId, int championLevel, int championPoints, long championPointsSinceLastLevel, long championPointsUntilNextLevel, bool chestGranted, long lastPlayTime, int tokensEarned)
+    public SummonerChampionMastery(ChampionId championId, int championLevel, int championPoints, long championPointsSinceLastLevel, long championPointsUntilNextLevel, bool chestGranted, long lastPlayTime, int tokensEarned)
+        : base (new SummonerChampionMasteryId(Guid.NewGuid()))
     {
         ChampionId = championId;
         ChampionLevel = championLevel;
@@ -17,21 +19,19 @@ public class SummonerChampionMastery : Entity
         TokensEarned = tokensEarned;
     }
     
-    public int Id { get; }
+    public ChampionId ChampionId { get; }
     
-    public int ChampionId { get; set; }
+    public int ChampionLevel { get; }
     
-    public int ChampionLevel { get; set; }
+    public int ChampionPoints { get; }
     
-    public int ChampionPoints { get; set; }
+    public long ChampionPointsSinceLastLevel { get; }
     
-    public long ChampionPointsSinceLastLevel { get; set; }
+    public long ChampionPointsUntilNextLevel { get; }
     
-    public long ChampionPointsUntilNextLevel { get; set; }
+    public bool ChestGranted { get; }
     
-    public bool ChestGranted { get; set; }
+    public long LastPlayTime { get; }
     
-    public long LastPlayTime { get; set; }
-    
-    public int TokensEarned { get; set; }
+    public int TokensEarned { get; }
 }

@@ -8,36 +8,36 @@ namespace LeagueOfStats.Infrastructure.Champions;
 
 public class ChampionRepository : IChampionRepository
 {
-    private readonly ImmutableDictionary<int, Champion> _championsById;
+    private readonly ImmutableDictionary<ChampionId, Champion> _championsById;
 
     public ChampionRepository()
     {
         using (StreamReader r = new StreamReader(ConfigurationPaths.GetChampionConfigurationPath()))
         {
-            var champions = JsonSerializer.Deserialize<ChampionConfigurationModel>(r.ReadToEnd());
-                
-            _championsById = champions!.ChampionDataConfigurationModels.ToImmutableDictionary(
-                c => Int32.Parse(c.Value.Id), c =>
-                    new Champion(
-                        Int32.Parse(c.Value.Id),
-                        c.Value.Name,
-                        c.Value.Title,
-                        c.Value.Description,
-                        new ChampionImage(
-                            c.Value.ChampionConfigurationImageModel.FullFileName,
-                            c.Value.ChampionConfigurationImageModel.SpriteFileName,
-                            c.Value.ChampionConfigurationImageModel.Height,
-                            c.Value.ChampionConfigurationImageModel.Width)));
+            var championConfigurationModel = JsonSerializer.Deserialize<ChampionConfigurationModel>(r.ReadToEnd());
+            var champions = championConfigurationModel.ChampionDataConfigurationModels.Select(c =>
+                new Champion(
+                    Int32.Parse(c.Value.Id),
+                    c.Value.Name,
+                    c.Value.Title,
+                    c.Value.Description,
+                    new ChampionImage(
+                        c.Value.ChampionConfigurationImageModel.FullFileName,
+                        c.Value.ChampionConfigurationImageModel.SpriteFileName,
+                        c.Value.ChampionConfigurationImageModel.Height,
+                        c.Value.ChampionConfigurationImageModel.Width)));
+            
+            _championsById = champions.ToImmutableDictionary(c => c.Id, c => c);
         }
     }
 
-    public Task<Champion?> GetByIdAsync(int id) =>
+    public Task<Champion?> GetByIdAsync(ChampionId id) =>
         Task.FromResult(
             _championsById.TryGetValue(id, out var champion)
                 ? champion
                 : null);
 
-    public Task<IEnumerable<Champion>> GetAllAsync(params int[] ids) =>
+    public Task<IEnumerable<Champion>> GetAllAsync(params ChampionId[] ids) =>
         Task.FromResult(ids.Length > 0
             ? _championsById.GetMultiple(ids)
             : _championsById.Values);

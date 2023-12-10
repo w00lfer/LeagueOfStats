@@ -6,9 +6,9 @@ using Camille.RiotGames.Util;
 using LanguageExt;
 using LeagueOfStats.API.Common.Errors;
 using LeagueOfStats.API.Infrastructure.Constants;
-using LeagueOfStats.Application.Enums;
 using LeagueOfStats.Application.Extensions;
 using LeagueOfStats.Application.RiotClient;
+using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Errors;
 
 namespace LeagueOfStats.API.Infrastructure.RiotClient;
@@ -51,6 +51,7 @@ public class RiotClient : IRiotClient
         Summoner summoner;
         try
         {
+            // no need to use region here. just use closes cluster to server
             Account? account = await _riotGamesApi.AccountV1().GetByRiotIdAsync(region.ToRegionalRoute(), gameName, tagLine);
 
             if (account is null)
@@ -85,7 +86,7 @@ public class RiotClient : IRiotClient
 
         // There must be always champion mastery for existing player. So either PUUID is invalid or there were other network problems with Camille
         return championMasteries is null
-            ? new ApiError("Champion masteries for given summoner does not exist.")
+            ? new ApiError("Champion masteries for given summoner do not exist.")
             : Either<Error, ChampionMastery[]>.Right(championMasteries);
     }
         

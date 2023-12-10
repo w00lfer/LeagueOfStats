@@ -1,7 +1,7 @@
 using Camille.RiotGames.ChampionMasteryV4;
 using Camille.RiotGames.SummonerV4;
 using LanguageExt;
-using LeagueOfStats.Application.Enums;
+using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Errors;
 
 namespace LeagueOfStats.Application.RiotClient;

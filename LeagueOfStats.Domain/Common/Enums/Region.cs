@@ -1,4 +1,4 @@
-namespace LeagueOfStats.Application.Enums;
+namespace LeagueOfStats.Domain.Common.Enums;
 
 public enum Region
 {

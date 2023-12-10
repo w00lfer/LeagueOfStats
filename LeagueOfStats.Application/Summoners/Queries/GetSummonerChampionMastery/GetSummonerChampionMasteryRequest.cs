@@ -1,17 +1,17 @@
 using Camille.RiotGames.ChampionMasteryV4;
 using LanguageExt;
 using LeagueOfStats.Application.Common.Errors;
-using LeagueOfStats.Application.Enums;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Champions;
+using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Errors;
 using MediatR;
 
-namespace LeagueOfStats.Application.SummonerChampionMastery.Queries.GetSummonerChampionMastery;
+namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
 
 public record GetSummonerChampionMasteryRequest(
         string Puuid,
-        string Region)
+        Region Region)
     : IRequest<Either<Error, IEnumerable<SummonerChampionMasteryDto>>>;
 
 public class GetSummonerChampionMasteryRequestHandler : IRequestHandler<GetSummonerChampionMasteryRequest, Either<Error, IEnumerable<SummonerChampionMasteryDto>>>
@@ -26,15 +26,9 @@ public class GetSummonerChampionMasteryRequestHandler : IRequestHandler<GetSummo
     }
 
     public Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> Handle(GetSummonerChampionMasteryRequest request, CancellationToken cancellationToken) =>
-        GetRegion(request.Region)
-            .BindAsync(region => _riotClient.GetSummonerByPuuidAsync(request.Puuid, region)
-                .BindAsync(summoner => _riotClient.GetChampionMasteryAsync(summoner.Puuid, region)))
+        _riotClient.GetSummonerByPuuidAsync(request.Puuid, request.Region)
+            .BindAsync(summoner => _riotClient.GetChampionMasteryAsync(summoner.Puuid, request.Region))
             .BindAsync(MapToSummonerChampionMasteryDtos);
-
-    private Either<Error, Region> GetRegion(string regionString) =>
-        Enum.TryParse<Region>(regionString, out var region)
-            ? region
-            : new ApplicationError("Region does not exist.");
     
     private async Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(ChampionMastery[] championMasteries)
     {
@@ -42,18 +36,18 @@ public class GetSummonerChampionMasteryRequestHandler : IRequestHandler<GetSummo
 
         var championsByChampionId = (await _championRepository.GetAllAsync()).ToDictionary(champion => champion.Id, champion => champion);
 
-        if (championMasteriesByChampionId.Keys.All(championsByChampionId.Keys.Contains) is false)
+        if (championMasteriesByChampionId.Keys.All(c => championsByChampionId.Keys.Select(k => k.Value).Contains(c)) is false)
         {
             return new ApplicationError("Champions from masteries differ than champions from domain");
         }
 
         var summonerChampionMasteryDtos = championMasteriesByChampionId.Select(championMasteryByChampionId =>
         {
-            var champion = championsByChampionId[championMasteryByChampionId.Key];
+            championsByChampionId.TryGetValue(new ChampionId(championMasteryByChampionId.Key), out var champion);
             var championMastery = championMasteryByChampionId.Value;
 
             return new SummonerChampionMasteryDto(
-                champion.Id,
+                champion!.Id.Value,
                 champion.Name,
                 champion.Title,
                 champion.Description,

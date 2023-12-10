@@ -2,18 +2,17 @@ using LeagueOfStats.Domain.Common.Entities;
 
 namespace LeagueOfStats.Domain.Champions;
 
-public class Champion : Entity, IAggregateRoot
+public class Champion : AggregateRoot<ChampionId>
 {
     public Champion(int id, string name, string title, string description, ChampionImage championImage)
+        : base(new ChampionId(id))
     {
-        Id = id;
         Name = name;
         Title = title;
         Description = description;
         ChampionImage = championImage;
     }
-
-    public int Id { get; }
+    
     public string Name { get; }
         
     public string Title { get; }

@@ -21,6 +21,7 @@ public static class EitherExtensions
         {
             ApplicationError applicationError => controllerBase.BadRequest(applicationError.ErrorMessage),
             DomainError domainError => controllerBase.BadRequest(domainError.ErrorMessage),
+            EntityNotFoundError entityNotFoundError => controllerBase.NotFound(entityNotFoundError.ErrorMessage),
             ApiError apiError => controllerBase.BadRequest(apiError.ErrorMessage),
             _ => throw new NotSupportedException("This error is not yet supported3")
         };

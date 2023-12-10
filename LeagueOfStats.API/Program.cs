@@ -1,5 +1,6 @@
 using LeagueOfStats.API.Infrastructure.RiotClient;
 using LeagueOfStats.Application.RiotClient;
+using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddEnumsWithValuesFixFilters();
+});
 
 builder.Services.AddScoped<IRiotClient, RiotClient>();
 
