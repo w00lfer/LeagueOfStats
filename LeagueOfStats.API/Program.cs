@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var keyVaultUrl = new Uri(builder.Configuration.GetSection("KeyVaultURL").Value!);
-var azureCredential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = "0ce168ae-979f-4f50-97f6-523285b0a37e"});
+var azureCredential = new DefaultAzureCredential(new DefaultAzureCredentialOptions { ManagedIdentityClientId = builder.Configuration.GetSection("ManagedIdentityClientId").Value!});
 builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
 
 builder.Services.Configure<EntityUpdateLockoutOptions>(
