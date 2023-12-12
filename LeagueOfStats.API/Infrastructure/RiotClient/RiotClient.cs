@@ -6,26 +6,26 @@ using Camille.RiotGames.Util;
 using LanguageExt;
 using LeagueOfStats.API.Common.Errors;
 using LeagueOfStats.API.Infrastructure.Constants;
+using LeagueOfStats.API.Options;
 using LeagueOfStats.Application.Extensions;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Errors;
+using Microsoft.Extensions.Options;
 
 namespace LeagueOfStats.API.Infrastructure.RiotClient;
 
 public class RiotClient : IRiotClient
 {
-    private readonly IConfiguration _configuration;
     private readonly ILogger<RiotClient> _logger;
     private readonly RiotGamesApi _riotGamesApi;
         
     public RiotClient(
         ILogger<RiotClient> logger,
-        IConfiguration configuration)
+        IOptionsSnapshot<RiotApiKeyOptions> riotApiKeyOptionsSnapshot)
     {
         _logger = logger;
-        _configuration = configuration;
-        _riotGamesApi = GetConfiguredRiotGamesApi();
+        _riotGamesApi = GetConfiguredRiotGamesApi(riotApiKeyOptionsSnapshot.Value.RiotApiKey);
     }
 
     public async Task<Either<Error, Summoner>> GetSummonerByPuuidAsync(string puuid, Region region)
@@ -92,9 +92,9 @@ public class RiotClient : IRiotClient
             : new ApiError($"Summoner with Puuid={puuid} and Region={region} neither does not exist or has no champion masteries.");
     }
         
-    private RiotGamesApi GetConfiguredRiotGamesApi()
+    private RiotGamesApi GetConfiguredRiotGamesApi(string riotApiKey)
     {
-        var config = new RiotGamesApiConfig.Builder(_configuration.GetRequiredSection(ConfigurationConstants.RiotApiKey).Value!)
+        var config = new RiotGamesApiConfig.Builder(riotApiKey)
         {
                 
         }.Build();

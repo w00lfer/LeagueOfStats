@@ -1,5 +1,7 @@
+using Azure.Identity;
 using LeagueOfStats.API.Environments;
 using LeagueOfStats.API.Infrastructure.RiotClient;
+using LeagueOfStats.API.Options;
 using LeagueOfStats.Application;
 using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.RiotClient;
@@ -19,8 +21,14 @@ builder.Services.AddSwaggerGen(c =>
     c.AddEnumsWithValuesFixFilters();
 });
 
+var keyVaultUrl = new Uri(builder.Configuration.GetSection("KeyVaultURL").Value!);
+var azureCredential = new DefaultAzureCredential();
+builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
+
 builder.Services.Configure<EntityUpdateLockoutOptions>(
     builder.Configuration.GetSection(nameof(EntityUpdateLockoutOptions)));
+builder.Services.Configure<RiotApiKeyOptions>(
+    builder.Configuration.GetSection(nameof(RiotApiKeyOptions)));
 
 builder.Services.AddSingleton<IEntityUpdateLockoutService, EntityUpdateLockoutService>();
 builder.Services.AddScoped<IRiotClient, RiotClient>();

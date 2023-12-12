@@ -1,3 +1,4 @@
+using LeagueOfStats.API.Options;
 using LeagueOfStats.Application.Common;
 using Microsoft.Extensions.Options;
 
