@@ -1,4 +1,3 @@
-using LeagueOfStats.Domain.Common;
 using LeagueOfStats.Domain.Summoners;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

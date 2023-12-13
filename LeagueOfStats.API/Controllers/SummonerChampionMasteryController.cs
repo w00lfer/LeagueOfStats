@@ -1,13 +1,12 @@
 using LeagueOfStats.API.Extensions;
 using LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
-using LeagueOfStats.Domain.Common.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LeagueOfStats.API.Controllers;
 
 [ApiController]
-[Route("Summoner/{id}/[controller]")]
+[Route("Summoner/{id}/ChampionMastery")]
 public class SummonerChampionMasteryController : ControllerBase
 {
     private readonly IMediator _mediator;

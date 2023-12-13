@@ -4,7 +4,7 @@ namespace LeagueOfStats.Infrastructure.Summoners;
 
 public class SummonerRepository : ISummonerRepository
 {
-    private List<Summoner> _summoners = new();
+    private readonly List<Summoner> _summoners = new();
 
     public Task<Summoner?> GetByIdAsync(Guid id) =>
         Task.FromResult(_summoners.SingleOrDefault(s => s.Id == id));
