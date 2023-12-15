@@ -1,10 +1,12 @@
 using LanguageExt;
 using LeagueOfStats.Application.Common;
+using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Errors;
 using LeagueOfStats.Domain.Summoners;
 using NodaTime;
+using Duration = NodaTime.Duration;
 
 namespace LeagueOfStats.Application.Summoners;
 
@@ -77,7 +79,7 @@ public class SummonerApplicationService : ISummonerApplicationService
                 summoner => 
                     CanSummonerCanBeUpdatedWithRiotData(summoner)
                         ? UpdateSummonerDataWithDataFromRiotApiAsync(summoner)
-                        : Task.FromResult(Option<Error>.None),
+                        : Task.FromResult(Option<Error>.Some(new ApplicationError($"Could not update summoner. Try refresh data on: {summoner.LastUpdated.Plus(Duration.FromMinutes(2))}."))),
                 error => Option<Error>.Some(error));
 
     private bool CanSummonerCanBeUpdatedWithRiotData(Summoner summoner) =>
@@ -90,23 +92,21 @@ public class SummonerApplicationService : ISummonerApplicationService
                 {
                     await _summonerDomainService.UpdateDetailsAsync(
                         summoner,
-                        new UpdateDetailsSummonerDto(summonerFromRiotApi.ProfileIconId,
-                            summonerFromRiotApi.SummonerLevel));
-
-                    await _summonerDomainService.UpdateChampionMasteriesAsync(
-                        summoner,
-                        summonerChampionMasteriesFromRiotApi.Select(c =>
-                            new UpdateChampionMasteryDto(
-                                (int)c.ChampionId,
-                                c.ChampionLevel,
-                                c.ChampionPoints,
-                                c.ChampionPointsSinceLastLevel,
-                                c.ChampionPointsUntilNextLevel,
-                                c.ChestGranted,
-                                c.LastPlayTime,
-                                c.Puuid,
-                                c.SummonerId,
-                                c.TokensEarned)));
+                        new UpdateDetailsSummonerDto(
+                            summonerFromRiotApi.ProfileIconId,
+                            summonerFromRiotApi.SummonerLevel,
+                            summonerChampionMasteriesFromRiotApi.Select(c =>
+                                new UpdateChampionMasteryDto(
+                                    (int)c.ChampionId,
+                                    c.ChampionLevel,
+                                    c.ChampionPoints,
+                                    c.ChampionPointsSinceLastLevel,
+                                    c.ChampionPointsUntilNextLevel,
+                                    c.ChestGranted,
+                                    c.LastPlayTime,
+                                    c.Puuid,
+                                    c.SummonerId,
+                                    c.TokensEarned))));
 
                     return Either<Error, IEnumerable<SummonerChampionMastery>>.Right(summoner.SummonerChampionMasteries);
                 }))

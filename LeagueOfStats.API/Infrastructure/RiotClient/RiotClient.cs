@@ -5,7 +5,6 @@ using Camille.RiotGames.SummonerV4;
 using Camille.RiotGames.Util;
 using LanguageExt;
 using LeagueOfStats.API.Common.Errors;
-using LeagueOfStats.API.Infrastructure.Constants;
 using LeagueOfStats.API.Options;
 using LeagueOfStats.Application.Extensions;
 using LeagueOfStats.Application.RiotClient;

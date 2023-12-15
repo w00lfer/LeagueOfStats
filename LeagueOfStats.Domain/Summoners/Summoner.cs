@@ -8,7 +8,17 @@ public class Summoner : AggregateRoot
 {
     private readonly List<SummonerChampionMastery> _summonerChampionMasteries = new();
     
-    internal Summoner(string summonerId, string accountId, string name, int profileIconId, string puuid, long summonerLevel, SummonerName summonerName, Region region, Instant lastUpdated, IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos)
+    internal Summoner(
+        string summonerId,
+        string accountId,
+        string name,
+        int profileIconId,
+        string puuid,
+        long summonerLevel,
+        SummonerName summonerName,
+        Region region,
+        IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos,
+        Instant lastUpdated)
         : base (Guid.NewGuid())
     {
         SummonerId = summonerId;
@@ -54,14 +64,16 @@ public class Summoner : AggregateRoot
 
     public List<SummonerChampionMastery> SummonerChampionMasteries => _summonerChampionMasteries.ToList();
 
-    internal void Update(int profileIconId, long summonerLevel, Instant lastUpdated)
+    internal void Update(int profileIconId, long summonerLevel, IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos, Instant lastUpdated)
     {
         ProfileIconId = profileIconId;
         SummonerLevel = summonerLevel;
         LastUpdated = lastUpdated;
+        
+        UpdateSummonerChampionMasteries(updateChampionMasteryDtos);
     }
 
-    internal void UpdateSummonerChampionMasteries(IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos, Instant lastUpdated)
+    private void UpdateSummonerChampionMasteries(IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos)
     {
         var existingMasteryForChampionIds = _summonerChampionMasteries.Select(c => c.RiotChampionId).ToList();
         var championMasteriesForUpdate = updateChampionMasteryDtos.Where(c => existingMasteryForChampionIds.Contains(c.RiotChampionId));
@@ -92,7 +104,5 @@ public class Summoner : AggregateRoot
                     championMasteryForAdd.LastPlayTime,
                     championMasteryForAdd.TokensEarned));
         }
-
-        LastUpdated = lastUpdated;
     }
 }

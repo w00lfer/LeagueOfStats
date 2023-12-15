@@ -4,6 +4,8 @@ using LeagueOfStats.API.Infrastructure.RiotClient;
 using LeagueOfStats.API.Options;
 using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.RiotClient;
+using NodaTime;
+using NodaTime.Serialization.SystemTextJson;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 
 namespace LeagueOfStats.API;
@@ -12,12 +14,13 @@ public static class DependencyInjection
 {
     public static void AddApiDI(this IServiceCollection services, WebApplicationBuilder builder)
     {
-        services.AddControllers();
+        services.AddControllers()
+            .AddJsonOptions(options => options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
         
         AddSwagger(builder);
         
         AddKeyVault(builder);
-
+        
         services.Configure<EntityUpdateLockoutOptions>(builder.Configuration.GetSection(nameof(EntityUpdateLockoutOptions)));
         services.Configure<RiotApiKeyOptions>(builder.Configuration.GetSection(nameof(RiotApiKeyOptions)));
 

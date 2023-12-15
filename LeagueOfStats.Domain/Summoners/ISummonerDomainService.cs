@@ -12,6 +12,4 @@ public interface ISummonerDomainService
     Task<Summoner> CreateAsync(CreateSummonerDto createSummonerDto);
     
     Task UpdateDetailsAsync(Summoner summoner, UpdateDetailsSummonerDto updateDetailsSummonerDto);
-
-    Task UpdateChampionMasteriesAsync(Summoner summoner, IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos);
 }
