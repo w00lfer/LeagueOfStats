@@ -32,21 +32,36 @@ public class SummonerApplicationService : ISummonerApplicationService
             .BindAsync(async summonerFromRiotApi => await (await _summonerDomainService.GetByPuuidAsync(summonerFromRiotApi.Puuid))
                 .MatchAsync(
                     summoner => Either<Error, Summoner>.Right(summoner),
-                    async _ =>
-                    {
-                        var summoner = await _summonerDomainService.CreateAsync(new CreateSummonerDto(
-                            summonerFromRiotApi.Id,
-                            summonerFromRiotApi.AccountId,
-                            summonerFromRiotApi.Name,
-                            summonerFromRiotApi.ProfileIconId,
-                            summonerFromRiotApi.Puuid,
-                            summonerFromRiotApi.SummonerLevel,
-                            gameName,
-                            tagLine,
-                            region));
-
-                        return Either<Error, Summoner>.Right(summoner);
-                    }));
+                    _ => _riotClient.GetSummonerChampionMasteryByPuuid(summonerFromRiotApi.Puuid, region)
+                        .BindAsync(async summonerChampionMasteriesFromRiotApi =>
+                        {
+                            var createSummonerDto = new CreateSummonerDto(
+                                summonerFromRiotApi.Id,
+                                summonerFromRiotApi.AccountId,
+                                summonerFromRiotApi.Name,
+                                summonerFromRiotApi.ProfileIconId,
+                                summonerFromRiotApi.Puuid,
+                                summonerFromRiotApi.SummonerLevel,
+                                gameName,
+                                tagLine,
+                                region,
+                                summonerChampionMasteriesFromRiotApi.Select(c =>
+                                    new UpdateChampionMasteryDto(
+                                        (int)c.ChampionId,
+                                        c.ChampionLevel,
+                                        c.ChampionPoints,
+                                        c.ChampionPointsSinceLastLevel,
+                                        c.ChampionPointsUntilNextLevel,
+                                        c.ChestGranted,
+                                        c.LastPlayTime,
+                                        c.Puuid,
+                                        c.SummonerId,
+                                        c.TokensEarned)));
+                            
+                            var summoner = await _summonerDomainService.CreateAsync(createSummonerDto);
+                                
+                            return Either<Error, Summoner>.Right(summoner);
+                        })));
 
     public Task<Either<Error, Summoner>> GetSummonerById(Guid id) =>
         _summonerDomainService.GetByIdAsync(id);

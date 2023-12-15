@@ -8,7 +8,7 @@ public class Summoner : AggregateRoot
 {
     private readonly List<SummonerChampionMastery> _summonerChampionMasteries = new();
     
-    internal Summoner(string summonerId, string accountId, string name, int profileIconId, string puuid, long summonerLevel, SummonerName summonerName, Region region, Instant lastUpdated)
+    internal Summoner(string summonerId, string accountId, string name, int profileIconId, string puuid, long summonerLevel, SummonerName summonerName, Region region, Instant lastUpdated, IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos)
         : base (Guid.NewGuid())
     {
         SummonerId = summonerId;
@@ -20,6 +20,17 @@ public class Summoner : AggregateRoot
         SummonerLevel = summonerLevel;
         Region = region;
         LastUpdated = lastUpdated;
+        
+        _summonerChampionMasteries.AddRange(updateChampionMasteryDtos.Select(championMasteryForAdd =>
+            new SummonerChampionMastery(
+                championMasteryForAdd.RiotChampionId,
+                championMasteryForAdd.ChampionLevel,
+                championMasteryForAdd.ChampionPoints,
+                championMasteryForAdd.ChampionPointsSinceLastLevel,
+                championMasteryForAdd.ChampionPointsUntilNextLevel,
+                championMasteryForAdd.ChestGranted,
+                championMasteryForAdd.LastPlayTime,
+                championMasteryForAdd.TokensEarned)));
     }
     
     public string SummonerId { get; }

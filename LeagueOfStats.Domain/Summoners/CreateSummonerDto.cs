@@ -11,4 +11,5 @@ public record CreateSummonerDto(
     long SummonerLevel,
     string GameName,
     string TagLine,
-    Region Region);
+    Region Region,
+    IEnumerable<UpdateChampionMasteryDto> UpdateChampionMasteryDtos);
