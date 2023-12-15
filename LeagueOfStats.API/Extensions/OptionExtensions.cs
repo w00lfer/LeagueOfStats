@@ -6,25 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LeagueOfStats.API.Extensions;
 
-public static class EitherExtensions
+public static class OptionExtensions
 {
-    public static IActionResult ToIActionResult<L, R>(this Either<L,R> either, ControllerBase controllerBase) 
-        where L: Error
-        where R: class =>
-        either
-            .Match(
-            r => controllerBase.Ok(r),
-            l => GetActionResultBasedOnErrorType(l, controllerBase));
+    public static IActionResult ToIActionResult(this Option<Error> option, ControllerBase controllerBase) =>
+        option.Match<IActionResult>(
+            error => GetActionResultBasedOnErrorType(error, controllerBase),
+            () => controllerBase.Ok());
     
-    public static Task<IActionResult> ToIActionResult<L, R>(this Task<Either<L,R>> either, ControllerBase controllerBase) 
-        where L: Error
-        where R: class =>
-        either
+    public static Task<IActionResult> ToIActionResult(this Task<Option<Error>> option, ControllerBase controllerBase) =>
+        option
             .ToAsync()
-            .Match(
-            r => controllerBase.Ok(r),
-            l => GetActionResultBasedOnErrorType(l, controllerBase));
-    
+            .Match<IActionResult>(
+            error => GetActionResultBasedOnErrorType(error, controllerBase),
+            () => controllerBase.Ok());
+
+
     // TODO refactor this method to create custom object result to not pass controller
     private static IActionResult GetActionResultBasedOnErrorType(Error error, ControllerBase controllerBase) =>
         error switch

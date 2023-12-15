@@ -12,4 +12,6 @@ public interface ISummonerApplicationService
     Task<Either<Error, Summoner>> GetSummonerById(Guid id);
 
     Task<Either<Error, IEnumerable<SummonerChampionMastery>>> GetSummonerChampionMasteriesBySummonerId(Guid summonerId);
+
+    Task<Option<Error>> RefreshSummonerDataBySummonerId(Guid summonerId);
 }

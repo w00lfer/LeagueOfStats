@@ -6,8 +6,8 @@ using MediatR;
 namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerById;
 
 public record GetSummonerByIdRequest(
-        Guid Id)
-    : IRequest<Either<Error, SummonerDto>>;
+    Guid Id)
+: IRequest<Either<Error, SummonerDto>>;
 
 public class GetSummonerByIdRequestRequestHandler : IRequestHandler<GetSummonerByIdRequest, Either<Error, SummonerDto>>
 {

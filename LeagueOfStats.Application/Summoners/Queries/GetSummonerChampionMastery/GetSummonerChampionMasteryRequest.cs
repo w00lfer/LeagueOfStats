@@ -1,4 +1,3 @@
-using Camille.RiotGames.ChampionMasteryV4;
 using LanguageExt;
 using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.RiotClient;
@@ -10,8 +9,8 @@ using MediatR;
 namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
 
 public record GetSummonerChampionMasteryRequest(
-        Guid Id)
-    : IRequest<Either<Error, IEnumerable<SummonerChampionMasteryDto>>>;
+    Guid Id)
+: IRequest<Either<Error, IEnumerable<SummonerChampionMasteryDto>>>;
 
 public class GetSummonerChampionMasteryRequestHandler : IRequestHandler<GetSummonerChampionMasteryRequest, Either<Error, IEnumerable<SummonerChampionMasteryDto>>>
 {

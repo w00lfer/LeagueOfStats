@@ -1,4 +1,5 @@
 using LeagueOfStats.API.Extensions;
+using LeagueOfStats.Application.Summoners.Commands.RefreshSummonerCommand;
 using LeagueOfStats.Application.Summoners.Queries.GetSummonerByGameNameAndTagLineAndRegion;
 using LeagueOfStats.Application.Summoners.Queries.GetSummonerById;
 using LeagueOfStats.Domain.Common.Enums;
@@ -19,12 +20,17 @@ public class SummonerController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(Guid id) =>
-        (await _mediator.Send(new GetSummonerByIdRequest(id)))
-        .ToIActionResult(this);
+    public Task<IActionResult> Get(Guid id) =>
+        _mediator.Send(new GetSummonerByIdRequest(id))
+            .ToIActionResult(this);
     
     [HttpGet]
-    public async Task<IActionResult> GetByGameNameAndTagLine([FromQuery] string gameName, [FromQuery] string tagLine, [FromQuery] Region region) => 
-        (await _mediator.Send(new GetSummonerByGameNameAndTagLineAndRegionRequest(gameName, tagLine, region)))
-        .ToIActionResult(this);
+    public Task<IActionResult> GetByGameNameAndTagLine([FromQuery] string gameName, [FromQuery] string tagLine, [FromQuery] Region region) => 
+        _mediator.Send(new GetSummonerByGameNameAndTagLineAndRegionRequest(gameName, tagLine, region))
+            .ToIActionResult(this);
+
+    [HttpPost("{id}/Refresh")]
+    public Task<IActionResult> Refresh(Guid id) => 
+        _mediator.Send(new RefreshSummonerCommand(id))
+            .ToIActionResult(this);
 }

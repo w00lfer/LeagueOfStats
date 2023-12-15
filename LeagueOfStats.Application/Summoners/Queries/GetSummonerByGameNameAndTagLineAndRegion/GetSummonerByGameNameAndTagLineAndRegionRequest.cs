@@ -7,10 +7,10 @@ using MediatR;
 namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerByGameNameAndTagLineAndRegion;
 
 public record GetSummonerByGameNameAndTagLineAndRegionRequest(
-        string GameName,
-        string TagLine,
-        Region Region)
-    : IRequest<Either<Error, SummonerDto>>;
+    string GameName,
+    string TagLine,
+    Region Region)
+: IRequest<Either<Error, SummonerDto>>;
 
 public class GetSummonerByGameNameAndTagLineAndRegionRequestHandler : IRequestHandler<GetSummonerByGameNameAndTagLineAndRegionRequest, Either<Error, SummonerDto>>
 {

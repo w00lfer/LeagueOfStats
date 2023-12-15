@@ -16,7 +16,7 @@ public static class DependencyInjection
         
         AddSwagger(builder);
         
-        AddKeyVault(services, builder);
+        AddKeyVault(builder);
 
         services.Configure<EntityUpdateLockoutOptions>(builder.Configuration.GetSection(nameof(EntityUpdateLockoutOptions)));
         services.Configure<RiotApiKeyOptions>(builder.Configuration.GetSection(nameof(RiotApiKeyOptions)));
@@ -34,7 +34,7 @@ public static class DependencyInjection
         });
     }
 
-    private static void AddKeyVault(IServiceCollection services, WebApplicationBuilder builder)
+    private static void AddKeyVault(WebApplicationBuilder builder)
     {
         var azureCredential = new DefaultAzureCredential(
             new DefaultAzureCredentialOptions

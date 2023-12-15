@@ -8,8 +8,6 @@ using NodaTime;
 
 namespace LeagueOfStats.Application.Summoners;
 
-// TODO Think about how to design solution when we need to have data synced with riot api but store it on our side
-// TODO Updating stuff in Get method does not feel good...
 public class SummonerApplicationService : ISummonerApplicationService
 {
     private readonly ISummonerDomainService _summonerDomainService;
@@ -33,16 +31,8 @@ public class SummonerApplicationService : ISummonerApplicationService
         _riotClient.GetSummonerByGameNameAndTaglineAsync(gameName, tagLine, region)
             .BindAsync(async summonerFromRiotApi => await (await _summonerDomainService.GetByPuuidAsync(summonerFromRiotApi.Puuid))
                 .MatchAsync(
-                    async summoner =>
-                    {
-                        if (CanSummonerCanBeUpdatedWithRiotData(summoner))
-                        {
-                            await _summonerDomainService.UpdateDetailsAsync(summoner, new UpdateDetailsSummonerDto(summoner.ProfileIconId, summoner.SummonerLevel));
-                        }
-
-                        return Either<Error, Summoner>.Right(summoner);
-                    },
-                    async error =>
+                    summoner => Either<Error, Summoner>.Right(summoner),
+                    async _ =>
                     {
                         var summoner = await _summonerDomainService.CreateAsync(new CreateSummonerDto(
                             summonerFromRiotApi.Id,
@@ -57,36 +47,29 @@ public class SummonerApplicationService : ISummonerApplicationService
 
                         return Either<Error, Summoner>.Right(summoner);
                     }));
-    
+
     public Task<Either<Error, Summoner>> GetSummonerById(Guid id) =>
-        _summonerDomainService.GetByIdAsync(id)
-            .BindAsync(async summoner =>
-            {
-                if (CanSummonerCanBeUpdatedWithRiotData(summoner))
-                {
-                    return await GetMostRecentSummonerFromRiotApiAndUpdateDomain(summoner);
-                }
-                
-                return Either<Error, Summoner>.Right(summoner);
-            });
+        _summonerDomainService.GetByIdAsync(id);
     
     public Task<Either<Error, IEnumerable<SummonerChampionMastery>>> GetSummonerChampionMasteriesBySummonerId(Guid summonerId) =>
         _summonerDomainService.GetByIdAsync(summonerId)
-            .BindAsync(async summoner =>
-            {
-                if (CanSummonerCanBeUpdatedWithRiotData(summoner))
-                {
-                    return await GetMostRecentSummoneChampionMasteriesAndUpdateDomain(summoner);
-                }
-                
-                return Either<Error, IEnumerable<SummonerChampionMastery>>.Right(summoner.SummonerChampionMasteries);
-            });
+            .BindAsync(summoner => Either<Error, IEnumerable<SummonerChampionMastery>>.Right(summoner.SummonerChampionMasteries));
+
+    public Task<Option<Error>> RefreshSummonerDataBySummonerId(Guid summonerId) =>
+        _summonerDomainService.GetByIdAsync(summonerId)
+            .ToAsync()
+            .MatchAsync(
+                summoner => 
+                    CanSummonerCanBeUpdatedWithRiotData(summoner)
+                        ? UpdateSummonerDataWithDataFromRiotApiAsync(summoner)
+                        : Task.FromResult(Option<Error>.None),
+                error => Option<Error>.Some(error));
 
     private bool CanSummonerCanBeUpdatedWithRiotData(Summoner summoner) =>
         _clock.GetCurrentInstant().Minus(summoner.LastUpdated).TotalMinutes >= _entityUpdateLockoutService.GetSummonerUpdateLockoutInMinutes();
     
-    private async Task<Either<Error, IEnumerable<SummonerChampionMastery>>> GetMostRecentSummoneChampionMasteriesAndUpdateDomain(Summoner summoner) =>
-        await _riotClient.GetSummonerByPuuidAsync(summoner.Puuid, summoner.Region)
+    private Task<Option<Error>> UpdateSummonerDataWithDataFromRiotApiAsync(Summoner summoner) =>
+        _riotClient.GetSummonerByPuuidAsync(summoner.Puuid, summoner.Region)
             .BindAsync(summonerFromRiotApi => _riotClient.GetSummonerChampionMasteryByPuuid(summonerFromRiotApi.Puuid, summoner.Region)
                 .BindAsync(async summonerChampionMasteriesFromRiotApi =>
                 {
@@ -111,17 +94,9 @@ public class SummonerApplicationService : ISummonerApplicationService
                                 c.TokensEarned)));
 
                     return Either<Error, IEnumerable<SummonerChampionMastery>>.Right(summoner.SummonerChampionMasteries);
-                }));
-    
-    private Task<Either<Error, Summoner>> GetMostRecentSummonerFromRiotApiAndUpdateDomain(Summoner summoner) =>
-        _riotClient.GetSummonerByPuuidAsync(summoner.Puuid, summoner.Region)
-            .BindAsync(async summonerFromRiotApi =>
-            {
-                await _summonerDomainService.UpdateDetailsAsync(
-                    summoner,
-                    new UpdateDetailsSummonerDto(summonerFromRiotApi.ProfileIconId, summonerFromRiotApi.SummonerLevel));
-
-                return Either<Error, Summoner>.Right(summoner);
-            });
-
+                }))
+            .ToAsync()
+            .Match(
+                _ => Option<Error>.None,
+                error => Option<Error>.Some(error));
 }
