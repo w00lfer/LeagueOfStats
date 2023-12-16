@@ -34,4 +34,8 @@
       <ProjectReference Include="..\LeagueOfStats.Infrastructure\LeagueOfStats.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Infrastructure\Converters\" />
+    </ItemGroup>
+
 </Project>
