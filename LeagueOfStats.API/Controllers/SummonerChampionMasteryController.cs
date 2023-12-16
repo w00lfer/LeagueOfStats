@@ -19,6 +19,6 @@ public class SummonerChampionMasteryController : ControllerBase
     [HttpGet]
     public Task<IActionResult> GetAll(Guid id) =>
         _mediator
-            .Send(new GetSummonerChampionMasteryRequest(id))
+            .Send(new GetSummonerChampionMasteryQuery(id))
             .ToIActionResult(this);
 }

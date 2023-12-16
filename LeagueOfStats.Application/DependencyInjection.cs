@@ -10,7 +10,5 @@ public static class DependencyInjection
     public static void AddApplicationDI(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddMediatR(cfg=>cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
-
-        services.AddScoped<ISummonerApplicationService, SummonerApplicationService>();
     }
 }

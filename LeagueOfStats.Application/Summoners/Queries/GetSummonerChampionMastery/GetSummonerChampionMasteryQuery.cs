@@ -1,6 +1,5 @@
 using LanguageExt;
 using LeagueOfStats.Application.Common.Errors;
-using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Errors;
 using LeagueOfStats.Domain.Summoners;
@@ -8,28 +7,26 @@ using MediatR;
 
 namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
 
-public record GetSummonerChampionMasteryRequest(
-    Guid Id)
+public record GetSummonerChampionMasteryQuery(
+    Guid SummonerId)
 : IRequest<Either<Error, IEnumerable<SummonerChampionMasteryDto>>>;
 
-public class GetSummonerChampionMasteryRequestHandler : IRequestHandler<GetSummonerChampionMasteryRequest, Either<Error, IEnumerable<SummonerChampionMasteryDto>>>
+public class GetSummonerChampionMasteryQueryHandler : IRequestHandler<GetSummonerChampionMasteryQuery, Either<Error, IEnumerable<SummonerChampionMasteryDto>>>
 {
-    private readonly ISummonerApplicationService _summonerApplicationService;
-    private readonly IRiotClient _riotClient;
+    private readonly ISummonerDomainService _summonerDomainService;
     private readonly IChampionRepository _championRepository;
 
-    public GetSummonerChampionMasteryRequestHandler(
-        ISummonerApplicationService summonerApplicationService,
-        IChampionRepository championRepository, IRiotClient riotClient)
+    public GetSummonerChampionMasteryQueryHandler(
+        ISummonerDomainService summonerDomainService,
+        IChampionRepository championRepository)
     { 
-        _summonerApplicationService = summonerApplicationService;
+        _summonerDomainService = summonerDomainService;
         _championRepository = championRepository;
-        _riotClient = riotClient;
     }
 
-    public Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> Handle(GetSummonerChampionMasteryRequest request, CancellationToken cancellationToken) =>
-        _summonerApplicationService.GetSummonerChampionMasteriesBySummonerId(request.Id)
-            .BindAsync(MapToSummonerChampionMasteryDtos);
+    public Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> Handle(GetSummonerChampionMasteryQuery query, CancellationToken cancellationToken) =>
+        _summonerDomainService.GetByIdAsync(query.SummonerId)
+            .BindAsync(summoner => MapToSummonerChampionMasteryDtos(summoner.SummonerChampionMasteries));
     
     private async Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(IEnumerable<SummonerChampionMastery> summonerChampionMasteries)
     {

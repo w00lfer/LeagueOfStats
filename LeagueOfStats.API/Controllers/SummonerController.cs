@@ -21,12 +21,12 @@ public class SummonerController : ControllerBase
 
     [HttpGet("{id}")]
     public Task<IActionResult> Get(Guid id) =>
-        _mediator.Send(new GetSummonerByIdRequest(id))
+        _mediator.Send(new GetSummonerByIdQuery(id))
             .ToIActionResult(this);
     
     [HttpGet]
     public Task<IActionResult> GetByGameNameAndTagLine([FromQuery] string gameName, [FromQuery] string tagLine, [FromQuery] Region region) => 
-        _mediator.Send(new GetSummonerByGameNameAndTagLineAndRegionRequest(gameName, tagLine, region))
+        _mediator.Send(new GetSummonerByGameNameAndTagLineAndRegionQuery(gameName, tagLine, region))
             .ToIActionResult(this);
 
     [HttpPost("{id}/Refresh")]

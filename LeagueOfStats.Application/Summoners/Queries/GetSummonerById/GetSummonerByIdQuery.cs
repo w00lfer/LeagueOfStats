@@ -5,21 +5,21 @@ using MediatR;
 
 namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerById;
 
-public record GetSummonerByIdRequest(
+public record GetSummonerByIdQuery(
     Guid Id)
 : IRequest<Either<Error, SummonerDto>>;
 
-public class GetSummonerByIdRequestRequestHandler : IRequestHandler<GetSummonerByIdRequest, Either<Error, SummonerDto>>
+public class GetSummonerByIdRequestQueryHandler : IRequestHandler<GetSummonerByIdQuery, Either<Error, SummonerDto>>
 {
-    private readonly ISummonerApplicationService _summonerApplicationService;
+    private readonly ISummonerDomainService _summonerDomainService;
 
-    public GetSummonerByIdRequestRequestHandler(ISummonerApplicationService summonerApplicationService)
+    public GetSummonerByIdRequestQueryHandler(ISummonerDomainService summonerDomainService)
     {
-        _summonerApplicationService = summonerApplicationService;
+        _summonerDomainService = summonerDomainService;
     }
 
-    public Task<Either<Error, SummonerDto>> Handle(GetSummonerByIdRequest request, CancellationToken cancellationToken) => 
-        _summonerApplicationService.GetSummonerById(request.Id)
+    public Task<Either<Error, SummonerDto>> Handle(GetSummonerByIdQuery query, CancellationToken cancellationToken) => 
+        _summonerDomainService.GetByIdAsync(query.Id)
             .BindAsync(summoner => Either<Error, SummonerDto>.Right(MapToSummonerDto(summoner)));
 
     private SummonerDto MapToSummonerDto(Summoner summoner) => 
