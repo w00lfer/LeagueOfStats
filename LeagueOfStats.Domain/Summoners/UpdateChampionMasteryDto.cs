@@ -8,6 +8,4 @@ public record UpdateChampionMasteryDto(
     long ChampionPointsUntilNextLevel,
     bool ChestGranted,
     long LastPlayTime,
-    string? Puuid,
-    string SummonerId,
     int TokensEarned);

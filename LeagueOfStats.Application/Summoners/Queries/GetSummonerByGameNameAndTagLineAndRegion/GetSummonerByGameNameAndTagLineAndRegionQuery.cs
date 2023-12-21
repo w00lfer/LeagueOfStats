@@ -1,4 +1,5 @@
 using LanguageExt;
+using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Errors;
@@ -15,26 +16,31 @@ public record GetSummonerByGameNameAndTagLineAndRegionQuery(
 
 public class GetSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestHandler<GetSummonerByGameNameAndTagLineAndRegionQuery, Either<Error, SummonerDto>>
 {
+    private readonly IValidator<GetSummonerByGameNameAndTagLineAndRegionQuery> _getSummonerByGameNameAndTagLineAndRegionQueryValidator;
     private readonly IRiotClient _riotClient;
     private readonly ISummonerDomainService _summonerDomainService;
 
     public GetSummonerByGameNameAndTagLineAndRegionQueryHandler(
+        IValidator<GetSummonerByGameNameAndTagLineAndRegionQuery> getSummonerByGameNameAndTagLineAndRegionQueryValidator,
         IRiotClient riotClient,
         ISummonerDomainService summonerDomainService)
     {
+        _getSummonerByGameNameAndTagLineAndRegionQueryValidator = getSummonerByGameNameAndTagLineAndRegionQueryValidator;
         _riotClient = riotClient;
         _summonerDomainService = summonerDomainService;
     }
 
     public Task<Either<Error, SummonerDto>> Handle(GetSummonerByGameNameAndTagLineAndRegionQuery query,
         CancellationToken cancellationToken) =>
-        _riotClient.GetSummonerByGameNameAndTaglineAsync(query.GameName, query.TagLine, query.Region)
-            .BindAsync(summonerFromRiotApi => _summonerDomainService.GetByPuuidAsync(summonerFromRiotApi.Puuid)
-                .ToAsync()
-                .MatchAsync(
-                    summoner => Task.FromResult(Either<Error, Summoner>.Right(summoner)),
-                    _ =>  CreateSummonerUsingDataFromRiotApiAsync(summonerFromRiotApi, query.GameName, query.TagLine, query.Region)))
-            .BindAsync(summoner => Either<Error, SummonerDto>.Right(MapToSummonerDto(summoner)));
+        _getSummonerByGameNameAndTagLineAndRegionQueryValidator.ValidateAsync(query)
+            .MatchAsync(
+                error => error,
+                () => _riotClient.GetSummonerByGameNameAndTaglineAsync(query.GameName, query.TagLine, query.Region)
+                    .BindAsync(summonerFromRiotApi => _summonerDomainService.GetByPuuidAsync(summonerFromRiotApi.Puuid).ToAsync()
+                        .MatchAsync(
+                            summoner => Task.FromResult(Either<Error, Summoner>.Right(summoner)),
+                            _ => CreateSummonerUsingDataFromRiotApiAsync(summonerFromRiotApi, query.GameName, query.TagLine, query.Region)))
+                    .BindAsync(summoner => Either<Error, SummonerDto>.Right(MapToSummonerDto(summoner))));
 
     private Task<Either<Error, Summoner>> CreateSummonerUsingDataFromRiotApiAsync(
         Camille.RiotGames.SummonerV4.Summoner summonerFromRiotApi,
@@ -63,8 +69,6 @@ public class GetSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestHand
                                 c.ChampionPointsUntilNextLevel,
                                 c.ChestGranted,
                                 c.LastPlayTime,
-                                c.Puuid,
-                                c.SummonerId,
                                 c.TokensEarned)));
 
                     var summoner = await _summonerDomainService.CreateAsync(createSummonerDto);

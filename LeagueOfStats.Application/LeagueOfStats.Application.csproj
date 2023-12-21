@@ -8,6 +8,8 @@
 
     <ItemGroup>
       <PackageReference Include="Camille.RiotGames" Version="3.0.0-nightly-2023-11-11-6dcc80abc0" />
+      <PackageReference Include="FluentValidation" Version="11.8.1" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.8.1" />
       <PackageReference Include="LanguageExt.Core" Version="4.4.7" />
       <PackageReference Include="LanguageExt.Transformers" Version="4.4.7" />
       <PackageReference Include="MediatR" Version="12.1.1" />

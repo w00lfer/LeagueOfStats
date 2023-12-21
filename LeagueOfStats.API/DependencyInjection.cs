@@ -1,9 +1,11 @@
 using Azure.Identity;
+using FluentValidation.AspNetCore;
 using LeagueOfStats.API.Environments;
 using LeagueOfStats.API.Infrastructure.RiotClient;
 using LeagueOfStats.API.Options;
 using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.RiotClient;
+using Microsoft.AspNetCore.Mvc;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
@@ -17,9 +19,16 @@ public static class DependencyInjection
         services.AddControllers()
             .AddJsonOptions(options => options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
         
+        services.Configure<ApiBehaviorOptions>(options =>
+        {
+            options.SuppressModelStateInvalidFilter = true;
+        });
+        
         AddSwagger(builder);
         
         AddKeyVault(builder);
+
+        services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
         
         services.Configure<EntityUpdateLockoutOptions>(builder.Configuration.GetSection(nameof(EntityUpdateLockoutOptions)));
         services.Configure<RiotApiKeyOptions>(builder.Configuration.GetSection(nameof(RiotApiKeyOptions)));

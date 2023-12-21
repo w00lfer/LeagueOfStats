@@ -1,4 +1,5 @@
 using LanguageExt;
+using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Domain.Common.Errors;
 using LeagueOfStats.Domain.Summoners;
 using MediatR;
@@ -11,16 +12,24 @@ public record GetSummonerByIdQuery(
 
 public class GetSummonerByIdRequestQueryHandler : IRequestHandler<GetSummonerByIdQuery, Either<Error, SummonerDto>>
 {
+    private readonly IValidator<GetSummonerByIdQuery> _getSummonerByIdQueryValidator;
     private readonly ISummonerDomainService _summonerDomainService;
 
-    public GetSummonerByIdRequestQueryHandler(ISummonerDomainService summonerDomainService)
+    public GetSummonerByIdRequestQueryHandler(
+        IValidator<GetSummonerByIdQuery> getSummonerByIdQueryValidator,
+        ISummonerDomainService summonerDomainService)
     {
+        _getSummonerByIdQueryValidator = getSummonerByIdQueryValidator;
         _summonerDomainService = summonerDomainService;
     }
 
-    public Task<Either<Error, SummonerDto>> Handle(GetSummonerByIdQuery query, CancellationToken cancellationToken) => 
-        _summonerDomainService.GetByIdAsync(query.Id)
-            .BindAsync(summoner => Either<Error, SummonerDto>.Right(MapToSummonerDto(summoner)));
+    public Task<Either<Error, SummonerDto>> Handle(GetSummonerByIdQuery query, CancellationToken cancellationToken) =>
+        _getSummonerByIdQueryValidator.ValidateAsync(query)
+            .MatchAsync(
+                error => error,
+                () => _summonerDomainService.GetByIdAsync(query.Id)
+                    .BindAsync(summoner => Either<Error, SummonerDto>.Right(MapToSummonerDto(summoner))));
+        
 
     private SummonerDto MapToSummonerDto(Summoner summoner) => 
         new(

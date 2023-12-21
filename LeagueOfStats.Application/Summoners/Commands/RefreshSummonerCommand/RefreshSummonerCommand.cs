@@ -1,6 +1,7 @@
 using LanguageExt;
 using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.Common.Errors;
+using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Errors;
 using LeagueOfStats.Domain.Summoners;
@@ -16,6 +17,7 @@ public record RefreshSummonerCommand
 
 public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerCommand, Option<Error>>
 {
+    private readonly IValidator<RefreshSummonerCommand> _refreshSummonerCommandValidator;
     private readonly ISummonerDomainService _summonerDomainService;
     private readonly IRiotClient _riotClient;
     private readonly IEntityUpdateLockoutService _entityUpdateLockoutService;
@@ -23,11 +25,13 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
 
 
     public RefreshSummonerCommandHandler(
+        IValidator<RefreshSummonerCommand> refreshSummonerCommandValidator,
         ISummonerDomainService summonerDomainService,
         IRiotClient riotClient,
         IEntityUpdateLockoutService entityUpdateLockoutService,
         IClock clock)
     {
+        _refreshSummonerCommandValidator = refreshSummonerCommandValidator;
         _summonerDomainService = summonerDomainService;
         _riotClient = riotClient;
         _entityUpdateLockoutService = entityUpdateLockoutService;
@@ -35,14 +39,16 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
     }
 
     public Task<Option<Error>> Handle(RefreshSummonerCommand request, CancellationToken cancellationToken) =>
-        _summonerDomainService.GetByIdAsync(request.Id)
-            .ToAsync()
+        _refreshSummonerCommandValidator.ValidateAsync(request)
             .MatchAsync(
-                summoner => 
-                    CanSummonerCanBeUpdatedWithRiotData(summoner)
-                        ? UpdateSummonerDataWithDataFromRiotApiAsync(summoner)
-                        : Task.FromResult(Option<Error>.Some(new ApplicationError($"Could not update summoner. Try refresh data on: {summoner.LastUpdated.Plus(Duration.FromMinutes(2))}."))),
-                error => Option<Error>.Some(error));
+                error => error,
+                () => _summonerDomainService.GetByIdAsync(request.Id).ToAsync()
+                    .MatchAsync(
+                        summoner =>
+                            CanSummonerCanBeUpdatedWithRiotData(summoner)
+                            ? UpdateSummonerDataWithDataFromRiotApiAsync(summoner)
+                            : Task.FromResult(Option<Error>.Some(new ApplicationError($"Could not update summoner. Try refresh data on: {summoner.LastUpdated.Plus(Duration.FromMinutes(2))}."))),
+                    error => Option<Error>.Some(error)));
 
     private bool CanSummonerCanBeUpdatedWithRiotData(Summoner summoner) =>
         _clock.GetCurrentInstant().Minus(summoner.LastUpdated).TotalMinutes >= _entityUpdateLockoutService.GetSummonerUpdateLockoutInMinutes();
@@ -66,8 +72,6 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
                                     c.ChampionPointsUntilNextLevel,
                                     c.ChestGranted,
                                     c.LastPlayTime,
-                                    c.Puuid,
-                                    c.SummonerId,
                                     c.TokensEarned))));
 
                     return Either<Error, IEnumerable<SummonerChampionMastery>>.Right(summoner.SummonerChampionMasteries);

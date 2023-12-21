@@ -26,7 +26,7 @@ public class SummonerController : ControllerBase
     
     [HttpGet]
     public Task<IActionResult> GetByGameNameAndTagLine([FromQuery] string gameName, [FromQuery] string tagLine, [FromQuery] Region region) => 
-        _mediator.Send(new GetSummonerByGameNameAndTagLineAndRegionQuery(gameName, tagLine, region))
+            _mediator.Send(new GetSummonerByGameNameAndTagLineAndRegionQuery(gameName, tagLine, region))
             .ToIActionResult(this);
 
     [HttpPost("{id}/Refresh")]

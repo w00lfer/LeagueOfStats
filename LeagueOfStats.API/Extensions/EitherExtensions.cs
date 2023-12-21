@@ -29,10 +29,11 @@ public static class EitherExtensions
     private static IActionResult GetActionResultBasedOnErrorType(Error error, ControllerBase controllerBase) =>
         error switch
         {
+            ApiError apiError => controllerBase.BadRequest(apiError.ErrorMessage),
             ApplicationError applicationError => controllerBase.BadRequest(applicationError.ErrorMessage),
             DomainError domainError => controllerBase.BadRequest(domainError.ErrorMessage),
             EntityNotFoundError entityNotFoundError => controllerBase.NotFound(entityNotFoundError.ErrorMessage),
-            ApiError apiError => controllerBase.BadRequest(apiError.ErrorMessage),
+            ValidationError validationError => controllerBase.BadRequest(validationError.ErrorMessage),
             _ => throw new NotSupportedException("This error is not yet supported.")
         };
 }
