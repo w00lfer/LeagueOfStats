@@ -3,13 +3,11 @@ using Camille.RiotGames.AccountV1;
 using Camille.RiotGames.ChampionMasteryV4;
 using Camille.RiotGames.SummonerV4;
 using Camille.RiotGames.Util;
-using LanguageExt;
 using LeagueOfStats.API.Common.Errors;
 using LeagueOfStats.API.Options;
 using LeagueOfStats.Application.Extensions;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
-using LeagueOfStats.Domain.Common.Rails.Errors;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using Microsoft.Extensions.Options;
 

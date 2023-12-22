@@ -1,5 +1,3 @@
-using LanguageExt;
-using LeagueOfStats.Domain.Common.Rails.Errors;
 using LeagueOfStats.Domain.Common.Rails.Results;
 
 namespace LeagueOfStats.Domain.Summoners;
