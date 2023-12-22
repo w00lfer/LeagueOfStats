@@ -36,7 +36,7 @@ public class SummonerDomainService : ISummonerDomainService
             : Result.Failure<Summoner>(new EntityNotFoundError($"Summoner with Id={id} does not exist."));
     }
 
-    public async Task<Either<Error, Summoner>> GetByPuuidAsync(string puuid)
+    public async Task<Result<Summoner>> GetByPuuidAsync(string puuid)
     {
         Summoner? summoner = await _summonerRepository.GetByPuuid(puuid);
         

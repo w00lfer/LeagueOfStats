@@ -8,10 +8,14 @@ namespace LeagueOfStats.API.Extensions;
 
 public static class ResultExtensions
 {
-    public static IActionResult ToIActionResult<T>(this Result<T> result, ControllerBase controllerBase) =>
-        result.IsSuccess
-            ? controllerBase.Ok(result.Value)
+    public static async Task<IActionResult> ToIActionResult(this Task<Result> taskResult, ControllerBase controllerBase)
+    {
+        var result = await taskResult;
+        
+        return result.IsSuccess
+            ? controllerBase.Ok()
             : GetActionResultBasedOnErrorType(result.Errors, controllerBase);
+    }
 
     public static async Task<IActionResult> ToIActionResult<T>(this Task<Result<T>> taskResult, ControllerBase controllerBase)
     {

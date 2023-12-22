@@ -25,7 +25,7 @@ public class GetSummonerByIdRequestQueryHandler : IRequestHandler<GetSummonerByI
     public Task<Result<SummonerDto>> Handle(GetSummonerByIdQuery query, CancellationToken cancellationToken) =>
         _getSummonerByIdQueryValidator.ValidateAsyncTwo(query)
             .Bind(() => _summonerDomainService.GetByIdAsyncTwo(query.Id))
-            .Bind(summoner => Result.Success(MapToSummonerDto(summoner)));
+            .Map(MapToSummonerDto);
 
         private SummonerDto MapToSummonerDto(Summoner summoner) => 
         new(
