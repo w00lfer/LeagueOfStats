@@ -44,6 +44,9 @@ public class Result
     
     public Error[] Errors { get; }
 
+    public static implicit operator Result(Error error) => 
+        Failure(error);
+    
     public static Result Success() =>
         new(true, (Error)null);
 
@@ -138,4 +141,8 @@ public class Result<TValue> : Result
 
     public static implicit operator Result<TValue>(TValue? value) =>
         value is not null ? Success(value) : Failure<TValue>(new NullValueError());
+
+    public static implicit operator Result<TValue>(Error error) => 
+        Failure<TValue>(error);
+
 }

@@ -1,8 +1,8 @@
-using LanguageExt;
 using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Rails.Errors;
+using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Summoners;
 using MediatR;
 
@@ -10,9 +10,9 @@ namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery
 
 public record GetSummonerChampionMasteryQuery(
     Guid SummonerId)
-: IRequest<Either<Error, IEnumerable<SummonerChampionMasteryDto>>>;
+: IRequest<Result<IEnumerable<SummonerChampionMasteryDto>>>;
 
-public class GetSummonerChampionMasteryQueryHandler : IRequestHandler<GetSummonerChampionMasteryQuery, Either<Error, IEnumerable<SummonerChampionMasteryDto>>>
+public class GetSummonerChampionMasteryQueryHandler : IRequestHandler<GetSummonerChampionMasteryQuery, Result<IEnumerable<SummonerChampionMasteryDto>>>
 {
     private readonly IValidator<GetSummonerChampionMasteryQuery> _getSummonerChampionMasteryQueryValidator;
     private readonly ISummonerDomainService _summonerDomainService;
@@ -28,14 +28,12 @@ public class GetSummonerChampionMasteryQueryHandler : IRequestHandler<GetSummone
         _championRepository = championRepository;
     }
 
-    public Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> Handle(GetSummonerChampionMasteryQuery query, CancellationToken cancellationToken) =>
-        _getSummonerChampionMasteryQueryValidator.ValidateAsync(query)
-            .MatchAsync(
-                error => error,
-                () => _summonerDomainService.GetByIdAsync(query.SummonerId)
-                    .BindAsync(summoner => MapToSummonerChampionMasteryDtos(summoner.SummonerChampionMasteries)));
+    public Task<Result<IEnumerable<SummonerChampionMasteryDto>>> Handle(GetSummonerChampionMasteryQuery query, CancellationToken cancellationToken) =>
+        _getSummonerChampionMasteryQueryValidator.ValidateAsyncTwo(query)
+            .Bind(() => _summonerDomainService.GetByIdAsyncTwo(query.SummonerId))
+            .Bind(summoner => MapToSummonerChampionMasteryDtos(summoner.SummonerChampionMasteries));
     
-    private async Task<Either<Error, IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(IEnumerable<SummonerChampionMastery> summonerChampionMasteries)
+    private async Task<Result<IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(IEnumerable<SummonerChampionMastery> summonerChampionMasteries)
     {
         var championMasteriesByRiotChampionId = summonerChampionMasteries.ToDictionary(championMastery => (int)championMastery.RiotChampionId, championMastery => championMastery);
 
@@ -64,6 +62,6 @@ public class GetSummonerChampionMasteryQueryHandler : IRequestHandler<GetSummone
                 championMastery.ChestGranted);
         });
 
-        return Either<Error, IEnumerable<SummonerChampionMasteryDto>>.Right(summonerChampionMasteryDtos);
+        return Result.Success(summonerChampionMasteryDtos);
     }
 }

@@ -44,6 +44,14 @@ public static class ResultExtensions
             : func(result.Value);
     }
 
+    public static async Task<Result<TOut>> Bind<TIn, TOut>(this Task<Result<TIn>> taskResult, Func<TIn, Task<Result<TOut>>> funcToAwait)
+    {
+        var result = await taskResult;
+        
+        return result.IsFailure
+            ? Result.Failure<TOut>(result.Errors)
+            : await funcToAwait(result.Value);
+    }
 
     public static async Task<Result> Bind<TIn>(this Result<TIn> result, Func<TIn, Task<Result>> func) =>
         result.IsFailure
