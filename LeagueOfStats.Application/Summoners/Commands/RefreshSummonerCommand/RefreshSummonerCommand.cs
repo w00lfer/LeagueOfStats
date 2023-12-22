@@ -3,7 +3,7 @@ using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.RiotClient;
-using LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Common.Rails.Errors;
 using LeagueOfStats.Domain.Summoners;
 using MediatR;
 using NodaTime;

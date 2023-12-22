@@ -2,7 +2,7 @@ using Camille.RiotGames.ChampionMasteryV4;
 using Camille.RiotGames.SummonerV4;
 using LanguageExt;
 using LeagueOfStats.Domain.Common.Enums;
-using LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Common.Rails.Errors;
 
 namespace LeagueOfStats.Application.RiotClient;
 

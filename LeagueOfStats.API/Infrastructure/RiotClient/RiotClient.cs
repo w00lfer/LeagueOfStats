@@ -9,7 +9,7 @@ using LeagueOfStats.API.Options;
 using LeagueOfStats.Application.Extensions;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
-using LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Common.Rails.Errors;
 using Microsoft.Extensions.Options;
 
 namespace LeagueOfStats.API.Infrastructure.RiotClient;

@@ -1,7 +1,7 @@
 using FluentValidation.Results;
 using LanguageExt;
 using LeagueOfStats.Application.Common.Errors;
-using LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Common.Rails.Errors;
 
 namespace LeagueOfStats.Application.Common.Validators;
 

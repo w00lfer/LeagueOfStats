@@ -1,7 +1,7 @@
 using LanguageExt;
 using LeagueOfStats.API.Common.Errors;
 using LeagueOfStats.Application.Common.Errors;
-using LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Common.Rails.Errors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LeagueOfStats.API.Extensions;

@@ -2,7 +2,7 @@ using LanguageExt;
 using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Domain.Champions;
-using LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Common.Rails.Errors;
 using LeagueOfStats.Domain.Summoners;
 using MediatR;
 

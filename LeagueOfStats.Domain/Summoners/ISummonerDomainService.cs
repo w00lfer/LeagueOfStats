@@ -1,5 +1,5 @@
 using LanguageExt;
-using LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Common.Rails.Errors;
 
 namespace LeagueOfStats.Domain.Summoners;
 

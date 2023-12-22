@@ -1,5 +1,5 @@
 using FluentValidation.Results;
-using LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Common.Rails.Errors;
 
 namespace LeagueOfStats.Application.Common.Errors;
 
