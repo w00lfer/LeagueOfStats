@@ -1,5 +1,6 @@
 using LanguageExt;
 using LeagueOfStats.Domain.Common.Rails.Errors;
+using LeagueOfStats.Domain.Common.Rails.Results;
 using NodaTime;
 
 namespace LeagueOfStats.Domain.Summoners;
@@ -24,6 +25,15 @@ public class SummonerDomainService : ISummonerDomainService
         return summoner is not null
             ? summoner
             : new EntityNotFoundError($"Summoner with Id={id} does not exist.");
+    }
+    
+    public async Task<Result<Summoner>> GetByIdAsyncTwo(Guid id)
+    {
+        Summoner? summoner = await _summonerRepository.GetByIdAsync(id);
+        
+        return summoner is not null
+            ? summoner
+            : Result.Failure<Summoner>(new EntityNotFoundError($"Summoner with Id={id} does not exist."));
     }
 
     public async Task<Either<Error, Summoner>> GetByPuuidAsync(string puuid)
