@@ -1,7 +1,6 @@
 using FluentValidation.Results;
-using LanguageExt;
 using LeagueOfStats.Application.Common.Errors;
-using LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Common.Rails.Results;
 
 namespace LeagueOfStats.Application.Common.Validators;
 
@@ -13,13 +12,13 @@ public class Validator<T> : IValidator<T>
     {
         _validator = validator;
     }
-    
-    public async Task<Option<Error>> ValidateAsync(T objectToValidate)
+
+    public async Task<Result> ValidateAsyncTwo(T objectToValidate)
     {
         ValidationResult result = await _validator.ValidateAsync(objectToValidate);
 
         return result.IsValid
-            ? Option<Error>.None
-            : Option<Error>.Some(new ValidationError(result.Errors));
+            ? Result.Success()
+            : Result.Failure(result.Errors.Select(f => new ValidationError(f)).ToArray());
     }
 }

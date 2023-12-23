@@ -1,4 +1,6 @@
-namespace LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Common.Rails.Results;
+
+namespace LeagueOfStats.Domain.Common.Rails.Errors;
 
 public abstract class Error
 {

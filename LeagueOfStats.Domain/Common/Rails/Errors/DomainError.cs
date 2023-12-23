@@ -1,4 +1,4 @@
-namespace LeagueOfStats.Domain.Common.Errors;
+namespace LeagueOfStats.Domain.Common.Rails.Errors;
 
 public class DomainError : Error
 {

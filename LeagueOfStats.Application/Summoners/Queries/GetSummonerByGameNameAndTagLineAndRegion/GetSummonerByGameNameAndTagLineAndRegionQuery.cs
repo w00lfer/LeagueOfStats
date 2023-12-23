@@ -1,8 +1,7 @@
-using LanguageExt;
 using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
-using LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Summoners;
 using MediatR;
 
@@ -12,9 +11,9 @@ public record GetSummonerByGameNameAndTagLineAndRegionQuery(
     string GameName,
     string TagLine,
     Region Region)
-: IRequest<Either<Error, SummonerDto>>;
+: IRequest<Result<SummonerDto>>;
 
-public class GetSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestHandler<GetSummonerByGameNameAndTagLineAndRegionQuery, Either<Error, SummonerDto>>
+public class GetSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestHandler<GetSummonerByGameNameAndTagLineAndRegionQuery, Result<SummonerDto>>
 {
     private readonly IValidator<GetSummonerByGameNameAndTagLineAndRegionQuery> _getSummonerByGameNameAndTagLineAndRegionQueryValidator;
     private readonly IRiotClient _riotClient;
@@ -30,25 +29,22 @@ public class GetSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestHand
         _summonerDomainService = summonerDomainService;
     }
 
-    public Task<Either<Error, SummonerDto>> Handle(GetSummonerByGameNameAndTagLineAndRegionQuery query,
-        CancellationToken cancellationToken) =>
-        _getSummonerByGameNameAndTagLineAndRegionQueryValidator.ValidateAsync(query)
-            .MatchAsync(
-                error => error,
-                () => _riotClient.GetSummonerByGameNameAndTaglineAsync(query.GameName, query.TagLine, query.Region)
-                    .BindAsync(summonerFromRiotApi => _summonerDomainService.GetByPuuidAsync(summonerFromRiotApi.Puuid).ToAsync()
-                        .MatchAsync(
-                            summoner => Task.FromResult(Either<Error, Summoner>.Right(summoner)),
-                            _ => CreateSummonerUsingDataFromRiotApiAsync(summonerFromRiotApi, query.GameName, query.TagLine, query.Region)))
-                    .BindAsync(summoner => Either<Error, SummonerDto>.Right(MapToSummonerDto(summoner))));
+    public Task<Result<SummonerDto>> Handle(GetSummonerByGameNameAndTagLineAndRegionQuery query, CancellationToken cancellationToken) =>
+        _getSummonerByGameNameAndTagLineAndRegionQueryValidator.ValidateAsyncTwo(query)
+            .Bind(() => _riotClient.GetSummonerByGameNameAndTaglineAsync(query.GameName, query.TagLine, query.Region))
+            .Bind(summonerFromRiotApi => _summonerDomainService.GetByPuuidAsync(summonerFromRiotApi.Puuid)
+                .Match(
+                    summoner => Task.FromResult(Result.Success(summoner)),
+                    () => CreateSummonerUsingDataFromRiotApiAsync(summonerFromRiotApi, query.GameName, query.TagLine, query.Region)))
+            .Map(MapToSummonerDto);
 
-    private Task<Either<Error, Summoner>> CreateSummonerUsingDataFromRiotApiAsync(
+    private Task<Result<Summoner>> CreateSummonerUsingDataFromRiotApiAsync(
         Camille.RiotGames.SummonerV4.Summoner summonerFromRiotApi,
         string gameName,
         string tagLine,
         Region region) => 
             _riotClient.GetSummonerChampionMasteryByPuuid(summonerFromRiotApi.Puuid, region)
-                .BindAsync(async summonerChampionMasteriesFromRiotApi =>
+                .Bind(async summonerChampionMasteriesFromRiotApi =>
                 {
                     var createSummonerDto = new CreateSummonerDto(
                         summonerFromRiotApi.Id,
@@ -71,9 +67,9 @@ public class GetSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestHand
                                 c.LastPlayTime,
                                 c.TokensEarned)));
 
-                    var summoner = await _summonerDomainService.CreateAsync(createSummonerDto);
+                   var summoner = await _summonerDomainService.CreateAsync(createSummonerDto);
 
-                    return Either<Error, Summoner>.Right(summoner);
+                   return Result.Success(summoner);
                 });
 
     private SummonerDto MapToSummonerDto(Summoner summoner) => 

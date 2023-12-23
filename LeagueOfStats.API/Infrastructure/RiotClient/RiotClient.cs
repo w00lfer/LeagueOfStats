@@ -3,13 +3,12 @@ using Camille.RiotGames.AccountV1;
 using Camille.RiotGames.ChampionMasteryV4;
 using Camille.RiotGames.SummonerV4;
 using Camille.RiotGames.Util;
-using LanguageExt;
 using LeagueOfStats.API.Common.Errors;
 using LeagueOfStats.API.Options;
 using LeagueOfStats.Application.Extensions;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
-using LeagueOfStats.Domain.Common.Errors;
+using LeagueOfStats.Domain.Common.Rails.Results;
 using Microsoft.Extensions.Options;
 
 namespace LeagueOfStats.API.Infrastructure.RiotClient;
@@ -27,7 +26,7 @@ public class RiotClient : IRiotClient
         _riotGamesApi = GetConfiguredRiotGamesApi(riotApiKeyOptionsSnapshot.Value.RiotApiKey);
     }
 
-    public async Task<Either<Error, Summoner>> GetSummonerByPuuidAsync(string puuid, Region region)
+    public async Task<Result<Summoner>> GetSummonerByPuuidAsync(string puuid, Region region)
     {
         Summoner? summoner;
         try
@@ -41,11 +40,11 @@ public class RiotClient : IRiotClient
         }
 
         return summoner is not null
-            ? Either<Error, Summoner>.Right(summoner)
+            ? summoner
             : new ApiError($"Summoner with Puuid={puuid} and Region={region.ToString()} does not exist.");
     }
 
-    public async Task<Either<Error, Summoner>> GetSummonerByGameNameAndTaglineAsync(string gameName, string tagLine, Region region)
+    public async Task<Result<Summoner>> GetSummonerByGameNameAndTaglineAsync(string gameName, string tagLine, Region region)
     {
         Summoner? summoner;
         try
@@ -67,11 +66,11 @@ public class RiotClient : IRiotClient
         }
         
         return summoner is not null
-            ? Either<Error, Summoner>.Right(summoner)
+            ? summoner
             : new ApiError($"Summoner with RiotId={gameName}#{tagLine} and Region={region.ToString()} does not exist.");
     }
 
-    public async Task<Either<Error, ChampionMastery[]>> GetSummonerChampionMasteryByPuuid(string puuid, Region region)
+    public async Task<Result<ChampionMastery[]>> GetSummonerChampionMasteryByPuuid(string puuid, Region region)
     {
         ChampionMastery[] championMasteries;
         try
@@ -87,7 +86,7 @@ public class RiotClient : IRiotClient
 
         // There must be always champion mastery for existing player. So either PUUID is invalid or there were other network problems with Camille
         return championMasteries is not null
-            ? Either<Error, ChampionMastery[]>.Right(championMasteries)
+            ? championMasteries
             : new ApiError($"Summoner with Puuid={puuid} and Region={region} neither does not exist or has no champion masteries.");
     }
         
