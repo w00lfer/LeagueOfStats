@@ -12,4 +12,5 @@ public record SummonerDto(
     string Puuid,
     long SummonerLevel,
     SummonerName SummonerName,
-    Instant LastUpdated);
+    Instant LastUpdated,
+    Instant CanBeUpdatedFrom);

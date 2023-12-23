@@ -24,11 +24,11 @@ public class SummonerController : ControllerBase
         _mediator.Send(new GetSummonerByIdQuery(id))
             .ToIActionResult(this);
     
-    [HttpGet]
-    public Task<IActionResult> GetByGameNameAndTagLine([FromQuery] string gameName, [FromQuery] string tagLine, [FromQuery] Region region) => 
-            _mediator.Send(new GetSummonerByGameNameAndTagLineAndRegionQuery(gameName, tagLine, region))
+    [HttpGet("Search")]
+    public Task<IActionResult> SearchByGameNameAndTagLineAndRegion([FromQuery] string gameName, [FromQuery] string tagLine, [FromQuery] Region region) => 
+            _mediator.Send(new SearchSummonerByGameNameAndTagLineAndRegionQuery(gameName, tagLine, region))
             .ToIActionResult(this);
-
+    
     [HttpPost("{id}/Refresh")]
     public Task<IActionResult> Refresh(Guid id) => 
         _mediator.Send(new RefreshSummonerCommand(id))

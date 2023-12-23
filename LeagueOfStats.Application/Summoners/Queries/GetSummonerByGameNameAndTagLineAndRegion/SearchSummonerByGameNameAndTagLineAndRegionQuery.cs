@@ -1,36 +1,41 @@
+using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Summoners;
 using MediatR;
+using NodaTime;
 
 namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerByGameNameAndTagLineAndRegion;
 
-public record GetSummonerByGameNameAndTagLineAndRegionQuery(
+public record SearchSummonerByGameNameAndTagLineAndRegionQuery(
     string GameName,
     string TagLine,
     Region Region)
 : IRequest<Result<SummonerDto>>;
 
-public class GetSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestHandler<GetSummonerByGameNameAndTagLineAndRegionQuery, Result<SummonerDto>>
+public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestHandler<SearchSummonerByGameNameAndTagLineAndRegionQuery, Result<SummonerDto>>
 {
-    private readonly IValidator<GetSummonerByGameNameAndTagLineAndRegionQuery> _getSummonerByGameNameAndTagLineAndRegionQueryValidator;
+    private readonly IValidator<SearchSummonerByGameNameAndTagLineAndRegionQuery> _searchSummonerByGameNameAndTagLineAndRegionQueryValidator;
     private readonly IRiotClient _riotClient;
     private readonly ISummonerDomainService _summonerDomainService;
+    private readonly IEntityUpdateLockoutService _entityUpdateLockoutService;
 
-    public GetSummonerByGameNameAndTagLineAndRegionQueryHandler(
-        IValidator<GetSummonerByGameNameAndTagLineAndRegionQuery> getSummonerByGameNameAndTagLineAndRegionQueryValidator,
+    public SearchSummonerByGameNameAndTagLineAndRegionQueryHandler(
+        IValidator<SearchSummonerByGameNameAndTagLineAndRegionQuery> searchSummonerByGameNameAndTagLineAndRegionQueryValidator,
         IRiotClient riotClient,
-        ISummonerDomainService summonerDomainService)
+        ISummonerDomainService summonerDomainService,
+        IEntityUpdateLockoutService entityUpdateLockoutService)
     {
-        _getSummonerByGameNameAndTagLineAndRegionQueryValidator = getSummonerByGameNameAndTagLineAndRegionQueryValidator;
+        _searchSummonerByGameNameAndTagLineAndRegionQueryValidator = searchSummonerByGameNameAndTagLineAndRegionQueryValidator;
         _riotClient = riotClient;
         _summonerDomainService = summonerDomainService;
+        _entityUpdateLockoutService = entityUpdateLockoutService;
     }
 
-    public Task<Result<SummonerDto>> Handle(GetSummonerByGameNameAndTagLineAndRegionQuery query, CancellationToken cancellationToken) =>
-        _getSummonerByGameNameAndTagLineAndRegionQueryValidator.ValidateAsyncTwo(query)
+    public Task<Result<SummonerDto>> Handle(SearchSummonerByGameNameAndTagLineAndRegionQuery query, CancellationToken cancellationToken) =>
+        _searchSummonerByGameNameAndTagLineAndRegionQueryValidator.ValidateAsyncTwo(query)
             .Bind(() => _riotClient.GetSummonerByGameNameAndTaglineAsync(query.GameName, query.TagLine, query.Region))
             .Bind(summonerFromRiotApi => _summonerDomainService.GetByPuuidAsync(summonerFromRiotApi.Puuid)
                 .Match(
@@ -82,5 +87,6 @@ public class GetSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestHand
             summoner.Puuid,
             summoner.SummonerLevel,
             summoner.SummonerName,
-            summoner.LastUpdated);
+            summoner.LastUpdated,
+            summoner.LastUpdated.Plus(Duration.FromMinutes(_entityUpdateLockoutService.GetSummonerUpdateLockoutInMinutes())));
 }
