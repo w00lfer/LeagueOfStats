@@ -4,7 +4,7 @@ namespace LeagueOfStats.Domain.Summoners;
 
 public interface ISummonerDomainService
 {
-    Task<Result<Summoner>> GetByIdAsyncTwo(Guid id);
+    Task<Result<Summoner>> GetByIdAsync(Guid id);
     
     Task<Result<Summoner>> GetByPuuidAsync(string puuid);
     

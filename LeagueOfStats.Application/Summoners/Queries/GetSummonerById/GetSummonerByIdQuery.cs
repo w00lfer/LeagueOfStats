@@ -9,7 +9,7 @@ namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerById;
 
 public record GetSummonerByIdQuery(
     Guid Id)
-: IRequest<Result<SummonerDto>>;
+    : IRequest<Result<SummonerDto>>;
 
 public class GetSummonerByIdRequestQueryHandler : IRequestHandler<GetSummonerByIdQuery, Result<SummonerDto>>
 {
@@ -28,8 +28,8 @@ public class GetSummonerByIdRequestQueryHandler : IRequestHandler<GetSummonerByI
     }
 
     public Task<Result<SummonerDto>> Handle(GetSummonerByIdQuery query, CancellationToken cancellationToken) =>
-        _getSummonerByIdQueryValidator.ValidateAsyncTwo(query)
-            .Bind(() => _summonerDomainService.GetByIdAsyncTwo(query.Id))
+        _getSummonerByIdQueryValidator.ValidateAsync(query)
+            .Bind(() => _summonerDomainService.GetByIdAsync(query.Id))
             .Map(MapToSummonerDto);
 
         private SummonerDto MapToSummonerDto(Summoner summoner) => 

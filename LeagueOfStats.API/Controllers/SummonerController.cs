@@ -1,7 +1,7 @@
 using LeagueOfStats.API.Extensions;
 using LeagueOfStats.Application.Summoners.Commands.RefreshSummonerCommand;
-using LeagueOfStats.Application.Summoners.Queries.GetSummonerByGameNameAndTagLineAndRegion;
 using LeagueOfStats.Application.Summoners.Queries.GetSummonerById;
+using LeagueOfStats.Application.Summoners.Queries.SearchSummonerByGameNameAndTagLineAndRegion;
 using LeagueOfStats.Domain.Common.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

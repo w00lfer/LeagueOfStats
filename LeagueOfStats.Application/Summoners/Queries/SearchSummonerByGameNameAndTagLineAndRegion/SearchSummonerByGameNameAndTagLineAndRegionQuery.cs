@@ -7,13 +7,13 @@ using LeagueOfStats.Domain.Summoners;
 using MediatR;
 using NodaTime;
 
-namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerByGameNameAndTagLineAndRegion;
+namespace LeagueOfStats.Application.Summoners.Queries.SearchSummonerByGameNameAndTagLineAndRegion;
 
 public record SearchSummonerByGameNameAndTagLineAndRegionQuery(
     string GameName,
     string TagLine,
     Region Region)
-: IRequest<Result<SummonerDto>>;
+    : IRequest<Result<SummonerDto>>;
 
 public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestHandler<SearchSummonerByGameNameAndTagLineAndRegionQuery, Result<SummonerDto>>
 {
@@ -35,7 +35,7 @@ public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestH
     }
 
     public Task<Result<SummonerDto>> Handle(SearchSummonerByGameNameAndTagLineAndRegionQuery query, CancellationToken cancellationToken) =>
-        _searchSummonerByGameNameAndTagLineAndRegionQueryValidator.ValidateAsyncTwo(query)
+        _searchSummonerByGameNameAndTagLineAndRegionQueryValidator.ValidateAsync(query)
             .Bind(() => _riotClient.GetSummonerByGameNameAndTaglineAsync(query.GameName, query.TagLine, query.Region))
             .Bind(summonerFromRiotApi => _summonerDomainService.GetByPuuidAsync(summonerFromRiotApi.Puuid)
                 .Match(

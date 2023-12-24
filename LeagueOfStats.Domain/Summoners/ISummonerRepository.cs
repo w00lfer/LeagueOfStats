@@ -4,5 +4,5 @@ namespace LeagueOfStats.Domain.Summoners;
 
 public interface ISummonerRepository : IAsyncRepository<Summoner>
 {
-    Task<Summoner?> GetByPuuid(string puuid);
+    Task<Summoner?> GetByPuuidAsync(string puuid);
 }

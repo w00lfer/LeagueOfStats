@@ -4,5 +4,5 @@ namespace LeagueOfStats.Application.Common.Validators;
 
 public interface IValidator<T>
 {
-    Task<Result> ValidateAsyncTwo(T objectToValidate);
+    Task<Result> ValidateAsync(T objectToValidate);
 }

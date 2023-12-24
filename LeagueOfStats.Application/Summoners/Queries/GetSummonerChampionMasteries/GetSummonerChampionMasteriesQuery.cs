@@ -1,25 +1,25 @@
 using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.Common.Validators;
+using LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
 using LeagueOfStats.Domain.Champions;
-using LeagueOfStats.Domain.Common.Rails.Errors;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Summoners;
 using MediatR;
 
-namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
+namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMasteries;
 
-public record GetSummonerChampionMasteryQuery(
-    Guid SummonerId)
-: IRequest<Result<IEnumerable<SummonerChampionMasteryDto>>>;
+public record GetSummonerChampionMasteriesQuery(
+    Guid SummonerId) 
+    : IRequest<Result<IEnumerable<SummonerChampionMasteryDto>>>;
 
-public class GetSummonerChampionMasteryQueryHandler : IRequestHandler<GetSummonerChampionMasteryQuery, Result<IEnumerable<SummonerChampionMasteryDto>>>
+public class GetSummonerChampionMasteriesQueryHandler : IRequestHandler<GetSummonerChampionMasteriesQuery, Result<IEnumerable<SummonerChampionMasteryDto>>>
 {
-    private readonly IValidator<GetSummonerChampionMasteryQuery> _getSummonerChampionMasteryQueryValidator;
+    private readonly IValidator<GetSummonerChampionMasteriesQuery> _getSummonerChampionMasteryQueryValidator;
     private readonly ISummonerDomainService _summonerDomainService;
     private readonly IChampionRepository _championRepository;
 
-    public GetSummonerChampionMasteryQueryHandler(
-        IValidator<GetSummonerChampionMasteryQuery> getSummonerChampionMasteryQueryValidator,
+    public GetSummonerChampionMasteriesQueryHandler(
+        IValidator<GetSummonerChampionMasteriesQuery> getSummonerChampionMasteryQueryValidator,
         ISummonerDomainService summonerDomainService,
         IChampionRepository championRepository)
     { 
@@ -28,9 +28,9 @@ public class GetSummonerChampionMasteryQueryHandler : IRequestHandler<GetSummone
         _championRepository = championRepository;
     }
 
-    public Task<Result<IEnumerable<SummonerChampionMasteryDto>>> Handle(GetSummonerChampionMasteryQuery query, CancellationToken cancellationToken) =>
-        _getSummonerChampionMasteryQueryValidator.ValidateAsyncTwo(query)
-            .Bind(() => _summonerDomainService.GetByIdAsyncTwo(query.SummonerId))
+    public Task<Result<IEnumerable<SummonerChampionMasteryDto>>> Handle(GetSummonerChampionMasteriesQuery query, CancellationToken cancellationToken) =>
+        _getSummonerChampionMasteryQueryValidator.ValidateAsync(query)
+            .Bind(() => _summonerDomainService.GetByIdAsync(query.SummonerId))
             .Bind(summoner => MapToSummonerChampionMasteryDtos(summoner.SummonerChampionMasteries));
     
     private async Task<Result<IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(IEnumerable<SummonerChampionMastery> summonerChampionMasteries)

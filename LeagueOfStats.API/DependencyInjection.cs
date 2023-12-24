@@ -1,11 +1,14 @@
+using System.ComponentModel;
 using Azure.Identity;
 using FluentValidation.AspNetCore;
+using LeagueOfStats.API.Common.Converters;
 using LeagueOfStats.API.Environments;
 using LeagueOfStats.API.Infrastructure.RiotClient;
 using LeagueOfStats.API.Options;
 using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.RiotClient;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
@@ -23,6 +26,8 @@ public static class DependencyInjection
         {
             options.SuppressModelStateInvalidFilter = true;
         });
+
+        //TypeDescriptor.AddAttributes(typeof(Instant), new TypeConverterAttribute(typeof(InstantTypeConverter)));
         
         AddSwagger(builder);
         
@@ -43,6 +48,7 @@ public static class DependencyInjection
         builder.Services.AddSwaggerGen(c =>
         {
             c.AddEnumsWithValuesFixFilters();
+            c.MapType<Instant>(() => new OpenApiSchema { Type = "string" });
         });
     }
 

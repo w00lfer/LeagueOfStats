@@ -9,7 +9,7 @@ public class SummonerRepository : ISummonerRepository
     public Task<Summoner?> GetByIdAsync(Guid id) =>
         Task.FromResult(_summoners.SingleOrDefault(s => s.Id == id));
 
-    public Task<Summoner?> GetByPuuid(string puuid) =>
+    public Task<Summoner?> GetByPuuidAsync(string puuid) =>
         Task.FromResult(_summoners.SingleOrDefault(s => s.Puuid == puuid));
     
     public Task<IEnumerable<Summoner>> GetAllAsync(params Guid[] ids) =>
@@ -22,6 +22,11 @@ public class SummonerRepository : ISummonerRepository
         _summoners.Add(entity);
 
         return Task.CompletedTask;
+    }
+
+    public Task AddRangeAsync(IEnumerable<Summoner> entities)
+    {
+        throw new NotImplementedException();
     }
 
     public Task DeleteAsync(Summoner entity)

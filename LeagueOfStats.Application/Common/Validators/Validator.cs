@@ -13,7 +13,7 @@ public class Validator<T> : IValidator<T>
         _validator = validator;
     }
 
-    public async Task<Result> ValidateAsyncTwo(T objectToValidate)
+    public async Task<Result> ValidateAsync(T objectToValidate)
     {
         ValidationResult result = await _validator.ValidateAsync(objectToValidate);
 

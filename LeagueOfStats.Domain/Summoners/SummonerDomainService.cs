@@ -17,7 +17,7 @@ public class SummonerDomainService : ISummonerDomainService
         _clock = clock;
     }
     
-    public async Task<Result<Summoner>> GetByIdAsyncTwo(Guid id)
+    public async Task<Result<Summoner>> GetByIdAsync(Guid id)
     {
         Summoner? summoner = await _summonerRepository.GetByIdAsync(id);
         
@@ -28,7 +28,7 @@ public class SummonerDomainService : ISummonerDomainService
 
     public async Task<Result<Summoner>> GetByPuuidAsync(string puuid)
     {
-        Summoner? summoner = await _summonerRepository.GetByPuuid(puuid);
+        Summoner? summoner = await _summonerRepository.GetByPuuidAsync(puuid);
         
         return summoner is not null
             ? summoner

@@ -12,7 +12,7 @@ namespace LeagueOfStats.Application.Summoners.Commands.RefreshSummonerCommand;
 
 public record RefreshSummonerCommand(
     Guid Id)
-: IRequest<Result>;
+    : IRequest<Result>;
 
 public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerCommand, Result>
 {
@@ -38,8 +38,8 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
     }
 
     public Task<Result> Handle(RefreshSummonerCommand command, CancellationToken cancellationToken) =>
-        _refreshSummonerCommandValidator.ValidateAsyncTwo(command)
-            .Bind(() => _summonerDomainService.GetByIdAsyncTwo(command.Id))
+        _refreshSummonerCommandValidator.ValidateAsync(command)
+            .Bind(() => _summonerDomainService.GetByIdAsync(command.Id))
             .Bind(summoner =>
                 CanSummonerCanBeUpdatedWithRiotData(summoner)
                     ? UpdateSummonerDataWithDataFromRiotApiAsync(summoner)
@@ -70,5 +70,6 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
                                     c.LastPlayTime,
                                     c.TokensEarned))));
                 }))
+            // #TODO Update last 20 games from match history
             .ToNonValueResult();
 }

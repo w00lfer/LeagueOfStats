@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerByGameNameAndTagLineAndRegion;
+namespace LeagueOfStats.Application.Summoners.Queries.SearchSummonerByGameNameAndTagLineAndRegion;
 
 public class SearchSummonerByGameNameAndTagLineAndRegionQueryValidator : AbstractValidator<SearchSummonerByGameNameAndTagLineAndRegionQuery>
 {
