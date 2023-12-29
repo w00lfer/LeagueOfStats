@@ -43,6 +43,11 @@ public class Result
     public bool IsFailure => !IsSuccess;
     
     public Error[] Errors { get; }
+    
+    public string AggregatedErrorMessages => 
+        IsFailure
+            ? string.Join(Environment.NewLine, Errors.Select(e => e.ErrorMessage))
+            : throw new InvalidOperationException("Can only get aggregated error messages when result is Error.");
 
     public static implicit operator Result(Error error) => 
         Failure(error);
@@ -137,7 +142,7 @@ public class Result<TValue> : Result
     public TValue Value =>
         IsSuccess
             ? _value!
-            : throw new InvalidOperationException("The value of a failure result can't be accessed");
+            : throw new InvalidOperationException("The value of a failure result can't be accessed.");
 
     public static implicit operator Result<TValue>(TValue? value) =>
         value is not null ? Success(value) : Failure<TValue>(new NullValueError());

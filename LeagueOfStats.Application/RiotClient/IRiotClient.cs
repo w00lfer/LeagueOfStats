@@ -14,5 +14,5 @@ public interface IRiotClient
         
     Task<Result<ChampionMastery[]>> GetSummonerChampionMasteryByPuuid(string puuid, Region region);
 
-    Task<Result<IEnumerable<Match>>> GetSummonerMatchHistory(GetSummonerMatchHistoryDto getSummonerMatchHistoryDto);
+    Task<Result<IEnumerable<Match>>> GetSummonerMatchHistorySummary(GetSummonerMatchHistoryDto getSummonerMatchHistoryDto);
 }

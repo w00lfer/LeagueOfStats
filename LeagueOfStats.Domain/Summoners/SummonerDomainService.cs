@@ -23,7 +23,7 @@ public class SummonerDomainService : ISummonerDomainService
         
         return summoner is not null
             ? summoner
-            : Result.Failure<Summoner>(new EntityNotFoundError($"Summoner with Id={id} does not exist."));
+            : new EntityNotFoundError($"Summoner with Id={id} does not exist.");
     }
 
     public async Task<Result<Summoner>> GetByPuuidAsync(string puuid)

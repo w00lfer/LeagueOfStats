@@ -88,7 +88,7 @@ public class RiotClient : IRiotClient
         }
     }
 
-    public async Task<Result<IEnumerable<Match>>> GetSummonerMatchHistory(GetSummonerMatchHistoryDto getSummonerMatchHistoryDto)
+    public async Task<Result<IEnumerable<Match>>> GetSummonerMatchHistorySummary(GetSummonerMatchHistoryDto getSummonerMatchHistoryDto)
     {
         try
         {
@@ -99,18 +99,10 @@ public class RiotClient : IRiotClient
                 getSummonerMatchHistoryDto.GameEndedAt.ToUnixTimeSeconds(),
                 getSummonerMatchHistoryDto.GameType.ToNullableQueue());
 
-            List<Match> matches = new();
-            foreach (var matchHistoryId in matchHistoryIds)
-            {
-                Match? match = await _riotGamesApi.MatchV5().GetMatchAsync(getSummonerMatchHistoryDto.Region.ToRegionalRoute(), matchHistoryId);
+            var matches = await Task.WhenAll(matchHistoryIds.Select(mId =>
+                _riotGamesApi.MatchV5().GetMatchAsync(getSummonerMatchHistoryDto.Region.ToRegionalRoute(), mId)));
 
-                if (match is not null)
-                {
-                    matches.Add(match);
-                }
-            }
-
-            return matches;
+            return Result.Success<IEnumerable<Match>>(matches.Where(m => m is not null));
         }
         catch (RiotResponseException riotResponseException)
         {

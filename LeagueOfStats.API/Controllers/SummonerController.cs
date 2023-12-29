@@ -19,7 +19,7 @@ public class SummonerController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public Task<IActionResult> Get(Guid id) =>
         _mediator.Send(new GetSummonerByIdQuery(id))
             .ToIActionResult(this);
@@ -29,7 +29,7 @@ public class SummonerController : ControllerBase
             _mediator.Send(new SearchSummonerByGameNameAndTagLineAndRegionQuery(gameName, tagLine, region))
             .ToIActionResult(this);
     
-    [HttpPost("{id}/Refresh")]
+    [HttpPost("{id:guid}/Refresh")]
     public Task<IActionResult> Refresh(Guid id) => 
         _mediator.Send(new RefreshSummonerCommand(id))
             .ToIActionResult(this);

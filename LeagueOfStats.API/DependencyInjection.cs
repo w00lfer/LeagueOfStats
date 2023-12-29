@@ -1,7 +1,5 @@
-using System.ComponentModel;
 using Azure.Identity;
 using FluentValidation.AspNetCore;
-using LeagueOfStats.API.Common.Converters;
 using LeagueOfStats.API.Environments;
 using LeagueOfStats.API.Infrastructure.RiotClient;
 using LeagueOfStats.API.Options;
@@ -27,8 +25,6 @@ public static class DependencyInjection
             options.SuppressModelStateInvalidFilter = true;
         });
 
-        //TypeDescriptor.AddAttributes(typeof(Instant), new TypeConverterAttribute(typeof(InstantTypeConverter)));
-        
         AddSwagger(builder);
         
         AddKeyVault(builder);
