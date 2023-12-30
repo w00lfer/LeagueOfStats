@@ -1,24 +1,58 @@
 using LeagueOfStats.Domain.Common.Entities;
+using LeagueOfStats.Domain.Common.Enums;
+using LeagueOfStats.Domain.Matches.Participants;
+using LeagueOfStats.Domain.Matches.Teams;
 using NodaTime;
 
 namespace LeagueOfStats.Domain.Matches;
 
 public class Match : AggregateRoot
 {
-    private readonly List<Guid> _summonerIds = new();
+    private readonly List<Participant> _participants = new();
+    private readonly List<Team> _teams = new();
     
-    internal Match(string riotMatchId, IEnumerable<Guid> summonerIds, Instant gameEndTimestamp) : base(Guid.NewGuid())
+    internal Match(
+        AddMatchDto addMatchDto) 
+        : base(Guid.NewGuid())
     {
-        RiotMatchId = riotMatchId;
-        GameEndTimestamp = gameEndTimestamp;
-        _summonerIds = summonerIds.ToList();
+        RiotMatchId = addMatchDto.RiotMatchId;
+        GameEndTimestamp = addMatchDto.GameEndTimestamp;
+        GameVersion = addMatchDto.GameVersion;
+        GameDuration = addMatchDto.GameDuration;
+        GameStartTimeStamp = addMatchDto.GameStartTimeStamp;
+        GameMode = addMatchDto.GameMode;
+        GameType = addMatchDto.GameType;
+        Map = addMatchDto.Map;
+        PlatformId = addMatchDto.PlatformId;
+        Queue = addMatchDto.Queue;
+        TournamentCode = addMatchDto.TournamentCode;
+        
+        // TODO Add Teams and Participants
     }
     
     public string RiotMatchId { get; }
     
+    public string GameVersion { get; }
+    
+    public Duration GameDuration { get; }
+    
+    public Instant GameStartTimeStamp { get; }
+    
     public Instant GameEndTimestamp { get; }
     
-    public bool IsReadyToShow { get; }
+    public GameMode GameMode { get; }
+    
+    public GameType GameType { get; }
+    
+    public Map Map { get; }
+    
+    public string PlatformId { get; }
+    
+    public Queue Queue { get; }
+    
+    public string? TournamentCode { get; }
 
-    public List<Guid> SummonerIds => _summonerIds.ToList();
+    public List<Participant> Participants => _participants.ToList();
+    
+    public List<Team> Teams => _teams.ToList();
 }

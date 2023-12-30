@@ -2,6 +2,7 @@ using Camille.RiotGames;
 using Camille.RiotGames.AccountV1;
 using Camille.RiotGames.ChampionMasteryV4;
 using Camille.RiotGames.MatchV5;
+using Camille.RiotGames.SpectatorV4;
 using Camille.RiotGames.SummonerV4;
 using Camille.RiotGames.Util;
 using LeagueOfStats.API.Common.Errors;
@@ -97,12 +98,31 @@ public class RiotClient : IRiotClient
                 getSummonerMatchHistoryDto.Puuid,
                 getSummonerMatchHistoryDto.Count,
                 getSummonerMatchHistoryDto.GameEndedAt.ToUnixTimeSeconds(),
-                getSummonerMatchHistoryDto.GameType.ToNullableQueue());
+                getSummonerMatchHistoryDto.QueueFilter.ToNullableQueue());
 
             var matches = await Task.WhenAll(matchHistoryIds.Select(mId =>
                 _riotGamesApi.MatchV5().GetMatchAsync(getSummonerMatchHistoryDto.Region.ToRegionalRoute(), mId)));
 
             return Result.Success<IEnumerable<Match>>(matches.Where(m => m is not null));
+        }
+        catch (RiotResponseException riotResponseException)
+        {
+            _logger.LogError(riotResponseException.ToString());
+            return new ApiError("There are problems on Riot API side");
+        }
+    }
+
+    public async Task<Result<CurrentGameInfo?>> GetSummonerLiveGame(GetSummonerLiveGameDto getSummonerLiveGameDto)
+    {
+        try
+        {
+            CurrentGameInfo? liveGame = await _riotGamesApi
+                .SpectatorV4()
+                .GetCurrentGameInfoBySummonerAsync(getSummonerLiveGameDto.Region.ToPlatformRoute(), getSummonerLiveGameDto.RiotSummonerId);
+
+            return liveGame is not null
+                ? liveGame
+                : new ApiError($"Summoner={getSummonerLiveGameDto.SummonerName} is not in game.");;
         }
         catch (RiotResponseException riotResponseException)
         {

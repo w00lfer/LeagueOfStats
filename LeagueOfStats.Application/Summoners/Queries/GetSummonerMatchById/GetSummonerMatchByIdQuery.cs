@@ -16,18 +16,15 @@ public class GetSummonerMatchByIdQueryHandler : IRequestHandler<GetSummonerMatch
 {
     private readonly IValidator<GetSummonerMatchByIdQuery> _getSummonerMatchByIdQuery;
     private readonly ISummonerDomainService _summonerDomainService;
-    private readonly IRiotClient _riotClient;
     private readonly IMatchDomainService _matchDomainService;
 
     public GetSummonerMatchByIdQueryHandler(
         IValidator<GetSummonerMatchByIdQuery> getSummonerMatchByIdQuery,
         ISummonerDomainService summonerDomainService,
-        IRiotClient riotClient,
         IMatchDomainService matchDomainService)
     {
         _getSummonerMatchByIdQuery = getSummonerMatchByIdQuery;
         _summonerDomainService = summonerDomainService;
-        _riotClient = riotClient;
         _matchDomainService = matchDomainService;
     }
 

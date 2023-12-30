@@ -1,5 +1,6 @@
 using Camille.RiotGames.ChampionMasteryV4;
 using Camille.RiotGames.MatchV5;
+using Camille.RiotGames.SpectatorV4;
 using Camille.RiotGames.SummonerV4;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Rails.Results;
@@ -15,4 +16,6 @@ public interface IRiotClient
     Task<Result<ChampionMastery[]>> GetSummonerChampionMasteryByPuuid(string puuid, Region region);
 
     Task<Result<IEnumerable<Match>>> GetSummonerMatchHistorySummary(GetSummonerMatchHistoryDto getSummonerMatchHistoryDto);
+
+    Task<Result<CurrentGameInfo>> GetSummonerLiveGame(GetSummonerLiveGameDto getSummonerLiveGameDto);
 }

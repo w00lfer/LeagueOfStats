@@ -1,7 +1,7 @@
 using LeagueOfStats.API.Extensions;
+using LeagueOfStats.Application.Common.Enums;
 using LeagueOfStats.Application.Summoners.Queries.GetSummonerMatchById;
 using LeagueOfStats.Application.Summoners.Queries.GetSummonerMatchHistory;
-using LeagueOfStats.Domain.Common.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
@@ -20,8 +20,14 @@ public class SummonerMatchHistoryController : ControllerBase
     }
     
     [HttpGet]
-    public Task<IActionResult> GetMatchHistorySummary(Guid summonerId, [FromQuery] Instant gameEndedAt, [FromQuery] GameType gameType, [FromQuery] int limit = 20) =>
-        _mediator.Send(new GetSummonerMatchHistorySummaryQuery(summonerId, gameEndedAt, gameType, limit))
+    public Task<IActionResult> GetMatchHistorySummary(Guid summonerId, [FromQuery] Instant gameEndedAt, [FromQuery] QueueFilter queueFilter, [FromQuery] int limit = 20) =>
+        _mediator.Send(new GetSummonerMatchHistorySummaryQuery(
+                summonerId,
+                gameEndedAt,
+                queueFilter,
+                limit > 5 
+                    ? 5 
+                    : limit))
             .ToIActionResult(this);
     
     [HttpGet("{id:guid}")]

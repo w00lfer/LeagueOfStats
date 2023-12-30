@@ -1,9 +1,13 @@
+using LeagueOfStats.Application.Common.Enums;
 using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.Common.Validators;
+using LeagueOfStats.Application.Extensions;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Matches;
+using LeagueOfStats.Domain.Matches.Participants.Dtos;
+using LeagueOfStats.Domain.Matches.Teams.Dtos;
 using LeagueOfStats.Domain.Summoners;
 using MediatR;
 using NodaTime;
@@ -13,7 +17,7 @@ namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerMatchHistory;
 public record GetSummonerMatchHistorySummaryQuery(
     Guid SummonerId,
     Instant GameEndedAt,
-    GameType GameType,
+    QueueFilter QueueFilter,
     int Limit)
     : IRequest<Result<IEnumerable<SummonerMatchHistorySummaryDto>>>;
 
@@ -39,11 +43,16 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
     public Task<Result<IEnumerable<SummonerMatchHistorySummaryDto>>> Handle(GetSummonerMatchHistorySummaryQuery query, CancellationToken cancellationToken) =>
         _getSummonerMatchHistoryQueryValidator.ValidateAsync(query)
             .Bind(() => _summonerDomainService.GetByIdAsync(query.SummonerId))
-            .Bind(summoner => _riotClient.GetSummonerMatchHistorySummary(new GetSummonerMatchHistoryDto(summoner.Region, summoner.Puuid, query.Limit, query.GameEndedAt, query.GameType))
+            .Bind(summoner => _riotClient.GetSummonerMatchHistorySummary(new GetSummonerMatchHistoryDto(
+                    summoner.Region,
+                    summoner.Puuid,
+                    query.Limit,
+                    query.GameEndedAt,
+                    query.QueueFilter))
                 .Bind(matchesFromRiotApi => GetOrCreateSummonersForMatchesByPuuid(matchesFromRiotApi, summoner.Region)
                     .Bind(summoners =>
                     {
-                        IEnumerable<AddMatchDto> addMatchDtos = matchesFromRiotApi.Select(m =>
+                        var addMatchDtos = matchesFromRiotApi.Select(m =>
                         {
                             var summonersPuuidsInMatch = m.Info.Participants.Select(p => p.Puuid);
                             
@@ -57,7 +66,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
                     })))
             .Map(MapToMatchHistorySummaryDtos);
 
-    private async Task<Result<IEnumerable<Summoner>>> GetOrCreateSummonersForMatchesByPuuid(IEnumerable<Camille.RiotGames.MatchV5.Match> matchesFromRiotApi, Region region)
+    private async Task<Result<List<Summoner>>> GetOrCreateSummonersForMatchesByPuuid(IEnumerable<Camille.RiotGames.MatchV5.Match> matchesFromRiotApi, Region region)
     {
         var uniqueSummoners = matchesFromRiotApi.SelectMany(m => m.Info.Participants).Select(p => new SummonerInfoDto(p.Puuid, p.RiotIdName, p.RiotIdTagline)).Distinct().ToList();
 
@@ -75,7 +84,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
                 createSummonerResults.Where(r => r.IsFailure).Select(r => r.AggregatedErrorMessages)));
         }
 
-        return Result.Success(createSummonerResults.Select(r => r.Value).Concat(existingSummoners));
+        return Result.Success(createSummonerResults.Select(r => r.Value).Concat(existingSummoners).ToList());
     }
 
     private Task<Result<Summoner>> CreateSummonerUsingDataFromRiotApiAsync(
@@ -110,7 +119,53 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
 
                     return Result.Success(summoner);
                 }));
+
+
+    private AddMatchDto MapMatchFromRiotApiToAddMatchdto(Camille.RiotGames.MatchV5.Match matchFromRiotApi, List<Summoner> participatedSummonersInMatch)
+    {
+        var summonersPuuidsInMatch = m.Info.Participants.Select(p => p.Puuid);
+
+        List<AddParticipantDto> addParticipantDtos = new List<AddParticipantDto>();
+
+        var addTeamDtos = matchFromRiotApi.Info.Teams.Select(team =>
+        {
+            return new AddTeamDto(
+                new AddObjectivesDto(
+                    new AddObjectiveDto(team.Objectives.Baron.First, team.Objectives.Baron.Kills),
+                    new AddObjectiveDto(team.Objectives.Champion.First, team.Objectives.Champion.Kills),
+                    new AddObjectiveDto(team.Objectives.Dragon.First, team.Objectives.Dragon.Kills),
+                    team.Objectives.Horde is null
+                        ? null
+                        : new AddObjectiveDto(team.Objectives.Horde.First, team.Objectives.Horde.Kills),
+                    new AddObjectiveDto(team.Objectives.Inhibitor.First, team.Objectives.Inhibitor.Kills),
+                    new AddObjectiveDto(team.Objectives.RiftHerald.First, team.Objectives.RiftHerald.Kills),
+                    new AddObjectiveDto(team.Objectives.Tower.First, team.Objectives.Tower.Kills)),
+                new List<AddBanDto>(),
+                team.TeamId.ToSide(),
+                team.Win);
+        });
+
+        var addMatchDto = new AddMatchDto(
+            matchFromRiotApi.Metadata.MatchId,
+            matchFromRiotApi.Info.GameVersion,
+            Duration.FromSeconds(matchFromRiotApi.Info.GameDuration),
+            Instant.FromUnixTimeMilliseconds(matchFromRiotApi.Info.GameStartTimestamp),
+            Instant.FromUnixTimeMilliseconds(matchFromRiotApi.Info.GameEndTimestamp!.Value),
+            matchFromRiotApi.Info.GameMode.ToGameMode(), // Map to Game Mode
+            matchFromRiotApi.Info.GameType.ToGameType(), // Map to game Type
+            matchFromRiotApi.Info.MapId.ToMap(), // Map to Map
+            matchFromRiotApi.Info.PlatformId,
+            matchFromRiotApi.Info.QueueId.ToQueue(), //Map to queue
+            matchFromRiotApi.Info.TournamentCode,
+            addParticipantDtos,
+            addTeamDtos);
         
+        return new AddMatchDto(
+            
+            m.Metadata.MatchId,
+            summoners.Where(s => summonersPuuidsInMatch.Contains(s.Puuid)),
+            Instant.FromUnixTimeMilliseconds(m.Info.GameEndTimestamp!.Value));
+    }
     
     private IEnumerable<SummonerMatchHistorySummaryDto> MapToMatchHistorySummaryDtos(IEnumerable<Match> matches) =>
         matches.Select(m => new SummonerMatchHistorySummaryDto(m.Id, m.RiotMatchId, m.SummonerIds, m.GameEndTimestamp));

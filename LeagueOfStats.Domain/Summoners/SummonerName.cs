@@ -16,6 +16,9 @@ public class SummonerName : ValueObject
     {
         throw new NotImplementedException();
     }
+
+    public override string ToString() =>
+        $"{GameName}#{TagLine}";
     
     private SummonerName(string gameName, string tagLine)
     {

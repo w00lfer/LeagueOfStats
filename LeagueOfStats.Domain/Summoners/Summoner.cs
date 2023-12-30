@@ -19,7 +19,7 @@ public class Summoner : AggregateRoot
         Region region,
         IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos,
         Instant lastUpdated)
-        : base (Guid.NewGuid())
+        : base(Guid.NewGuid())
     {
         SummonerId = summonerId;
         AccountId = accountId;

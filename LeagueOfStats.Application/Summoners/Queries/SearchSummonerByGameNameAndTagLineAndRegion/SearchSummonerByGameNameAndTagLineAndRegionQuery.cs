@@ -34,13 +34,19 @@ public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestH
         _entityUpdateLockoutService = entityUpdateLockoutService;
     }
 
-    public Task<Result<SummonerDto>> Handle(SearchSummonerByGameNameAndTagLineAndRegionQuery query, CancellationToken cancellationToken) =>
+    public Task<Result<SummonerDto>> Handle(SearchSummonerByGameNameAndTagLineAndRegionQuery query,
+        CancellationToken cancellationToken) =>
         _searchSummonerByGameNameAndTagLineAndRegionQueryValidator.ValidateAsync(query)
-            .Bind(() => _riotClient.GetSummonerByGameNameAndTaglineAsync(query.GameName, query.TagLine, query.Region))
+            .Bind(() => _riotClient.GetSummonerByGameNameAndTaglineAsync(query.GameName,
+                query.TagLine,
+                query.Region))
             .Bind(summonerFromRiotApi => _summonerDomainService.GetByPuuidAsync(summonerFromRiotApi.Puuid)
                 .Match(
                     summoner => Task.FromResult(Result.Success(summoner)),
-                    () => CreateSummonerUsingDataFromRiotApiAsync(summonerFromRiotApi, query.GameName, query.TagLine, query.Region)))
+                    () => CreateSummonerUsingDataFromRiotApiAsync(summonerFromRiotApi,
+                        query.GameName,
+                        query.TagLine,
+                        query.Region)))
             .Map(MapToSummonerDto);
 
     private Task<Result<Summoner>> CreateSummonerUsingDataFromRiotApiAsync(
