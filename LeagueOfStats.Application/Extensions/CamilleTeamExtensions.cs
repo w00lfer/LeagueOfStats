@@ -11,6 +11,7 @@ public static class CamilleTeamExtensions
             Team.Blue => Side.Blue,
             Team.Red => Side.Red,
             Team.Other => Side.Other,
+            0 => Side.Arena,
             _ => throw new ArgumentOutOfRangeException(nameof(team), team, null)
         };
 }

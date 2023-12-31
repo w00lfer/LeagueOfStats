@@ -27,7 +27,8 @@ public class Match : AggregateRoot
         Queue = addMatchDto.Queue;
         TournamentCode = addMatchDto.TournamentCode;
         
-        // TODO Add Teams and Participants
+        _participants.AddRange(addMatchDto.AddParticipantDtos.Select(addParticipantDto => new Participant(addParticipantDto)));
+        _teams.AddRange(addMatchDto.AddTeamDtos.Select(addTeamDto => new Team(addTeamDto)));
     }
     
     public string RiotMatchId { get; }

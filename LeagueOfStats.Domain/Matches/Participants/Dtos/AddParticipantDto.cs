@@ -7,7 +7,7 @@ namespace LeagueOfStats.Domain.Matches.Participants.Dtos;
 public record AddParticipantDto(
     Champion Champion,
     Summoner Summoner,
-    Perks Perks,
+    AddPerksDto AddPerksDto,
     int ChampLevel,
     int? DamageDealtToBuildings,
     int DamageDealtToObjectives,

@@ -1,5 +1,4 @@
 using LeagueOfStats.Application.Common.Validators;
-using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Matches;
 using LeagueOfStats.Domain.Summoners;
@@ -35,5 +34,5 @@ public class GetSummonerMatchByIdQueryHandler : IRequestHandler<GetSummonerMatch
             .Map(MapToSummonerMatchDto);
     
     private SummonerMatchDto MapToSummonerMatchDto(Match match) =>
-        new (match.Id, match.RiotMatchId, match.SummonerIds ,match.GameEndTimestamp);
+        new (match.Id, match.RiotMatchId, match.Participants.Select(p => p.SummonerId) ,match.GameEndTimestamp);
 } 

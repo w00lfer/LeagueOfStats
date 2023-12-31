@@ -5,4 +5,5 @@ public enum Side
     Blue,
     Red,
     Other,
+    Arena,
 }
