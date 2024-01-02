@@ -14,22 +14,22 @@ public record GetSummonerChampionMasteriesQuery(
 
 public class GetSummonerChampionMasteriesQueryHandler : IRequestHandler<GetSummonerChampionMasteriesQuery, Result<IEnumerable<SummonerChampionMasteryDto>>>
 {
-    private readonly IValidator<GetSummonerChampionMasteriesQuery> _getSummonerChampionMasteryQueryValidator;
+    private readonly IValidator<GetSummonerChampionMasteriesQuery> _getSummonerChampionMasteriesQueryValidator;
     private readonly ISummonerDomainService _summonerDomainService;
     private readonly IChampionRepository _championRepository;
 
     public GetSummonerChampionMasteriesQueryHandler(
-        IValidator<GetSummonerChampionMasteriesQuery> getSummonerChampionMasteryQueryValidator,
+        IValidator<GetSummonerChampionMasteriesQuery> getSummonerChampionMasteriesQueryValidator,
         ISummonerDomainService summonerDomainService,
         IChampionRepository championRepository)
     { 
-        _getSummonerChampionMasteryQueryValidator = getSummonerChampionMasteryQueryValidator;
+        _getSummonerChampionMasteriesQueryValidator = getSummonerChampionMasteriesQueryValidator;
         _summonerDomainService = summonerDomainService;
         _championRepository = championRepository;
     }
 
     public Task<Result<IEnumerable<SummonerChampionMasteryDto>>> Handle(GetSummonerChampionMasteriesQuery query, CancellationToken cancellationToken) =>
-        _getSummonerChampionMasteryQueryValidator.ValidateAsync(query)
+        _getSummonerChampionMasteriesQueryValidator.ValidateAsync(query)
             .Bind(() => _summonerDomainService.GetByIdAsync(query.SummonerId))
             .Bind(summoner => MapToSummonerChampionMasteryDtos(summoner.SummonerChampionMasteries));
     
@@ -52,6 +52,7 @@ public class GetSummonerChampionMasteriesQueryHandler : IRequestHandler<GetSummo
             return new SummonerChampionMasteryDto(
                 champion!.RiotChampionId,
                 champion.Name,
+                championMastery.ChampionLevel,
                 champion.Title,
                 champion.Description,
                 champion.ChampionImage.FullFileName,

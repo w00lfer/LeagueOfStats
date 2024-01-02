@@ -18,17 +18,20 @@ public class GetSummonerMatchByIdQueryHandler : IRequestHandler<GetSummonerMatch
 {
     private readonly IValidator<GetSummonerMatchByIdQuery> _getSummonerMatchByIdQuery;
     private readonly ISummonerDomainService _summonerDomainService;
+    private readonly ISummonerRepository _summonerRepository;
     private readonly IMatchDomainService _matchDomainService;
     private readonly IChampionRepository _championRepository;
 
     public GetSummonerMatchByIdQueryHandler(
         IValidator<GetSummonerMatchByIdQuery> getSummonerMatchByIdQuery,
         ISummonerDomainService summonerDomainService,
+        ISummonerRepository summonerRepository,
         IMatchDomainService matchDomainService,
         IChampionRepository championRepository)
     {
         _getSummonerMatchByIdQuery = getSummonerMatchByIdQuery;
         _summonerDomainService = summonerDomainService;
+        _summonerRepository = summonerRepository;
         _matchDomainService = matchDomainService;
         _championRepository = championRepository;
     }
@@ -62,6 +65,7 @@ public class GetSummonerMatchByIdQueryHandler : IRequestHandler<GetSummonerMatch
         Guid summonerId) 
     {
         var champions = (await _championRepository.GetAllAsync()).ToList();
+        var summoners = (await _summonerRepository.GetAllAsync(participants.Select(p => p.SummonerId).ToArray())).ToList();
         
         if (gameMode is GameMode.Arena)
         {
@@ -70,8 +74,11 @@ public class GetSummonerMatchByIdQueryHandler : IRequestHandler<GetSummonerMatch
                     g.Select(p =>
                     {
                         Champion champion = champions.Single(c => c.Id == p.ChampionId);
+                        Summoner summoner = summoners.Single(s => s.Id == p.SummonerId);
                         return new MatchDetailsTeamParticipantDto(
                             champion.Id,
+                            summoner.Id,
+                            summoner.SummonerName.ToString(),
                             champion.Name,
                             champion.ChampionImage.FullFileName,
                             p.ChampLevel,
@@ -99,8 +106,11 @@ public class GetSummonerMatchByIdQueryHandler : IRequestHandler<GetSummonerMatch
                 g.Select(p =>
                 {
                     Champion champion = champions.Single(c => c.Id == p.ChampionId);
+                    Summoner summoner = summoners.Single(s => s.Id == p.SummonerId);
                     return new MatchDetailsTeamParticipantDto(
                         champion.Id,
+                        summoner.Id,
+                        summoner.SummonerName.ToString(),
                         champion.Name,
                         champion.ChampionImage.FullFileName,
                         p.ChampLevel,

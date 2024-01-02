@@ -2,6 +2,8 @@ namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerMatchById;
 
 public record MatchDetailsTeamParticipantDto(
     Guid ChampionId,
+    Guid? SummonerId,
+    string SummonerName,
     string ChampionName,
     string ChampionImageFullFileName,
     int ChampLevel,
