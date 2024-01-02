@@ -1,38 +1,125 @@
 using LeagueOfStats.Application.Common.Validators;
+using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Matches;
+using LeagueOfStats.Domain.Matches.Participants;
 using LeagueOfStats.Domain.Summoners;
 using MediatR;
+using NodaTime;
 
 namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerMatchById;
 
 public record GetSummonerMatchByIdQuery(
     Guid SummonerId,
     Guid Id)
-    : IRequest<Result<SummonerMatchDto>>;
+    : IRequest<Result<MatchDetailsDto>>;
 
-public class GetSummonerMatchByIdQueryHandler : IRequestHandler<GetSummonerMatchByIdQuery, Result<SummonerMatchDto>>
+public class GetSummonerMatchByIdQueryHandler : IRequestHandler<GetSummonerMatchByIdQuery, Result<MatchDetailsDto>>
 {
     private readonly IValidator<GetSummonerMatchByIdQuery> _getSummonerMatchByIdQuery;
     private readonly ISummonerDomainService _summonerDomainService;
     private readonly IMatchDomainService _matchDomainService;
+    private readonly IChampionRepository _championRepository;
 
     public GetSummonerMatchByIdQueryHandler(
         IValidator<GetSummonerMatchByIdQuery> getSummonerMatchByIdQuery,
         ISummonerDomainService summonerDomainService,
-        IMatchDomainService matchDomainService)
+        IMatchDomainService matchDomainService,
+        IChampionRepository championRepository)
     {
         _getSummonerMatchByIdQuery = getSummonerMatchByIdQuery;
         _summonerDomainService = summonerDomainService;
         _matchDomainService = matchDomainService;
+        _championRepository = championRepository;
     }
 
-    public Task<Result<SummonerMatchDto>> Handle(GetSummonerMatchByIdQuery query, CancellationToken cancellationToken) =>
+    public Task<Result<MatchDetailsDto>> Handle(GetSummonerMatchByIdQuery query, CancellationToken cancellationToken) =>
         _getSummonerMatchByIdQuery.ValidateAsync(query)
             .Bind(() => _summonerDomainService.GetByIdAsync(query.SummonerId))
             .Bind(_ => _matchDomainService.GetByIdAsync(query.Id))
-            .Map(MapToSummonerMatchDto);
+            .Map(match => MapToMatchDetailsDtoAsync(match, query.SummonerId));
     
-    private SummonerMatchDto MapToSummonerMatchDto(Match match) =>
-        new (match.Id, match.RiotMatchId, match.Participants.Select(p => p.SummonerId) ,match.GameEndTimestamp);
+    private async Task<MatchDetailsDto> MapToMatchDetailsDtoAsync(Match match, Guid summonerId) =>
+        new(
+            match.Id,
+            await MapParticipantsToMatchDetailsTeamDtosAsync(
+                match.Participants,
+                match.GameMode,
+                match.GameDuration,
+                summonerId),
+            match.GameVersion,
+            match.GameDuration,
+            match.GameStartTimeStamp,
+            match.GameEndTimestamp,
+            match.GameMode,
+            match.GameType,
+            match.Map);
+
+    private async Task<IEnumerable<MatchDetailsTeamDto>> MapParticipantsToMatchDetailsTeamDtosAsync(
+        IEnumerable<Participant> participants,
+        GameMode gameMode,
+        Duration gameDuration,
+        Guid summonerId) 
+    {
+        var champions = (await _championRepository.GetAllAsync()).ToList();
+        
+        if (gameMode is GameMode.Arena)
+        {
+            return participants.GroupBy(p => p.PlayerSubteamId).Select(g =>
+                new MatchDetailsTeamDto(
+                    g.Select(p =>
+                    {
+                        Champion champion = champions.Single(c => c.Id == p.ChampionId);
+                        return new MatchDetailsTeamParticipantDto(
+                            champion.Id,
+                            champion.Name,
+                            champion.ChampionImage.FullFileName,
+                            p.ChampLevel,
+                            p.Kills,
+                            p.Deaths,
+                            p.Assists,
+                            (p.Kills + p.Assists) / p.Deaths,
+                            p.TotalMinionsKilled,
+                            p.TotalMinionsKilled / gameDuration.Minutes,
+                            p.Item0,
+                            p.Item1,
+                            p.Item2,
+                            p.Item3,
+                            p.Item4,
+                            p.Item5,
+                            p.Item6,
+                            p.SummonerId == summonerId);
+                    }),
+                    g.Select(p => p.Side).Distinct().Single(),
+                    g.Select(p => p.Win).Distinct().Single()));
+        }
+
+        return participants.GroupBy(p => p.Side).Select(g =>
+            new MatchDetailsTeamDto(
+                g.Select(p =>
+                {
+                    Champion champion = champions.Single(c => c.Id == p.ChampionId);
+                    return new MatchDetailsTeamParticipantDto(
+                        champion.Id,
+                        champion.Name,
+                        champion.ChampionImage.FullFileName,
+                        p.ChampLevel,
+                        p.Kills,
+                        p.Deaths,
+                        p.Assists,
+                        (p.Kills + p.Assists) / p.Deaths,
+                        p.TotalMinionsKilled,
+                        p.TotalMinionsKilled / gameDuration.Minutes,
+                        p.Item0,
+                        p.Item1,
+                        p.Item2,
+                        p.Item3,
+                        p.Item4,
+                        p.Item5,
+                        p.Item6,
+                        p.SummonerId == summonerId);
+                }),
+                g.Select(p => p.Side).Distinct().Single(),
+                g.Select(p => p.Win).Distinct().Single()));
+    }
 } 

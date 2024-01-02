@@ -1,6 +1,6 @@
-namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerMatchHistory;
+namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerMatchById;
 
-public record MatchHistorySummarySummonerDto(
+public record MatchDetailsTeamParticipantDto(
     Guid ChampionId,
     string ChampionName,
     string ChampionImageFullFileName,
@@ -17,4 +17,5 @@ public record MatchHistorySummarySummonerDto(
     int Item3,
     int Item4,
     int Item5,
-    int Item6);
+    int Item6,
+    bool IsSummoner);

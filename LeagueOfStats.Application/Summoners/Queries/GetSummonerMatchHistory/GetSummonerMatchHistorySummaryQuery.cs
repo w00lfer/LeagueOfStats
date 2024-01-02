@@ -187,7 +187,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
                     participantAsSummoner.Item4,
                     participantAsSummoner.Item5,
                     participantAsSummoner.Item6),
-                MapParticipantsToMatchHistorySummaryTeamDto(m.Participants, champions, m.GameMode),
+                MapParticipantsToMatchHistorySummaryTeamDtos(m.Participants, champions, m.GameMode),
                 m.GameVersion,
                 m.GameDuration,
                 m.GameStartTimeStamp,
@@ -198,7 +198,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
         });
     }
 
-    private IEnumerable<MatchHistorySummaryTeamDto> MapParticipantsToMatchHistorySummaryTeamDto(IEnumerable<Domain.Matches.Participants.Participant> participants, IEnumerable<Champion> champions, GameMode gameMode)
+    private IEnumerable<MatchHistorySummaryTeamDto> MapParticipantsToMatchHistorySummaryTeamDtos(IEnumerable<Domain.Matches.Participants.Participant> participants, IEnumerable<Champion> champions, GameMode gameMode)
     {
         if (gameMode is GameMode.Arena)
         {
@@ -207,7 +207,9 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
                     g.Select(p =>
                     {
                         Champion champion = champions.Single(c => c.Id == p.ChampionId);
-                        return new MatchHistorySummaryTeamParticipantDto(champion.Id, champion.Name,
+                        return new MatchHistorySummaryTeamParticipantDto(
+                            champion.Id,
+                            champion.Name,
                             champion.ChampionImage.FullFileName);
                     }),
                     g.Select(p => p.Side).Distinct().Single(),
@@ -219,7 +221,9 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
                 g.Select(p =>
                 {
                     Champion champion = champions.Single(c => c.Id == p.ChampionId);
-                    return new MatchHistorySummaryTeamParticipantDto(champion.Id, champion.Name,
+                    return new MatchHistorySummaryTeamParticipantDto(
+                        champion.Id,
+                        champion.Name,
                         champion.ChampionImage.FullFileName);
                 }),
                 g.Select(p => p.Side).Distinct().Single(),
