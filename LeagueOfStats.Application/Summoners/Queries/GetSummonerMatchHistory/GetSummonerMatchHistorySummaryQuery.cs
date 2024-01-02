@@ -22,9 +22,9 @@ public record GetSummonerMatchHistorySummaryQuery(
     Instant GameEndedAt,
     QueueFilter QueueFilter,
     int Limit)
-    : IRequest<Result<IEnumerable<Match>>>;
+    : IRequest<Result<IEnumerable<MatchHistorySummaryDto>>>;
 
-public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSummonerMatchHistorySummaryQuery, Result<IEnumerable<Match>>>
+public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSummonerMatchHistorySummaryQuery, Result<IEnumerable<MatchHistorySummaryDto>>>
 {
     private readonly IValidator<GetSummonerMatchHistorySummaryQuery> _getSummonerMatchHistoryQueryValidator;
     private readonly ISummonerDomainService _summonerDomainService;
@@ -46,7 +46,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
         _championRepository = championRepository;
     }
 
-    public Task<Result<IEnumerable<Match>>> Handle(GetSummonerMatchHistorySummaryQuery query, CancellationToken cancellationToken) =>
+    public Task<Result<IEnumerable<MatchHistorySummaryDto>>> Handle(GetSummonerMatchHistorySummaryQuery query, CancellationToken cancellationToken) =>
         _getSummonerMatchHistoryQueryValidator.ValidateAsync(query)
             .Bind(() => _summonerDomainService.GetByIdAsync(query.SummonerId))
             .Bind(summoner => _riotClient.GetSummonerMatchHistorySummary(new GetSummonerMatchHistoryDto(
@@ -71,8 +71,8 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
                         });
 
                         return await _matchDomainService.AddMatchesAsync(addMatchDtos);
-                    })));
-            // .Map(MapToMatchHistorySummaryDtos);
+                    })))
+            .Map(matches => MapToMatchHistorySummaryDtosAsync(matches, query.SummonerId));
 
     private async Task<Result<List<Summoner>>> GetOrCreateSummonersForMatchesByPuuid(IEnumerable<Camille.RiotGames.MatchV5.Match> matchesFromRiotApi, Region region)
     {
@@ -158,8 +158,73 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
         return addMatchDto;
     }
     
-    private IEnumerable<SummonerMatchHistorySummaryDto> MapToMatchHistorySummaryDtos(IEnumerable<Match> matches) =>
-        matches.Select(m => new SummonerMatchHistorySummaryDto(m.Id, m.RiotMatchId, m.Participants.Select(p => p.SummonerId), m.GameEndTimestamp));
+    private async Task<IEnumerable<MatchHistorySummaryDto>> MapToMatchHistorySummaryDtosAsync(IEnumerable<Match> matches, Guid summonerId)
+    {
+        var champions = (await _championRepository.GetAllAsync()).ToList();
+        
+        return matches.Select(m =>
+        {
+            var participantAsSummoner = m.Participants.Single(p => p.SummonerId == summonerId);
+            var championPlayedBySummoner = champions.Single(c => c.Id == participantAsSummoner.ChampionId);
+                
+            return new MatchHistorySummaryDto(
+                m.Id,
+                new MatchHistorySummarySummonerDto(
+                    championPlayedBySummoner.Id,
+                    championPlayedBySummoner.Name,
+                    championPlayedBySummoner.ChampionImage.FullFileName,
+                    participantAsSummoner.ChampLevel,
+                    participantAsSummoner.Kills,
+                    participantAsSummoner.Deaths,
+                    participantAsSummoner.Assists,
+                    (participantAsSummoner.Kills + participantAsSummoner.Assists) / participantAsSummoner.Deaths,
+                    participantAsSummoner.TotalMinionsKilled,
+                    participantAsSummoner.TotalMinionsKilled / m.GameDuration.Minutes,
+                    participantAsSummoner.Item0,
+                    participantAsSummoner.Item1,
+                    participantAsSummoner.Item2,
+                    participantAsSummoner.Item3,
+                    participantAsSummoner.Item4,
+                    participantAsSummoner.Item5,
+                    participantAsSummoner.Item6),
+                MapParticipantsToMatchHistorySummaryTeamDto(m.Participants, champions, m.GameMode),
+                m.GameVersion,
+                m.GameDuration,
+                m.GameStartTimeStamp,
+                m.GameEndTimestamp,
+                m.GameMode,
+                m.GameType,
+                m.Map);
+        });
+    }
+
+    private IEnumerable<MatchHistorySummaryTeamDto> MapParticipantsToMatchHistorySummaryTeamDto(IEnumerable<Domain.Matches.Participants.Participant> participants, IEnumerable<Champion> champions, GameMode gameMode)
+    {
+        if (gameMode is GameMode.Arena)
+        {
+            return participants.GroupBy(p => p.PlayerSubteamId).Select(g =>
+                new MatchHistorySummaryTeamDto(
+                    g.Select(p =>
+                    {
+                        Champion champion = champions.Single(c => c.Id == p.ChampionId);
+                        return new MatchHistorySummaryTeamParticipantDto(champion.Id, champion.Name,
+                            champion.ChampionImage.FullFileName);
+                    }),
+                    g.Select(p => p.Side).Distinct().Single(),
+                    g.Select(p => p.Win).Distinct().Single()));
+        }
+
+        return participants.GroupBy(p => p.Side).Select(g =>
+            new MatchHistorySummaryTeamDto(
+                g.Select(p =>
+                {
+                    Champion champion = champions.Single(c => c.Id == p.ChampionId);
+                    return new MatchHistorySummaryTeamParticipantDto(champion.Id, champion.Name,
+                        champion.ChampionImage.FullFileName);
+                }),
+                g.Select(p => p.Side).Distinct().Single(),
+                g.Select(p => p.Win).Distinct().Single()));
+    }
 
     private AddParticipantDto MapParticipantToAddParticipantDto(Participant participant, Champion champion, Summoner summoner) =>
         new(
@@ -177,6 +242,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
                             perkStyleSelection.Var3)),
                     perkStyle.Description,
                     perkStyle.Style))),
+            participant.Assists,
             participant.ChampLevel,
             participant.DamageDealtToBuildings,
             participant.DamageDealtToObjectives,
@@ -272,7 +338,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler : IRequestHandler<GetSum
                 new AddObjectiveDto(team.Objectives.RiftHerald.First, team.Objectives.RiftHerald.Kills),
                 new AddObjectiveDto(team.Objectives.Tower.First, team.Objectives.Tower.Kills)),
             team.Bans.Select(ban =>
-                new AddBanDto(champions.Single(c => c.RiotChampionId == (int)ban.ChampionId), ban.PickTurn)),
+                new AddBanDto(champions.SingleOrDefault(c => c.RiotChampionId == (int)ban.ChampionId), ban.PickTurn)),
             team.TeamId.ToSide(),
             team.Win);
 

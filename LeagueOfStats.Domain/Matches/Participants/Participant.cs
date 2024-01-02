@@ -12,6 +12,7 @@ public class Participant : Entity
     {
         ChampionId = addParticipantDto.Champion.Id;
         SummonerId = addParticipantDto.Summoner.Id;
+        Assists = addParticipantDto.Assists;
         ChampLevel = addParticipantDto.ChampLevel;
         DamageDealtToBuildings = addParticipantDto.DamageDealtToBuildings;
         DamageDealtToObjectives = addParticipantDto.DamageDealtToObjectives;
@@ -99,6 +100,8 @@ public class Participant : Entity
     public Guid ChampionId { get; }
 
     public Guid SummonerId { get; }
+    
+    public int Assists { get; }
 
     public int ChampLevel { get; }
 

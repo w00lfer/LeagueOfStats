@@ -9,11 +9,11 @@ public class Ban : Entity
         AddBanDto addBanDto) 
         : base(Guid.NewGuid())
     {
-        ChampionId = addBanDto.Champion.Id;
+        ChampionId = addBanDto.Champion?.Id;
         PickTurn = addBanDto.PickTurn;
     }
 
-    public Guid ChampionId { get; }
+    public Guid? ChampionId { get; }
     
     public int PickTurn { get; }
 }

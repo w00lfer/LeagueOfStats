@@ -8,6 +8,7 @@ public record AddParticipantDto(
     Champion Champion,
     Summoner Summoner,
     AddPerksDto AddPerksDto,
+    int Assists,
     int ChampLevel,
     int? DamageDealtToBuildings,
     int DamageDealtToObjectives,
