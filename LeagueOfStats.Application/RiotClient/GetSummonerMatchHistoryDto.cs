@@ -1,3 +1,4 @@
+using LeagueOfStats.Application.Common.Enums;
 using LeagueOfStats.Domain.Common.Enums;
 using NodaTime;
 
@@ -8,4 +9,4 @@ public record GetSummonerMatchHistoryDto(
     string Puuid,
     int Count,
     Instant GameEndedAt,
-    GameType GameType);
+    QueueFilter QueueFilter);

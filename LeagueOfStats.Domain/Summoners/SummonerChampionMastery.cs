@@ -7,7 +7,7 @@ namespace LeagueOfStats.Domain.Summoners;
 public class SummonerChampionMastery : Entity
 {
     public SummonerChampionMastery(int riotChampionId, int championLevel, int championPoints, long championPointsSinceLastLevel, long championPointsUntilNextLevel, bool chestGranted, long lastPlayTime, int tokensEarned)
-        : base (Guid.NewGuid())
+        : base(Guid.NewGuid())
     {
         RiotChampionId = riotChampionId;
         ChampionLevel = championLevel;

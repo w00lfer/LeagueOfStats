@@ -3,9 +3,9 @@ using LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMasteries;
 
 namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
 
-public class GetSummonerChampionMasteryQueryValidator : AbstractValidator<GetSummonerChampionMasteriesQuery>
+public class GetSummonerChampionMasteriesQueryValidator : AbstractValidator<GetSummonerChampionMasteriesQuery>
 {
-    public GetSummonerChampionMasteryQueryValidator()
+    public GetSummonerChampionMasteriesQueryValidator()
     {
         RuleFor(x => x.SummonerId)
             .NotEmpty();

@@ -26,11 +26,25 @@ public static class ResultExtensions
             ? Result.Success(mappingFunc(result.Value))
             : Result.Failure<TOut>(result.Errors);
     }
+    
+    public static async Task<Result<TOut>> Map<TIn, TOut>(this Task<Result<TIn>> taskResult, Func<TIn, Task<TOut>> mappingFunc)
+    {
+        var result = await taskResult;
+        
+        return result.IsSuccess
+            ? Result.Success(await mappingFunc(result.Value))
+            : Result.Failure<TOut>(result.Errors);
+    }
 
     public static Result<TOut> Bind<TOut>(this Result result, Func<Result<TOut>> func) => 
         result.IsFailure 
             ? Result.Failure<TOut>(result.Errors)
             : func();
+    
+    public static async Task<Result<TOut>> Bind<TOut>(this Result result, Func<Task<Result<TOut>>> func) => 
+        result.IsFailure 
+            ? Result.Failure<TOut>(result.Errors)
+            : await func();
     
     public static async Task<Result<TOut>> Bind<TOut>(this Task<Result> taskResult, Func<Result<TOut>> func)
     {

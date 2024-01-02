@@ -70,6 +70,5 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
                                     c.LastPlayTime,
                                     c.TokensEarned))));
                 }))
-            // #TODO Update last 20 games from match history
             .ToNonValueResult();
 }

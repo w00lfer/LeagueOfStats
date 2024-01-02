@@ -1,6 +1,10 @@
+using LeagueOfStats.Domain.Common.Rails.Results;
+
 namespace LeagueOfStats.Domain.Matches;
 
 public interface IMatchDomainService
 {
-    public Task<IEnumerable<Match>> AddMatches(IEnumerable<AddMatchDto> addMatchDtos);
+    public Task<Result<Match>> GetByIdAsync(Guid id);
+    
+    public Task<Result<IEnumerable<Match>>> AddMatchesAsync(IEnumerable<AddMatchDto> addMatchDtos);
 }

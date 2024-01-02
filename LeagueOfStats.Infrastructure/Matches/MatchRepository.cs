@@ -6,10 +6,8 @@ public class MatchRepository : IMatchRepository
 {
     private readonly List<Match> _matches = new();
     
-    public Task<Match?> GetByIdAsync(Guid id)
-    {
-        throw new NotImplementedException();
-    }
+    public Task<Match?> GetByIdAsync(Guid id) => 
+        Task.FromResult(_matches.FirstOrDefault(m => m.Id == id));
 
     public Task<IEnumerable<Match>> GetAllAsync(params Guid[] ids)
     {

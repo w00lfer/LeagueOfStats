@@ -1,7 +1,6 @@
-using System.ComponentModel;
+using System.Text.Json.Serialization;
 using Azure.Identity;
 using FluentValidation.AspNetCore;
-using LeagueOfStats.API.Common.Converters;
 using LeagueOfStats.API.Environments;
 using LeagueOfStats.API.Infrastructure.RiotClient;
 using LeagueOfStats.API.Options;
@@ -20,19 +19,21 @@ public static class DependencyInjection
     public static void AddApiDI(this IServiceCollection services, WebApplicationBuilder builder)
     {
         services.AddControllers()
-            .AddJsonOptions(options => options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb));
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });
         
         services.Configure<ApiBehaviorOptions>(options =>
         {
             options.SuppressModelStateInvalidFilter = true;
         });
 
-        //TypeDescriptor.AddAttributes(typeof(Instant), new TypeConverterAttribute(typeof(InstantTypeConverter)));
-        
         AddSwagger(builder);
         
         AddKeyVault(builder);
-
+        
         services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
         
         services.Configure<EntityUpdateLockoutOptions>(builder.Configuration.GetSection(nameof(EntityUpdateLockoutOptions)));
