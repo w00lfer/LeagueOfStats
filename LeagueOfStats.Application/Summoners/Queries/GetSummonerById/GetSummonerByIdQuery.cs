@@ -11,7 +11,8 @@ public record GetSummonerByIdQuery(
     Guid Id)
     : IRequest<Result<SummonerDto>>;
 
-public class GetSummonerByIdRequestQueryHandler : IRequestHandler<GetSummonerByIdQuery, Result<SummonerDto>>
+public class GetSummonerByIdRequestQueryHandler
+    : IRequestHandler<GetSummonerByIdQuery, Result<SummonerDto>>
 {
     private readonly IValidator<GetSummonerByIdQuery> _getSummonerByIdQueryValidator;
     private readonly ISummonerDomainService _summonerDomainService;
@@ -27,7 +28,9 @@ public class GetSummonerByIdRequestQueryHandler : IRequestHandler<GetSummonerByI
         _entityUpdateLockoutService = entityUpdateLockoutService;
     }
 
-    public Task<Result<SummonerDto>> Handle(GetSummonerByIdQuery query, CancellationToken cancellationToken) =>
+    public Task<Result<SummonerDto>> Handle(
+        GetSummonerByIdQuery query,
+        CancellationToken cancellationToken) =>
         _getSummonerByIdQueryValidator.ValidateAsync(query)
             .Bind(() => _summonerDomainService.GetByIdAsync(query.Id))
             .Map(MapToSummonerDto);
@@ -43,5 +46,6 @@ public class GetSummonerByIdRequestQueryHandler : IRequestHandler<GetSummonerByI
             summoner.SummonerLevel,
             summoner.SummonerName,
             summoner.LastUpdated,
-            summoner.LastUpdated.Plus(Duration.FromMinutes(_entityUpdateLockoutService.GetSummonerUpdateLockoutInMinutes())));
+            summoner.LastUpdated.Plus(Duration.FromMinutes(
+                _entityUpdateLockoutService.GetSummonerUpdateLockoutInMinutes())));
 }

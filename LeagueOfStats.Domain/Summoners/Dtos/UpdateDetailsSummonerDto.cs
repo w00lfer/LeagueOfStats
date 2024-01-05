@@ -1,4 +1,4 @@
-namespace LeagueOfStats.Domain.Summoners;
+namespace LeagueOfStats.Domain.Summoners.Dtos;
 
 public record UpdateDetailsSummonerDto(
     int ProfileIconId,

@@ -1,4 +1,5 @@
 using LeagueOfStats.Domain.Common.Rails.Results;
+using LeagueOfStats.Domain.Summoners.Dtos;
 
 namespace LeagueOfStats.Domain.Summoners;
 

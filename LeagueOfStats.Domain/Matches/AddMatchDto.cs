@@ -1,7 +1,5 @@
-using LeagueOfStats.Domain.Common.Enums;
-using LeagueOfStats.Domain.Matches.Participants;
+using LeagueOfStats.Domain.Matches.Enums;
 using LeagueOfStats.Domain.Matches.Participants.Dtos;
-using LeagueOfStats.Domain.Matches.Teams;
 using LeagueOfStats.Domain.Matches.Teams.Dtos;
 using NodaTime;
 

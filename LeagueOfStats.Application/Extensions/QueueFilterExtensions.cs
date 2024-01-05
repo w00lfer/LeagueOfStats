@@ -1,6 +1,5 @@
 using Camille.Enums;
 using LeagueOfStats.Application.Common.Enums;
-using LeagueOfStats.Domain.Common.Enums;
 
 namespace LeagueOfStats.Application.Extensions;
 

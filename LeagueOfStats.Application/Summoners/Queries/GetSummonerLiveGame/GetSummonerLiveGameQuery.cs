@@ -14,7 +14,8 @@ public record GetSummonerLiveGameQuery(
         Guid Id)
     : IRequest<Result<LiveGameDto>>;
 
-public class GetSummonerLiveGameQueryHandler : IRequestHandler<GetSummonerLiveGameQuery, Result<LiveGameDto>>
+public class GetSummonerLiveGameQueryHandler
+    : IRequestHandler<GetSummonerLiveGameQuery, Result<LiveGameDto>>
 {
     private readonly IValidator<GetSummonerLiveGameQuery> _getSummonerLiveGameQueryValidator;
     private readonly ISummonerDomainService _summonerDomainService;
@@ -33,7 +34,9 @@ public class GetSummonerLiveGameQueryHandler : IRequestHandler<GetSummonerLiveGa
         _championRepository = championRepository;
     }
 
-    public Task<Result<LiveGameDto>> Handle(GetSummonerLiveGameQuery query, CancellationToken cancellationToken) =>
+    public Task<Result<LiveGameDto>> Handle(
+        GetSummonerLiveGameQuery query,
+        CancellationToken cancellationToken) =>
         _getSummonerLiveGameQueryValidator.ValidateAsync(query)
             .Bind(() => _summonerDomainService.GetByIdAsync(query.Id))
             .Bind(summoner => _riotClient.GetSummonerLiveGame(new GetSummonerLiveGameDto(
@@ -63,7 +66,8 @@ public class GetSummonerLiveGameQueryHandler : IRequestHandler<GetSummonerLiveGa
                 return new LiveGameTeamDto(
                     g.Select(p =>
                     {
-                        Champion championPlayedByParticipant = champions.Single(c => c.RiotChampionId == (int)p.ChampionId);
+                        Champion championPlayedByParticipant =
+                            champions.Single(c => c.RiotChampionId == (int)p.ChampionId);
 
                         return new LiveGameTeamParticipantDto(
                             championPlayedByParticipant.Id,

@@ -12,23 +12,21 @@ public class ChampionRepository : IChampionRepository
 
     public ChampionRepository()
     {
-        using (StreamReader r = new StreamReader(ConfigurationPaths.GetChampionConfigurationPath()))
-        {
-            var championConfigurationModel = JsonSerializer.Deserialize<ChampionConfigurationModel>(r.ReadToEnd());
-            var champions = championConfigurationModel.ChampionDataConfigurationModels.Select(c =>
-                new Champion(
-                    Int32.Parse(c.Value.Id),
-                    c.Value.Name,
-                    c.Value.Title,
-                    c.Value.Description,
-                    new ChampionImage(
-                        c.Value.ChampionConfigurationImageModel.FullFileName,
-                        c.Value.ChampionConfigurationImageModel.SpriteFileName,
-                        c.Value.ChampionConfigurationImageModel.Height,
-                        c.Value.ChampionConfigurationImageModel.Width)));
+        using StreamReader r = new StreamReader(ConfigurationPaths.GetChampionConfigurationPath());
+        var championConfigurationModel = JsonSerializer.Deserialize<ChampionConfigurationModel>(r.ReadToEnd());
+        var champions = championConfigurationModel.ChampionDataConfigurationModels.Select(c =>
+            new Champion(
+                Int32.Parse(c.Value.Id),
+                c.Value.Name,
+                c.Value.Title,
+                c.Value.Description,
+                ChampionImage.Create(
+                    c.Value.ChampionConfigurationImageModel.FullFileName,
+                    c.Value.ChampionConfigurationImageModel.SpriteFileName,
+                    c.Value.ChampionConfigurationImageModel.Height,
+                    c.Value.ChampionConfigurationImageModel.Width)));
             
-            _championsById = champions.ToImmutableDictionary(c => c.Id, c => c);
-        }
+        _championsById = champions.ToImmutableDictionary(c => c.Id, c => c);
     }
 
     public Task<Champion?> GetByIdAsync(Guid id) =>

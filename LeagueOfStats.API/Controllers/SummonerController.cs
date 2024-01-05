@@ -26,8 +26,11 @@ public class SummonerController : ControllerBase
             .ToIActionResult(this);
     
     [HttpGet("Search")]
-    public Task<IActionResult> SearchByGameNameAndTagLineAndRegion([FromQuery] string gameName, [FromQuery] string tagLine, [FromQuery] Region region) => 
-            _mediator.Send(new SearchSummonerByGameNameAndTagLineAndRegionQuery(gameName, tagLine, region))
+    public Task<IActionResult> SearchByGameNameAndTagLineAndRegion(
+        [FromQuery] string gameName,
+        [FromQuery] string tagLine,
+        [FromQuery] Region region) =>
+        _mediator.Send(new SearchSummonerByGameNameAndTagLineAndRegionQuery(gameName, tagLine, region))
             .ToIActionResult(this);
 
 

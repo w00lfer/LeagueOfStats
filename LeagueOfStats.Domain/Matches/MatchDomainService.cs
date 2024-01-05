@@ -23,19 +23,29 @@ public class MatchDomainService : IMatchDomainService
 
     public async Task<Result<IEnumerable<Match>>> AddMatchesAsync(IEnumerable<AddMatchDto> addMatchDtos)
     {
-        var alreadyExistingMatches = (await _matchRepository.GetAllByRiotMatchIdsAsync(addMatchDtos.Select(m => m.RiotMatchId))).ToList();
-        List<string> alreadyExistingMatchRiotMatchIds = alreadyExistingMatches.Select(m => m.RiotMatchId).ToList();
+        var alreadyExistingMatches =
+            (await _matchRepository.GetAllByRiotMatchIdsAsync(addMatchDtos.Select(m => m.RiotMatchId)))
+            .ToList();
+        
+        List<string> alreadyExistingMatchRiotMatchIds = alreadyExistingMatches
+            .Select(m => m.RiotMatchId)
+            .ToList();
 
-        var addMatchDtosToBeAdded = addMatchDtos.Where(addMatchDto => alreadyExistingMatchRiotMatchIds.Contains(addMatchDto.RiotMatchId) is false);
+        var addMatchDtosToBeAdded = addMatchDtos
+            .Where(addMatchDto => alreadyExistingMatchRiotMatchIds.Contains(addMatchDto.RiotMatchId) is false);
 
-            return await ValidateNumberOfSummonersInMatches(addMatchDtosToBeAdded)
+        return await ValidateNumberOfSummonersInMatches(addMatchDtosToBeAdded)
             .Bind(async () =>
             {
-                var matchesToAdd = addMatchDtosToBeAdded.Select(addMatchDto => new Match(addMatchDto));
-                
+                var matchesToAdd = addMatchDtosToBeAdded
+                    .Select(addMatchDto => new Match(addMatchDto));
+
                 await _matchRepository.AddRangeAsync(matchesToAdd);
 
-                var matches = alreadyExistingMatches.Concat(matchesToAdd).OrderByDescending(m => m.GameEndTimestamp).AsEnumerable();
+                var matches = alreadyExistingMatches
+                    .Concat(matchesToAdd)
+                    .OrderByDescending(m => m.GameEndTimestamp)
+                    .AsEnumerable();
 
                 return Result.Success(matches);
             });
@@ -43,11 +53,14 @@ public class MatchDomainService : IMatchDomainService
 
     private Result ValidateNumberOfSummonersInMatches(IEnumerable<AddMatchDto> addMatchDtos)
     {
-        var invalidAddMatchDtos = addMatchDtos.Where(m => IsNumberOfSummonerInMatchValid(m) is false).ToList();
+        var invalidAddMatchDtos = addMatchDtos
+            .Where(m => IsNumberOfSummonerInMatchValid(m) is false)
+            .ToList();
 
         return invalidAddMatchDtos.Count == 0
             ? Result.Success()
-            : new DomainError($"{invalidAddMatchDtos.Select(m => $"Could not create Match with GameType=GameType and number of Summoners={m.AddParticipantDtos.Count()}")}");
+            : new DomainError(
+                $"{invalidAddMatchDtos.Select(m => $"Could not create Match with GameType=GameType and number of Summoners={m.AddParticipantDtos.Count()}")}");
     }
 
     private bool IsNumberOfSummonerInMatchValid(AddMatchDto addMatchDto) =>

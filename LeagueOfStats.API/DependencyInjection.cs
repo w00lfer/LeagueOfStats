@@ -24,20 +24,20 @@ public static class DependencyInjection
                 options.JsonSerializerOptions.ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
-        
-        services.Configure<ApiBehaviorOptions>(options =>
-        {
-            options.SuppressModelStateInvalidFilter = true;
-        });
+
+        services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
 
         AddSwagger(builder);
-        
+
         AddKeyVault(builder);
-        
-        services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
-        
-        services.Configure<EntityUpdateLockoutOptions>(builder.Configuration.GetSection(nameof(EntityUpdateLockoutOptions)));
-        services.Configure<RiotApiKeyOptions>(builder.Configuration.GetSection(nameof(RiotApiKeyOptions)));
+
+        services.AddFluentValidationAutoValidation()
+            .AddFluentValidationClientsideAdapters();
+
+        services.Configure<EntityUpdateLockoutOptions>(
+            builder.Configuration.GetSection(nameof(EntityUpdateLockoutOptions)));
+        services.Configure<RiotApiKeyOptions>(
+            builder.Configuration.GetSection(nameof(RiotApiKeyOptions)));
 
         services.AddSingleton<IEntityUpdateLockoutService, EntityUpdateLockoutService>();
         services.AddScoped<IRiotClient, RiotClient>();
@@ -49,7 +49,10 @@ public static class DependencyInjection
         builder.Services.AddSwaggerGen(c =>
         {
             c.AddEnumsWithValuesFixFilters();
-            c.MapType<Instant>(() => new OpenApiSchema { Type = "string" });
+            c.MapType<Instant>(() => new OpenApiSchema
+            {
+                Type = "string"
+            });
         });
     }
 
@@ -58,10 +61,13 @@ public static class DependencyInjection
         var azureCredential = new DefaultAzureCredential(
             new DefaultAzureCredentialOptions
             {
-                ManagedIdentityClientId = builder.Configuration.GetSection("ManagedIdentityClientId").Value!,
+                ManagedIdentityClientId = builder.Configuration.GetSection("ManagedIdentityClientId")
+                    .Value!,
             });
-        var keyVaultUrl = new Uri((builder.Configuration.GetSection("KeyVaultURL").Value!));
-        
-        builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
+        var keyVaultUrl = new Uri((builder.Configuration.GetSection("KeyVaultURL")
+            .Value!));
+
+        builder.Configuration.AddAzureKeyVault(keyVaultUrl,
+            azureCredential);
     }
 }

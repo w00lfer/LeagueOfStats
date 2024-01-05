@@ -1,6 +1,5 @@
 using LeagueOfStats.API.Extensions;
 using LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMasteries;
-using LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

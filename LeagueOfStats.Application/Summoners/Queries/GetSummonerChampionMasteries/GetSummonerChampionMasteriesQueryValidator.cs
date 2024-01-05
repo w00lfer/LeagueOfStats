@@ -1,7 +1,6 @@
 using FluentValidation;
-using LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMasteries;
 
-namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
+namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMasteries;
 
 public class GetSummonerChampionMasteriesQueryValidator : AbstractValidator<GetSummonerChampionMasteriesQuery>
 {

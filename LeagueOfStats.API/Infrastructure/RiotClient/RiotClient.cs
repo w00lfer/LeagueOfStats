@@ -32,7 +32,9 @@ public class RiotClient : IRiotClient
     {
         try
         { 
-            Summoner? summoner = await _riotGamesApi.SummonerV4().GetByPUUIDAsync(region.ToPlatformRoute(), puuid);
+            Summoner? summoner = await _riotGamesApi
+                .SummonerV4()
+                .GetByPUUIDAsync(region.ToPlatformRoute(), puuid);
             
             return summoner is not null
                 ? summoner
@@ -45,19 +47,26 @@ public class RiotClient : IRiotClient
         }
     }
 
-    public async Task<Result<Summoner>> GetSummonerByGameNameAndTaglineAsync(string gameName, string tagLine, Region region)
+    public async Task<Result<Summoner>> GetSummonerByGameNameAndTaglineAsync(
+        string gameName,
+        string tagLine,
+        Region region)
     {
         try
         {
             // no need to use region here. just use closes cluster to server
-            Account? account = await _riotGamesApi.AccountV1().GetByRiotIdAsync(region.ToRegionalRoute(), gameName, tagLine);
+            Account? account = await _riotGamesApi
+                .AccountV1()
+                .GetByRiotIdAsync(region.ToRegionalRoute(), gameName, tagLine);
 
             if (account is null)
             {
                 return new ApiError($"There is no such account: {gameName}#{tagLine}");
             }
 
-            Summoner? summoner = await _riotGamesApi.SummonerV4().GetByPUUIDAsync(region.ToPlatformRoute(), account.Puuid);
+            Summoner? summoner = await _riotGamesApi
+                .SummonerV4()
+                .GetByPUUIDAsync(region.ToPlatformRoute(), account.Puuid);
             
             return summoner is not null
                 ? summoner
@@ -70,14 +79,17 @@ public class RiotClient : IRiotClient
         }
     }
 
-    public async Task<Result<ChampionMastery[]>> GetSummonerChampionMasteryByPuuid(string puuid, Region region)
+    public async Task<Result<ChampionMastery[]>> GetSummonerChampionMasteryByPuuid(
+        string puuid,
+        Region region)
     {
         ChampionMastery[] championMasteries;
         try
         {
-            championMasteries = await _riotGamesApi.ChampionMasteryV4().GetAllChampionMasteriesByPUUIDAsync(region.ToPlatformRoute(), puuid);
-            
-            // There must be always champion mastery for existing player. So either PUUID is invalid or there were other network problems with Camille
+            championMasteries = await _riotGamesApi
+                .ChampionMasteryV4()
+                .GetAllChampionMasteriesByPUUIDAsync(region.ToPlatformRoute(), puuid);
+
             return championMasteries is not null
                 ? championMasteries
                 : new ApiError($"Summoner with Puuid={puuid} and Region={region} neither does not exist or has no champion masteries.");
@@ -89,19 +101,25 @@ public class RiotClient : IRiotClient
         }
     }
 
-    public async Task<Result<IEnumerable<Match>>> GetSummonerMatchHistorySummary(GetSummonerMatchHistoryDto getSummonerMatchHistoryDto)
+    public async Task<Result<IEnumerable<Match>>> GetSummonerMatchHistorySummary(
+        GetSummonerMatchHistoryDto getSummonerMatchHistoryDto)
     {
         try
         {
-            var matchHistoryIds = await _riotGamesApi.MatchV5().GetMatchIdsByPUUIDAsync(
-                getSummonerMatchHistoryDto.Region.ToRegionalRoute(),
-                getSummonerMatchHistoryDto.Puuid,
-                getSummonerMatchHistoryDto.Count,
-                getSummonerMatchHistoryDto.GameEndedAt.ToUnixTimeSeconds(),
-                getSummonerMatchHistoryDto.QueueFilter.ToNullableQueue());
+            var matchHistoryIds = await _riotGamesApi
+                .MatchV5()
+                .GetMatchIdsByPUUIDAsync(
+                    getSummonerMatchHistoryDto.Region.ToRegionalRoute(),
+                    getSummonerMatchHistoryDto.Puuid,
+                    getSummonerMatchHistoryDto.Count,
+                    getSummonerMatchHistoryDto.GameEndedAt.ToUnixTimeSeconds(),
+                    getSummonerMatchHistoryDto.QueueFilter.ToNullableQueue());
 
-            var matches = await Task.WhenAll(matchHistoryIds.Select(mId =>
-                _riotGamesApi.MatchV5().GetMatchAsync(getSummonerMatchHistoryDto.Region.ToRegionalRoute(), mId)));
+            var matches = await Task.WhenAll(
+                matchHistoryIds.Select(mId =>
+                    _riotGamesApi
+                        .MatchV5()
+                        .GetMatchAsync(getSummonerMatchHistoryDto.Region.ToRegionalRoute(), mId)));
 
             return Result.Success<IEnumerable<Match>>(matches.Where(m => m is not null));
         }
@@ -112,13 +130,16 @@ public class RiotClient : IRiotClient
         }
     }
 
-    public async Task<Result<CurrentGameInfo?>> GetSummonerLiveGame(GetSummonerLiveGameDto getSummonerLiveGameDto)
+    public async Task<Result<CurrentGameInfo?>> GetSummonerLiveGame(
+        GetSummonerLiveGameDto getSummonerLiveGameDto)
     {
         try
         {
             CurrentGameInfo? liveGame = await _riotGamesApi
                 .SpectatorV4()
-                .GetCurrentGameInfoBySummonerAsync(getSummonerLiveGameDto.Region.ToPlatformRoute(), getSummonerLiveGameDto.RiotSummonerId);
+                .GetCurrentGameInfoBySummonerAsync(
+                    getSummonerLiveGameDto.Region.ToPlatformRoute(),
+                    getSummonerLiveGameDto.RiotSummonerId);
 
             return liveGame is not null
                 ? liveGame
@@ -130,14 +151,12 @@ public class RiotClient : IRiotClient
             return new ApiError("There are problems on Riot API side");
         }
     }
-        
+
     private RiotGamesApi GetConfiguredRiotGamesApi(string riotApiKey)
     {
         var config = new RiotGamesApiConfig.Builder(riotApiKey)
-        {
-                
-        }.Build();
-            
+            .Build();
+
         return RiotGamesApi.NewInstance(config);
     }
 }

@@ -1,16 +1,13 @@
 using System.Reflection;
 using FluentValidation;
 using LeagueOfStats.Application.Common.Validators;
-using LeagueOfStats.Application.Summoners;
-using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LeagueOfStats.Application;
 
 public static class DependencyInjection
 {
-    public static void AddApplicationDI(this IServiceCollection services, IConfiguration configuration)
+    public static void AddApplicationDI(this IServiceCollection services)
     {
         AddMediatR(services);
         AddValidation(services);

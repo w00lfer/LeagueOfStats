@@ -1,5 +1,6 @@
 using LeagueOfStats.Domain.Common.Rails.Errors;
 using LeagueOfStats.Domain.Common.Rails.Results;
+using LeagueOfStats.Domain.Summoners.Dtos;
 using NodaTime;
 
 namespace LeagueOfStats.Domain.Summoners;
@@ -46,16 +47,23 @@ public class SummonerDomainService : ISummonerDomainService
             createSummonerDto.SummonerLevel,
             SummonerName.Create(createSummonerDto.GameName, createSummonerDto.TagLine),
             createSummonerDto.Region,
-            createSummonerDto.UpdateChampionMasteryDtos, _clock.GetCurrentInstant());
+            createSummonerDto.UpdateChampionMasteryDtos,
+            _clock.GetCurrentInstant());
                     
         await _summonerRepository.AddAsync(summoner);
 
         return summoner;
     }
-    
-    public async Task UpdateDetailsAsync(Summoner summoner, UpdateDetailsSummonerDto updateDetailsSummonerDto)
-    { 
-        summoner.Update(updateDetailsSummonerDto.ProfileIconId, updateDetailsSummonerDto.SummonerLevel, updateDetailsSummonerDto.UpdateChampionMasteryDtos, _clock.GetCurrentInstant());
+
+    public async Task UpdateDetailsAsync(Summoner summoner,
+        UpdateDetailsSummonerDto updateDetailsSummonerDto)
+    {
+        summoner.Update(
+            updateDetailsSummonerDto.ProfileIconId,
+            updateDetailsSummonerDto.SummonerLevel,
+            updateDetailsSummonerDto.UpdateChampionMasteryDtos,
+            _clock.GetCurrentInstant());
+        
         await _summonerRepository.UpdateAsync(summoner);
     }
 }

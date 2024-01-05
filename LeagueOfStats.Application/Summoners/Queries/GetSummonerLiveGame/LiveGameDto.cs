@@ -1,4 +1,4 @@
-using LeagueOfStats.Domain.Matches;
+using LeagueOfStats.Domain.Matches.Enums;
 using NodaTime;
 
 namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerLiveGame;

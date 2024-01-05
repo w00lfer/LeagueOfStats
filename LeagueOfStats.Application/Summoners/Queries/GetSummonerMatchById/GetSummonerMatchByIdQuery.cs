@@ -2,6 +2,7 @@ using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Matches;
+using LeagueOfStats.Domain.Matches.Enums;
 using LeagueOfStats.Domain.Matches.Participants;
 using LeagueOfStats.Domain.Summoners;
 using MediatR;
@@ -14,7 +15,8 @@ public record GetSummonerMatchByIdQuery(
     Guid Id)
     : IRequest<Result<MatchDetailsDto>>;
 
-public class GetSummonerMatchByIdQueryHandler : IRequestHandler<GetSummonerMatchByIdQuery, Result<MatchDetailsDto>>
+public class GetSummonerMatchByIdQueryHandler
+    : IRequestHandler<GetSummonerMatchByIdQuery, Result<MatchDetailsDto>>
 {
     private readonly IValidator<GetSummonerMatchByIdQuery> _getSummonerMatchByIdQuery;
     private readonly ISummonerDomainService _summonerDomainService;
@@ -36,13 +38,17 @@ public class GetSummonerMatchByIdQueryHandler : IRequestHandler<GetSummonerMatch
         _championRepository = championRepository;
     }
 
-    public Task<Result<MatchDetailsDto>> Handle(GetSummonerMatchByIdQuery query, CancellationToken cancellationToken) =>
+    public Task<Result<MatchDetailsDto>> Handle(
+        GetSummonerMatchByIdQuery query,
+        CancellationToken cancellationToken) =>
         _getSummonerMatchByIdQuery.ValidateAsync(query)
             .Bind(() => _summonerDomainService.GetByIdAsync(query.SummonerId))
             .Bind(_ => _matchDomainService.GetByIdAsync(query.Id))
             .Map(match => MapToMatchDetailsDtoAsync(match, query.SummonerId));
     
-    private async Task<MatchDetailsDto> MapToMatchDetailsDtoAsync(Match match, Guid summonerId) =>
+    private async Task<MatchDetailsDto> MapToMatchDetailsDtoAsync(
+        Match match,
+        Guid summonerId) => 
         new(
             match.Id,
             await MapParticipantsToMatchDetailsTeamDtosAsync(
@@ -65,7 +71,10 @@ public class GetSummonerMatchByIdQueryHandler : IRequestHandler<GetSummonerMatch
         Guid summonerId) 
     {
         var champions = (await _championRepository.GetAllAsync()).ToList();
-        var summoners = (await _summonerRepository.GetAllAsync(participants.Select(p => p.SummonerId).ToArray())).ToList();
+        var summoners = (await _summonerRepository
+                .GetAllAsync(participants.Select(p => p.SummonerId)
+                .ToArray()))
+            .ToList();
         
         if (gameMode is GameMode.Arena)
         {
