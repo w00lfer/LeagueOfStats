@@ -11,7 +11,7 @@ namespace LeagueOfStats.Infrastructure;
 
     public static class DependencyInjection
     {
-        public static void AddInfrastructureDI(this IServiceCollection services, IConfiguration configuration)
+        public static void AddInfrastructureDI(this IServiceCollection services)
         {
             services.AddSingleton<IChampionRepository, ChampionRepository>();
             

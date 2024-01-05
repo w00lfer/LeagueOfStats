@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApiDI(builder);
 builder.Services.AddApplicationDI(builder.Configuration);
-builder.Services.AddInfrastructureDI(builder.Configuration);
+builder.Services.AddInfrastructureDI();
 builder.Services.AddDomainDI(builder.Configuration);
 
 var app = builder.Build();
