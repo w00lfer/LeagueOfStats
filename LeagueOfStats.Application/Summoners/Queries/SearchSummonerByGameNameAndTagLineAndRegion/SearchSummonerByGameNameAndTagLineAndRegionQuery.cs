@@ -4,6 +4,7 @@ using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Summoners;
+using LeagueOfStats.Domain.Summoners.Dtos;
 using MediatR;
 using NodaTime;
 

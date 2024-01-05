@@ -1,4 +1,4 @@
-namespace LeagueOfStats.Domain.Matches;
+namespace LeagueOfStats.Domain.Matches.Enums;
 
 public enum Queue
 {

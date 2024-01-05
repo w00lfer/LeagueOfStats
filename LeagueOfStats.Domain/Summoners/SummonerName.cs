@@ -4,8 +4,14 @@ namespace LeagueOfStats.Domain.Summoners;
 
 public class SummonerName : ValueObject
 {
+    private SummonerName(string gameName, string tagLine)
+    {
+        GameName = gameName;
+        TagLine = tagLine;
+    }
+    
     internal static SummonerName Create(string gameName, string tagLine) =>
-        new SummonerName(gameName, tagLine);
+        new(gameName, tagLine);
     
     public string GameName { get; }
     
@@ -13,15 +19,10 @@ public class SummonerName : ValueObject
     
     public override IEnumerable<object> GetEqualityComponents()
     {
-        throw new NotImplementedException();
+        yield return GameName;
+        yield return TagLine;
     }
 
     public override string ToString() =>
         $"{GameName}#{TagLine}";
-    
-    private SummonerName(string gameName, string tagLine)
-    {
-        GameName = gameName;
-        TagLine = tagLine;
-    }
 }

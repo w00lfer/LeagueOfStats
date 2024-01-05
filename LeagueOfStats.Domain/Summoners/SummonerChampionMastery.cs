@@ -1,4 +1,3 @@
-using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Entities;
 
 namespace LeagueOfStats.Domain.Summoners;
@@ -6,7 +5,15 @@ namespace LeagueOfStats.Domain.Summoners;
 // Aggregate member of Summoner
 public class SummonerChampionMastery : Entity
 {
-    public SummonerChampionMastery(int riotChampionId, int championLevel, int championPoints, long championPointsSinceLastLevel, long championPointsUntilNextLevel, bool chestGranted, long lastPlayTime, int tokensEarned)
+    public SummonerChampionMastery(
+        int riotChampionId,
+        int championLevel,
+        int championPoints,
+        long championPointsSinceLastLevel,
+        long championPointsUntilNextLevel,
+        bool chestGranted,
+        long lastPlayTime,
+        int tokensEarned)
         : base(Guid.NewGuid())
     {
         RiotChampionId = riotChampionId;
@@ -35,7 +42,14 @@ public class SummonerChampionMastery : Entity
     
     public int TokensEarned { get; private set; }
 
-    internal void Update(int championLevel, int championPoints, long championPointsSinceLastLevel, long championPointsUntilNextLevel, bool chestGranted, long lastPlayTime, int tokensEarned)
+    internal void Update(
+        int championLevel,
+        int championPoints,
+        long championPointsSinceLastLevel,
+        long championPointsUntilNextLevel,
+        bool chestGranted,
+        long lastPlayTime,
+        int tokensEarned)
     {
         ChampionLevel = championLevel;
         ChampionPoints = championPoints;

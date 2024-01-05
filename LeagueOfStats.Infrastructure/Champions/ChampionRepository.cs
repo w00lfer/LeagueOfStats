@@ -20,7 +20,7 @@ public class ChampionRepository : IChampionRepository
                 c.Value.Name,
                 c.Value.Title,
                 c.Value.Description,
-                new ChampionImage(
+                ChampionImage.Create(
                     c.Value.ChampionConfigurationImageModel.FullFileName,
                     c.Value.ChampionConfigurationImageModel.SpriteFileName,
                     c.Value.ChampionConfigurationImageModel.Height,

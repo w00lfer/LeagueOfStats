@@ -1,5 +1,6 @@
 using LeagueOfStats.Domain.Common.Entities;
 using LeagueOfStats.Domain.Common.Enums;
+using LeagueOfStats.Domain.Summoners.Dtos;
 using NodaTime;
 
 namespace LeagueOfStats.Domain.Summoners;
@@ -31,16 +32,17 @@ public class Summoner : AggregateRoot
         Region = region;
         LastUpdated = lastUpdated;
         
-        _summonerChampionMasteries.AddRange(updateChampionMasteryDtos.Select(championMasteryForAdd =>
-            new SummonerChampionMastery(
-                championMasteryForAdd.RiotChampionId,
-                championMasteryForAdd.ChampionLevel,
-                championMasteryForAdd.ChampionPoints,
-                championMasteryForAdd.ChampionPointsSinceLastLevel,
-                championMasteryForAdd.ChampionPointsUntilNextLevel,
-                championMasteryForAdd.ChestGranted,
-                championMasteryForAdd.LastPlayTime,
-                championMasteryForAdd.TokensEarned)));
+        _summonerChampionMasteries.AddRange(updateChampionMasteryDtos
+            .Select(championMasteryForAdd =>
+                new SummonerChampionMastery(
+                    championMasteryForAdd.RiotChampionId,
+                    championMasteryForAdd.ChampionLevel,
+                    championMasteryForAdd.ChampionPoints,
+                    championMasteryForAdd.ChampionPointsSinceLastLevel,
+                    championMasteryForAdd.ChampionPointsUntilNextLevel,
+                    championMasteryForAdd.ChestGranted,
+                    championMasteryForAdd.LastPlayTime,
+                    championMasteryForAdd.TokensEarned)));
     }
     
     public string SummonerId { get; }
@@ -64,7 +66,11 @@ public class Summoner : AggregateRoot
 
     public List<SummonerChampionMastery> SummonerChampionMasteries => _summonerChampionMasteries.ToList();
 
-    internal void Update(int profileIconId, long summonerLevel, IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos, Instant lastUpdated)
+    internal void Update(
+        int profileIconId,
+        long summonerLevel,
+        IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos,
+        Instant lastUpdated)
     {
         ProfileIconId = profileIconId;
         SummonerLevel = summonerLevel;
@@ -75,11 +81,20 @@ public class Summoner : AggregateRoot
 
     private void UpdateSummonerChampionMasteries(IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos)
     {
-        var existingMasteryForChampionIds = _summonerChampionMasteries.Select(c => c.RiotChampionId).ToList();
-        var championMasteriesForUpdate = updateChampionMasteryDtos.Where(c => existingMasteryForChampionIds.Contains(c.RiotChampionId));
+        var existingMasteryForChampionIds = _summonerChampionMasteries
+            .Select(c => c.RiotChampionId)
+            .ToList();
+        
+        var championMasteriesForUpdate =
+            updateChampionMasteryDtos
+                .Where(c => existingMasteryForChampionIds.Contains(c.RiotChampionId));
+        
         foreach (var championMasteryForUpdate in championMasteriesForUpdate)
-        { 
-            var updateChampionMasteryDto = _summonerChampionMasteries.Single(c => c.RiotChampionId == championMasteryForUpdate.RiotChampionId);
+        {
+            var updateChampionMasteryDto =
+                _summonerChampionMasteries.Single(c =>
+                    c.RiotChampionId == championMasteryForUpdate.RiotChampionId);
+            
             updateChampionMasteryDto.Update(
                 updateChampionMasteryDto.ChampionLevel,
                 updateChampionMasteryDto.ChampionPoints,
@@ -89,8 +104,9 @@ public class Summoner : AggregateRoot
                 updateChampionMasteryDto.LastPlayTime,
                 updateChampionMasteryDto.TokensEarned);
         }
-        
-        var championMasteriesForAdd = updateChampionMasteryDtos.Where(c => existingMasteryForChampionIds.Contains(c.RiotChampionId) is false);
+
+        var championMasteriesForAdd = updateChampionMasteryDtos
+            .Where(c => existingMasteryForChampionIds.Contains(c.RiotChampionId) is false);
         foreach (var championMasteryForAdd in championMasteriesForAdd)
         {
             _summonerChampionMasteries.Add(

@@ -1,6 +1,6 @@
 using LeagueOfStats.Domain.Common.Enums;
 
-namespace LeagueOfStats.Domain.Summoners;
+namespace LeagueOfStats.Domain.Summoners.Dtos;
 
 public record CreateSummonerDto(
     string SummonerId,

@@ -4,7 +4,6 @@ using LeagueOfStats.Domain.Summoners;
 using LeagueOfStats.Infrastructure.Champions;
 using LeagueOfStats.Infrastructure.Matches;
 using LeagueOfStats.Infrastructure.Summoners;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LeagueOfStats.Infrastructure;

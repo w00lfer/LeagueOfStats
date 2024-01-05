@@ -1,5 +1,5 @@
 using LeagueOfStats.Domain.Common.Entities;
-using LeagueOfStats.Domain.Common.Enums;
+using LeagueOfStats.Domain.Matches.Enums;
 using LeagueOfStats.Domain.Matches.Participants;
 using LeagueOfStats.Domain.Matches.Teams;
 using NodaTime;
@@ -27,8 +27,10 @@ public class Match : AggregateRoot
         Queue = addMatchDto.Queue;
         TournamentCode = addMatchDto.TournamentCode;
         
-        _participants.AddRange(addMatchDto.AddParticipantDtos.Select(addParticipantDto => new Participant(addParticipantDto)));
-        _teams.AddRange(addMatchDto.AddTeamDtos.Select(addTeamDto => new Team(addTeamDto)));
+        _participants.AddRange(addMatchDto.AddParticipantDtos
+            .Select(addParticipantDto => new Participant(addParticipantDto)));
+        _teams.AddRange(addMatchDto.AddTeamDtos
+            .Select(addTeamDto => new Team(addTeamDto)));
     }
     
     public string RiotMatchId { get; }

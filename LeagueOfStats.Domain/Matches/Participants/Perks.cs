@@ -13,7 +13,8 @@ public class Perks : Entity
     {
         StatPerks = new PerkStats(addPerksDto.AddPerkStatsDto);
         
-        _styles.AddRange(addPerksDto.AddPerkStyleDtos.Select(addPerkStyleDto => new PerkStyle(addPerkStyleDto)));
+        _styles.AddRange(addPerksDto.AddPerkStyleDtos
+            .Select(addPerkStyleDto => new PerkStyle(addPerkStyleDto)));
     }
 
     public PerkStats StatPerks { get; }

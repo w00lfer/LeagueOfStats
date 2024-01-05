@@ -80,7 +80,9 @@ public class Result
             ? Success(value)
             : Failure<T>(error);
 
-    public static Result<T> Ensure<T>(T value, params (Func<T, bool> predicate, Error error)[] functions)
+    public static Result<T> Ensure<T>(
+        T value, 
+        params (Func<T, bool> predicate, Error error)[] functions)
     {
         var results = new List<Result<T>>();
 
@@ -107,7 +109,9 @@ public class Result
         return Success(results[0].Value);
     }
 
-    public static Result<(T1, T2)> Combine<T1, T2>(Result<T1> result1, Result<T2> result2)
+    public static Result<(T1, T2)> Combine<T1, T2>(
+        Result<T1> result1,
+        Result<T2> result2)
     {
         if (result1.IsFailure)
         {

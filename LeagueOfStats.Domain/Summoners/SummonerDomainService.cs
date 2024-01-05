@@ -1,5 +1,6 @@
 using LeagueOfStats.Domain.Common.Rails.Errors;
 using LeagueOfStats.Domain.Common.Rails.Results;
+using LeagueOfStats.Domain.Summoners.Dtos;
 using NodaTime;
 
 namespace LeagueOfStats.Domain.Summoners;
@@ -46,7 +47,8 @@ public class SummonerDomainService : ISummonerDomainService
             createSummonerDto.SummonerLevel,
             SummonerName.Create(createSummonerDto.GameName, createSummonerDto.TagLine),
             createSummonerDto.Region,
-            createSummonerDto.UpdateChampionMasteryDtos, _clock.GetCurrentInstant());
+            createSummonerDto.UpdateChampionMasteryDtos,
+            _clock.GetCurrentInstant());
                     
         await _summonerRepository.AddAsync(summoner);
 

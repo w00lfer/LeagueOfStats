@@ -14,7 +14,8 @@ public class PerkStyle : Entity
         Description = addPerkStyleDto.Description;
         Style = addPerkStyleDto.Style;
         
-        _selections.AddRange(addPerkStyleDto.AddPerkStyleSelectionDtos.Select(addPerkStyleSelectionDto => new PerkStyleSelection(addPerkStyleSelectionDto)));
+        _selections.AddRange(addPerkStyleDto.AddPerkStyleSelectionDtos
+            .Select(addPerkStyleSelectionDto => new PerkStyleSelection(addPerkStyleSelectionDto)));
     }
     
     public string Description { get; }

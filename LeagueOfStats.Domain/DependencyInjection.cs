@@ -8,7 +8,7 @@ namespace LeagueOfStats.Domain;
 
 public static class DependencyInjection
 {
-    public static void AddDomainDI(this IServiceCollection services, IConfiguration configuration)
+    public static void AddDomainDI(this IServiceCollection services)
     {
         services.AddSingleton<IClock>(c => SystemClock.Instance);
         services.AddScoped<ISummonerDomainService, SummonerDomainService>();
