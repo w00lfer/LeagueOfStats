@@ -2,7 +2,8 @@ using FluentValidation;
 
 namespace LeagueOfStats.Application.Summoners.Queries.SearchSummonerByGameNameAndTagLineAndRegion;
 
-public class SearchSummonerByGameNameAndTagLineAndRegionQueryValidator : AbstractValidator<SearchSummonerByGameNameAndTagLineAndRegionQuery>
+public class SearchSummonerByGameNameAndTagLineAndRegionQueryValidator
+    : AbstractValidator<SearchSummonerByGameNameAndTagLineAndRegionQuery>
 {
     public SearchSummonerByGameNameAndTagLineAndRegionQueryValidator()
     {

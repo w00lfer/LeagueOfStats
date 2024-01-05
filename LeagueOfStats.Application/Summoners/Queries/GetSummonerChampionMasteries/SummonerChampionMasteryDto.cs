@@ -1,4 +1,4 @@
-namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
+namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMasteries;
 
 public record SummonerChampionMasteryDto(
     int ChampionId,

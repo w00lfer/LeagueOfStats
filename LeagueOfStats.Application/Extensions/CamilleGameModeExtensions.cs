@@ -1,4 +1,3 @@
-using LeagueOfStats.Domain.Matches;
 using LeagueOfStats.Domain.Matches.Enums;
 
 namespace LeagueOfStats.Application.Extensions;

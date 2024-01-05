@@ -16,7 +16,8 @@ public record SearchSummonerByGameNameAndTagLineAndRegionQuery(
     Region Region)
     : IRequest<Result<SummonerDto>>;
 
-public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestHandler<SearchSummonerByGameNameAndTagLineAndRegionQuery, Result<SummonerDto>>
+public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler
+    : IRequestHandler<SearchSummonerByGameNameAndTagLineAndRegionQuery, Result<SummonerDto>>
 {
     private readonly IValidator<SearchSummonerByGameNameAndTagLineAndRegionQuery> _searchSummonerByGameNameAndTagLineAndRegionQueryValidator;
     private readonly IRiotClient _riotClient;
@@ -35,7 +36,8 @@ public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler : IRequestH
         _entityUpdateLockoutService = entityUpdateLockoutService;
     }
 
-    public Task<Result<SummonerDto>> Handle(SearchSummonerByGameNameAndTagLineAndRegionQuery query,
+    public Task<Result<SummonerDto>> Handle(
+        SearchSummonerByGameNameAndTagLineAndRegionQuery query,
         CancellationToken cancellationToken) =>
         _searchSummonerByGameNameAndTagLineAndRegionQueryValidator.ValidateAsync(query)
             .Bind(() => _riotClient.GetSummonerByGameNameAndTaglineAsync(query.GameName,

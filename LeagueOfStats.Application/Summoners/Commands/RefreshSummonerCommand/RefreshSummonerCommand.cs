@@ -44,10 +44,14 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
             .Bind(summoner =>
                 CanSummonerCanBeUpdatedWithRiotData(summoner)
                     ? UpdateSummonerDataWithDataFromRiotApiAsync(summoner)
-                    : Task.FromResult(Result.Failure(new ApplicationError($"Could not update summoner. Try refresh data on: {summoner.LastUpdated.Plus(Duration.FromMinutes(2))}."))));
+                    : Task.FromResult(Result.Failure(
+                        new ApplicationError($"Could not update summoner. Try refresh data on: {summoner.LastUpdated.Plus(Duration.FromMinutes(2))}."))));
     
     private bool CanSummonerCanBeUpdatedWithRiotData(Summoner summoner) =>
-        _clock.GetCurrentInstant().Minus(summoner.LastUpdated).TotalMinutes >= _entityUpdateLockoutService.GetSummonerUpdateLockoutInMinutes();
+        GetSummonerMinutesFromLastUpdate(summoner) >= _entityUpdateLockoutService.GetSummonerUpdateLockoutInMinutes();
+
+    private double GetSummonerMinutesFromLastUpdate(Summoner summoner) => 
+        _clock.GetCurrentInstant().Minus(summoner.LastUpdated).TotalMinutes;
 
     private Task<Result> UpdateSummonerDataWithDataFromRiotApiAsync(Summoner summoner) =>
         _riotClient.GetSummonerByPuuidAsync(summoner.Puuid, summoner.Region)

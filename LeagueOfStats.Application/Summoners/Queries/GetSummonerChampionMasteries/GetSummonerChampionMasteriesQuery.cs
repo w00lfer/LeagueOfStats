@@ -1,6 +1,5 @@
 using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.Common.Validators;
-using LeagueOfStats.Application.Summoners.Queries.GetSummonerChampionMastery;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Summoners;
@@ -12,7 +11,8 @@ public record GetSummonerChampionMasteriesQuery(
     Guid SummonerId) 
     : IRequest<Result<IEnumerable<SummonerChampionMasteryDto>>>;
 
-public class GetSummonerChampionMasteriesQueryHandler : IRequestHandler<GetSummonerChampionMasteriesQuery, Result<IEnumerable<SummonerChampionMasteryDto>>>
+public class GetSummonerChampionMasteriesQueryHandler
+    : IRequestHandler<GetSummonerChampionMasteriesQuery, Result<IEnumerable<SummonerChampionMasteryDto>>>
 {
     private readonly IValidator<GetSummonerChampionMasteriesQuery> _getSummonerChampionMasteriesQueryValidator;
     private readonly ISummonerDomainService _summonerDomainService;
@@ -28,40 +28,46 @@ public class GetSummonerChampionMasteriesQueryHandler : IRequestHandler<GetSummo
         _championRepository = championRepository;
     }
 
-    public Task<Result<IEnumerable<SummonerChampionMasteryDto>>> Handle(GetSummonerChampionMasteriesQuery query, CancellationToken cancellationToken) =>
+    public Task<Result<IEnumerable<SummonerChampionMasteryDto>>> Handle(
+        GetSummonerChampionMasteriesQuery query,
+        CancellationToken cancellationToken) =>
         _getSummonerChampionMasteriesQueryValidator.ValidateAsync(query)
             .Bind(() => _summonerDomainService.GetByIdAsync(query.SummonerId))
             .Bind(summoner => MapToSummonerChampionMasteryDtos(summoner.SummonerChampionMasteries));
     
-    private async Task<Result<IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(IEnumerable<SummonerChampionMastery> summonerChampionMasteries)
+    private async Task<Result<IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(
+        IEnumerable<SummonerChampionMastery> summonerChampionMasteries)
     {
-        var championMasteriesByRiotChampionId = summonerChampionMasteries.ToDictionary(championMastery => (int)championMastery.RiotChampionId, championMastery => championMastery);
+        var championMasteriesByRiotChampionId = summonerChampionMasteries
+            .ToDictionary(championMastery => championMastery.RiotChampionId, championMastery => championMastery);
 
-        var championsByRiotChampionId = (await _championRepository.GetAllAsync()).ToDictionary(champion => champion.RiotChampionId, champion => champion);
+        var championsByRiotChampionId = (await _championRepository.GetAllAsync())
+            .ToDictionary(champion => champion.RiotChampionId, champion => champion);
 
-        if (championMasteriesByRiotChampionId.Keys.All(c => championsByRiotChampionId.Keys.Select(k => k).Contains(c)) is false)
+        if (championMasteriesByRiotChampionId.Keys.All(cId => championsByRiotChampionId.ContainsKey(cId)) is false)
         {
-            return new ApplicationError("Champions from masteries differ than champions from domain");
+            return new ApplicationError("Champions from masteries differ than champions from domain.");
         }
 
-        var summonerChampionMasteryDtos = championMasteriesByRiotChampionId.Select(championMasteryByRiotChampionId =>
-        {
-            championsByRiotChampionId.TryGetValue(championMasteryByRiotChampionId.Key, out var champion);
-            var championMastery = championMasteryByRiotChampionId.Value;
+        var summonerChampionMasteryDtos = championMasteriesByRiotChampionId
+            .Select(championMasteryByRiotChampionId => 
+            {
+                var champion = championsByRiotChampionId[championMasteryByRiotChampionId.Key];
+                var championMastery = championMasteryByRiotChampionId.Value;
 
-            return new SummonerChampionMasteryDto(
-                champion!.RiotChampionId,
-                champion.Name,
-                championMastery.ChampionLevel,
-                champion.Title,
-                champion.Description,
-                champion.ChampionImage.FullFileName,
-                champion.ChampionImage.SpriteFileName,
-                champion.ChampionImage.Height,
-                champion.ChampionImage.Width,
-                championMastery.ChampionPoints,
-                championMastery.ChestGranted);
-        });
+                return new SummonerChampionMasteryDto(
+                    champion!.RiotChampionId,
+                    champion.Name,
+                    championMastery.ChampionLevel,
+                    champion.Title,
+                    champion.Description,
+                    champion.ChampionImage.FullFileName,
+                    champion.ChampionImage.SpriteFileName,
+                    champion.ChampionImage.Height,
+                    champion.ChampionImage.Width,
+                    championMastery.ChampionPoints,
+                    championMastery.ChestGranted);
+            });
 
         return Result.Success(summonerChampionMasteryDtos);
     }
