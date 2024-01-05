@@ -89,7 +89,7 @@ public class RiotClient : IRiotClient
             championMasteries = await _riotGamesApi
                 .ChampionMasteryV4()
                 .GetAllChampionMasteriesByPUUIDAsync(region.ToPlatformRoute(), puuid);
-            
+
             return championMasteries is not null
                 ? championMasteries
                 : new ApiError($"Summoner with Puuid={puuid} and Region={region} neither does not exist or has no champion masteries.");
@@ -102,7 +102,7 @@ public class RiotClient : IRiotClient
     }
 
     public async Task<Result<IEnumerable<Match>>> GetSummonerMatchHistorySummary(
-        GetSummonerMatchHistoryDto getSummonerMatchHistoryDto) 
+        GetSummonerMatchHistoryDto getSummonerMatchHistoryDto)
     {
         try
         {
@@ -116,7 +116,7 @@ public class RiotClient : IRiotClient
                     getSummonerMatchHistoryDto.QueueFilter.ToNullableQueue());
 
             var matches = await Task.WhenAll(
-                matchHistoryIds.Select(mId => 
+                matchHistoryIds.Select(mId =>
                     _riotGamesApi
                         .MatchV5()
                         .GetMatchAsync(getSummonerMatchHistoryDto.Region.ToRegionalRoute(), mId)));
@@ -151,14 +151,12 @@ public class RiotClient : IRiotClient
             return new ApiError("There are problems on Riot API side");
         }
     }
-        
+
     private RiotGamesApi GetConfiguredRiotGamesApi(string riotApiKey)
     {
         var config = new RiotGamesApiConfig.Builder(riotApiKey)
-        {
-                
-        }.Build();
-            
+            .Build();
+
         return RiotGamesApi.NewInstance(config);
     }
 }
