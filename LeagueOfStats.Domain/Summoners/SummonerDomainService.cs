@@ -52,10 +52,16 @@ public class SummonerDomainService : ISummonerDomainService
 
         return summoner;
     }
-    
-    public async Task UpdateDetailsAsync(Summoner summoner, UpdateDetailsSummonerDto updateDetailsSummonerDto)
-    { 
-        summoner.Update(updateDetailsSummonerDto.ProfileIconId, updateDetailsSummonerDto.SummonerLevel, updateDetailsSummonerDto.UpdateChampionMasteryDtos, _clock.GetCurrentInstant());
+
+    public async Task UpdateDetailsAsync(Summoner summoner,
+        UpdateDetailsSummonerDto updateDetailsSummonerDto)
+    {
+        summoner.Update(
+            updateDetailsSummonerDto.ProfileIconId,
+            updateDetailsSummonerDto.SummonerLevel,
+            updateDetailsSummonerDto.UpdateChampionMasteryDtos,
+            _clock.GetCurrentInstant());
+        
         await _summonerRepository.UpdateAsync(summoner);
     }
 }

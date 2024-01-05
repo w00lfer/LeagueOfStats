@@ -13,5 +13,6 @@ internal class EntityUpdateLockoutService : IEntityUpdateLockoutService
         _summonerUpdateLockout = config.Value.SummonerUpdateLockout;
     }
 
-    public int GetSummonerUpdateLockoutInMinutes() => _summonerUpdateLockout;
+    public int GetSummonerUpdateLockoutInMinutes() => 
+        _summonerUpdateLockout;
 }
