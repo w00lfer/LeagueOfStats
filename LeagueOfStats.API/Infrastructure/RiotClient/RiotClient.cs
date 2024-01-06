@@ -6,7 +6,7 @@ using Camille.RiotGames.SpectatorV4;
 using Camille.RiotGames.SummonerV4;
 using Camille.RiotGames.Util;
 using LeagueOfStats.API.Common.Errors;
-using LeagueOfStats.API.Options;
+using LeagueOfStats.API.Configurations.Options;
 using LeagueOfStats.Application.Extensions;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
@@ -19,7 +19,7 @@ public class RiotClient : IRiotClient
 {
     private readonly ILogger<RiotClient> _logger;
     private readonly RiotGamesApi _riotGamesApi;
-        
+
     public RiotClient(
         ILogger<RiotClient> logger,
         IOptionsSnapshot<RiotApiKeyOptions> riotApiKeyOptionsSnapshot)
@@ -31,11 +31,11 @@ public class RiotClient : IRiotClient
     public async Task<Result<Summoner>> GetSummonerByPuuidAsync(string puuid, Region region)
     {
         try
-        { 
+        {
             Summoner? summoner = await _riotGamesApi
                 .SummonerV4()
                 .GetByPUUIDAsync(region.ToPlatformRoute(), puuid);
-            
+
             return summoner is not null
                 ? summoner
                 : new ApiError($"Summoner with Puuid={puuid} and Region={region.ToString()} does not exist.");
@@ -67,7 +67,7 @@ public class RiotClient : IRiotClient
             Summoner? summoner = await _riotGamesApi
                 .SummonerV4()
                 .GetByPUUIDAsync(region.ToPlatformRoute(), account.Puuid);
-            
+
             return summoner is not null
                 ? summoner
                 : new ApiError($"Summoner with RiotId={gameName}#{tagLine} and Region={region.ToString()} does not exist.");
