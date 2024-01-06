@@ -1,4 +1,5 @@
 using LeagueOfStats.Domain.Common.Entities;
+using LeagueOfStats.Domain.Summoners;
 
 namespace LeagueOfStats.Domain.Common.Repositories;
 

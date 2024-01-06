@@ -6,6 +6,7 @@ namespace LeagueOfStats.Domain.Summoners;
 public class SummonerChampionMastery : Entity
 {
     public SummonerChampionMastery(
+        Summoner summoner,
         int riotChampionId,
         int championLevel,
         int championPoints,
@@ -16,6 +17,7 @@ public class SummonerChampionMastery : Entity
         int tokensEarned)
         : base(Guid.NewGuid())
     {
+        Summoner = summoner;
         RiotChampionId = riotChampionId;
         ChampionLevel = championLevel;
         ChampionPoints = championPoints;
@@ -25,8 +27,15 @@ public class SummonerChampionMastery : Entity
         LastPlayTime = lastPlayTime;
         TokensEarned = tokensEarned;
     }
+
+    private SummonerChampionMastery()
+        : base(Guid.Empty)
+    {
+    }
+
+    public Summoner Summoner { get; private set; }
     
-    public int RiotChampionId { get; }
+    public int RiotChampionId { get; private set; }
     
     public int ChampionLevel { get; private set; }
     

@@ -7,6 +7,7 @@ using LeagueOfStats.API.Environments;
 using LeagueOfStats.API.Infrastructure.RiotClient;
 using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.RiotClient;
+using LeagueOfStats.Infrastructure.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using NodaTime;

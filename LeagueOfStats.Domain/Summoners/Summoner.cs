@@ -31,10 +31,11 @@ public class Summoner : AggregateRoot
         SummonerLevel = summonerLevel;
         Region = region;
         LastUpdated = lastUpdated;
-        
+
         _summonerChampionMasteries.AddRange(updateChampionMasteryDtos
             .Select(championMasteryForAdd =>
                 new SummonerChampionMastery(
+                    this,
                     championMasteryForAdd.RiotChampionId,
                     championMasteryForAdd.ChampionLevel,
                     championMasteryForAdd.ChampionPoints,
@@ -44,7 +45,12 @@ public class Summoner : AggregateRoot
                     championMasteryForAdd.LastPlayTime,
                     championMasteryForAdd.TokensEarned)));
     }
-    
+
+    private Summoner()
+        : base(Guid.Empty)
+    {
+    }
+
     public string SummonerId { get; }
     
     public string AccountId { get; }
@@ -111,6 +117,7 @@ public class Summoner : AggregateRoot
         {
             _summonerChampionMasteries.Add(
                 new SummonerChampionMastery(
+                    this,
                     championMasteryForAdd.RiotChampionId,
                     championMasteryForAdd.ChampionLevel,
                     championMasteryForAdd.ChampionPoints,
