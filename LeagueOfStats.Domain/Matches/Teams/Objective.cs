@@ -15,10 +15,14 @@ public class Objective : Entity
         Kills = addObjectiveDto.Kills;
     }
 
+    private Objective()
+        : base(Guid.Empty)
+    {
+    }
+
     public Objectives Objectives { get; }
-    
+
     public bool First { get; }
 
     public int Kills { get; }
-
 }

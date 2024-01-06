@@ -6,16 +6,20 @@ namespace LeagueOfStats.Domain.Matches.Participants;
 public class Perks : Entity
 {
     private readonly List<PerkStyle> _styles = new();
-    
+
     public Perks(
-        AddPerksDto addPerksDto)
+        AddPerksDto addPerksDto,
+        Participant participant)
         : base(Guid.NewGuid())
     {
-        StatPerks = new PerkStats(addPerksDto.AddPerkStatsDto);
-        
+        Participant = participant;
+        StatPerks = new PerkStats(addPerksDto.AddPerkStatsDto, this);
+
         _styles.AddRange(addPerksDto.AddPerkStyleDtos
-            .Select(addPerkStyleDto => new PerkStyle(addPerkStyleDto)));
+            .Select(addPerkStyleDto => new PerkStyle(addPerkStyleDto, this)));
     }
+
+    public Participant Participant { get; }
 
     public PerkStats StatPerks { get; }
 

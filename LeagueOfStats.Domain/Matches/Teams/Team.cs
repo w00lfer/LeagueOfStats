@@ -17,10 +17,15 @@ public class Team : Entity
         Objectives = new Objectives(addTeamDto.AddObjectivesDto, this);
         Side = addTeamDto.Side;
         Win = addTeamDto.Win;
-        
-        _bans.AddRange(addTeamDto.AddBanDtos.Select(addBanDto => new Ban(addBanDto)));
+
+        _bans.AddRange(addTeamDto.AddBanDtos.Select(addBanDto => new Ban(addBanDto, this)));
     }
-    
+
+    private Team()
+        : base(Guid.Empty)
+    {
+    }
+
     public Match Match { get; }
     
     public List<Ban> Bans => _bans.ToList();

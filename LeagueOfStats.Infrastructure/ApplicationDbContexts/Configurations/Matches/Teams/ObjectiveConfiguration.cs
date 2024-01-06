@@ -2,7 +2,7 @@ using LeagueOfStats.Domain.Matches.Teams;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches;
+namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches.Teams;
 
 public class ObjectiveConfiguration : IEntityTypeConfiguration<Objective>
 {

@@ -2,7 +2,7 @@ using LeagueOfStats.Domain.Matches.Teams;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches;
+namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches.Teams;
 
 public class TeamConfiguration : IEntityTypeConfiguration<Team>
 {
@@ -17,6 +17,11 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
         builder
             .HasOne(t => t.Objectives)
             .WithOne(o => o.Team)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        builder
+            .HasMany(t => t.Bans)
+            .WithOne(b => b.Team)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

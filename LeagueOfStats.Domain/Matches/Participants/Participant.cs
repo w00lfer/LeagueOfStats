@@ -50,7 +50,7 @@ public class Participant : Entity
         NexusKills = addParticipantDto.NexusKills;
         ObjectivesStolen = addParticipantDto.ObjectivesStolen;
         PentaKills = addParticipantDto.PentaKills;
-        Perks = new Perks(addParticipantDto.AddPerksDto);
+        Perks = new Perks(addParticipantDto.AddPerksDto, this);
         PhysicalDamageDealt = addParticipantDto.PhysicalDamageDealt;
         PhysicalDamageDealtToChampions = addParticipantDto.PhysicalDamageDealtToChampions;
         PhysicalDamageTaken = addParticipantDto.PhysicalDamageTaken;

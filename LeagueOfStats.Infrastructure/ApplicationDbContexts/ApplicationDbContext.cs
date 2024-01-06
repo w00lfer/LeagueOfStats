@@ -1,4 +1,5 @@
 using LeagueOfStats.Domain.Matches;
+using LeagueOfStats.Domain.Matches.Participants;
 using LeagueOfStats.Domain.Matches.Teams;
 using LeagueOfStats.Domain.Summoners;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,18 @@ public class ApplicationDbContext : DbContext
     public DbSet<Objectives> TeamObjectives { get; set; }
 
     public DbSet<Objective> Objectives { get; set; }
+
+    public DbSet<Ban> Bans { get; set; }
+
+    public DbSet<Participant> Participants { get; set; }
+
+    public DbSet<Perks> Perks { get; set; }
+
+    public DbSet<PerkStats> PerkStats { get; set; }
+
+    public DbSet<PerkStyle> PerkStyles { get; set; }
+
+    public DbSet<PerkStyleSelection> PerkStyleSelections { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

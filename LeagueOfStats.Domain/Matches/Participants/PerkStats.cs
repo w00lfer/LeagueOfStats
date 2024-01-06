@@ -6,17 +6,21 @@ namespace LeagueOfStats.Domain.Matches.Participants;
 public class PerkStats : Entity
 {
     public PerkStats(
-        AddPerkStatsDto addPerkStatsDto)
+        AddPerkStatsDto addPerkStatsDto,
+        Perks perks)
         : base(Guid.NewGuid())
     {
+        Perks = perks;
         Defense = addPerkStatsDto.Defense;
         Flex = addPerkStatsDto.Flex;
         Offense = addPerkStatsDto.Offense;
     }
 
+    public Perks Perks { get; }
+
     public int Defense { get; }
-    
+
     public int Flex { get; }
-    
+
     public int Offense { get; }
 }

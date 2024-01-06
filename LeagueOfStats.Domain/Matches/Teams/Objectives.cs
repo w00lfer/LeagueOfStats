@@ -22,6 +22,11 @@ public class Objectives : Entity
         TowerObjective = new Objective(addObjectivesDto.AddTowerObjectiveDto, this);
     }
 
+    private Objectives()
+        : base(Guid.Empty)
+    {
+    }
+
     public Team Team { get; }
     
     public Objective BaronObjective { get; }
