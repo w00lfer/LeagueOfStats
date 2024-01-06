@@ -12,8 +12,8 @@
         <PackageReference Include="Azure.Identity" Version="1.10.4" />
         <PackageReference Include="Camille.RiotGames" Version="3.0.0-nightly-2023-11-16-6dcc80abc0" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-        <PackageReference Include="MediatR" Version="12.1.1" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.9"/>
+        <PackageReference Include="MediatR" Version="12.2.0" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
         <PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.1.2" />
