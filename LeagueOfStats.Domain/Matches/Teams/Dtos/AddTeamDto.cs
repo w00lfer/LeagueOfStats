@@ -6,5 +6,4 @@ public record AddTeamDto(
     AddObjectivesDto AddObjectivesDto,
     IEnumerable<AddBanDto> AddBanDtos,
     Side Side,
-    bool Win
-    );
+    bool Win);

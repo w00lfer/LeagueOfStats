@@ -28,9 +28,9 @@ public class Match : AggregateRoot
         TournamentCode = addMatchDto.TournamentCode;
         
         _participants.AddRange(addMatchDto.AddParticipantDtos
-            .Select(addParticipantDto => new Participant(addParticipantDto)));
+            .Select(addParticipantDto => new Participant(addParticipantDto, this)));
         _teams.AddRange(addMatchDto.AddTeamDtos
-            .Select(addTeamDto => new Team(addTeamDto)));
+            .Select(addTeamDto => new Team(addTeamDto, this)));
     }
     
     public string RiotMatchId { get; }

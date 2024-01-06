@@ -9,15 +9,19 @@ public class Team : Entity
     private readonly List<Ban> _bans = new();
 
     internal Team(
-        AddTeamDto addTeamDto)
+        AddTeamDto addTeamDto,
+        Match match)
         : base(Guid.NewGuid())
     {
-        Objectives = new Objectives(addTeamDto.AddObjectivesDto);
+        Match = match;
+        Objectives = new Objectives(addTeamDto.AddObjectivesDto, this);
         Side = addTeamDto.Side;
         Win = addTeamDto.Win;
         
         _bans.AddRange(addTeamDto.AddBanDtos.Select(addBanDto => new Ban(addBanDto)));
     }
+    
+    public Match Match { get; }
     
     public List<Ban> Bans => _bans.ToList();
     

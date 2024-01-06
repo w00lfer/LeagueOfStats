@@ -6,31 +6,35 @@ namespace LeagueOfStats.Domain.Matches.Teams;
 public class Objectives : Entity
 {
     internal Objectives(
-        AddObjectivesDto addObjectivesDto)
+        AddObjectivesDto addObjectivesDto,
+        Team team)
         : base(Guid.NewGuid())
     {
-        Baron = new Objective(addObjectivesDto.AddBaronObjectiveDto);
-        Champion = new Objective(addObjectivesDto.AddChampionObjectiveDto);
-        Dragon = new Objective(addObjectivesDto.AddDragonObjectiveDto);
-        Horde = addObjectivesDto.AddHordeObjectiveDto is null
+        Team = team;
+        BaronObjective = new Objective(addObjectivesDto.AddBaronObjectiveDto, this);
+        ChampionObjective = new Objective(addObjectivesDto.AddChampionObjectiveDto, this);
+        DragonObjective = new Objective(addObjectivesDto.AddDragonObjectiveDto, this);
+        HordeObjective = addObjectivesDto.AddHordeObjectiveDto is null
             ? null
-            : new Objective(addObjectivesDto.AddHordeObjectiveDto);
-        Inhibitor = new Objective(addObjectivesDto.AddInhibitorObjectiveDto);
-        RiftHerald = new Objective(addObjectivesDto.AddRiftHeraldObjectiveDto);
-        Tower = new Objective(addObjectivesDto.AddTowerObjectiveDto);
+            : new Objective(addObjectivesDto.AddHordeObjectiveDto, this);
+        InhibitorObjective = new Objective(addObjectivesDto.AddInhibitorObjectiveDto, this);
+        RiftHeraldObjective = new Objective(addObjectivesDto.AddRiftHeraldObjectiveDto, this);
+        TowerObjective = new Objective(addObjectivesDto.AddTowerObjectiveDto, this);
     }
 
-    public Objective Baron { get; }
+    public Team Team { get; }
     
-    public Objective Champion { get; }
+    public Objective BaronObjective { get; }
     
-    public Objective Dragon { get; }
+    public Objective ChampionObjective { get; }
     
-    public Objective? Horde { get; }
+    public Objective DragonObjective { get; }
+    
+    public Objective? HordeObjective { get; }
 
-    public Objective Inhibitor { get; }
+    public Objective InhibitorObjective { get; }
     
-    public Objective RiftHerald { get; }
+    public Objective RiftHeraldObjective { get; }
     
-    public Objective Tower { get; }
+    public Objective TowerObjective { get; }
 }

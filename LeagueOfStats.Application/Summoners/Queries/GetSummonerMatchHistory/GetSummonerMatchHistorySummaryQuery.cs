@@ -245,7 +245,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler
     private IEnumerable<MatchHistorySummaryTeamDto> MapParticipantsToMatchHistorySummaryTeamDtos(
         IEnumerable<Domain.Matches.Participants.Participant> participants,
         IEnumerable<Champion> champions,
-        IEnumerable<Summoner> summoners, 
+        IEnumerable<Summoner> summoners,
         GameMode gameMode)
     {
         if (gameMode is GameMode.Arena)
