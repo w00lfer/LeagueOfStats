@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches.Participants;
 
-public class PerkStatsConfiguration : IEntityTypeConfiguration<PerkStats>
+public class PerkStatsConfiguration : EntityConfiguration<PerkStats>, IEntityTypeConfiguration<PerkStats>
 {
     public void Configure(EntityTypeBuilder<PerkStats> builder)
     {
-        builder.HasKey(ps => ps.Id);
+        ConfigureDefaultProperties(builder);
 
         builder.Property(ps => ps.Defense);
 

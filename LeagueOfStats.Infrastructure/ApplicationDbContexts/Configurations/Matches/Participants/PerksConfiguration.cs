@@ -4,15 +4,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches.Participants;
 
-public class PerksConfiguration : IEntityTypeConfiguration<Perks>
+public class PerksConfiguration : EntityConfiguration<Perks>, IEntityTypeConfiguration<Perks>
 {
     public void Configure(EntityTypeBuilder<Perks> builder)
     {
-        builder.HasKey(ps => ps.Id);
+        ConfigureDefaultProperties(builder);
 
         builder
             .HasOne(p => p.StatPerks)
             .WithOne(ps => ps.Perks)
+            .HasForeignKey<PerkStats>(ps => ps.Id)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder

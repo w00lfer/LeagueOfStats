@@ -19,6 +19,11 @@ public class Perks : Entity
             .Select(addPerkStyleDto => new PerkStyle(addPerkStyleDto, this)));
     }
 
+    private Perks()
+        : base(Guid.Empty)
+    {
+    }
+
     public Participant Participant { get; }
 
     public PerkStats StatPerks { get; }

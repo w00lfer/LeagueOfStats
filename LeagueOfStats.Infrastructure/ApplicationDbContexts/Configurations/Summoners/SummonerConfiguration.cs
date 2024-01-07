@@ -4,17 +4,17 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations;
 
-public class SummonerConfiguration : IEntityTypeConfiguration<Summoner>
+public class SummonerConfiguration : EntityConfiguration<Summoner>, IEntityTypeConfiguration<Summoner>
 {
     public void Configure(EntityTypeBuilder<Summoner> builder)
     {
-        builder.HasKey(s => s.Id);
+        ConfigureDefaultProperties(builder);
 
         builder.Property(s => s.SummonerId);
 
         builder.Property(s => s.AccountId);
 
-        builder.Property(s => s.Name);
+        builder.Property(s => s.Name);  
 
         builder.Property(s => s.ProfileIconId);
 

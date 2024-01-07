@@ -97,44 +97,47 @@ public class GetSummonerMatchHistorySummaryQueryHandler
             .Distinct()
             .ToList();
 
-        var getSummonerByPuuidResults = await Task.WhenAll(
-            uniqueSummoners.Select(s =>
-                _summonerDomainService.GetByPuuidAsync(s.Puuid)));
+        var existingSummoners =
+            await _summonerRepository.GetByPuuidsAsync(uniqueSummoners.Select(s => s.Puuid));
 
-        var existingSummoners = getSummonerByPuuidResults
-            .Where(r => r.IsSuccess)
-            .Select(r => r.Value)
-            .ToList();
-        
         var existingSummonersPuuids = existingSummoners
             .Select(s => s.Puuid)
             .ToList();
 
-        Result<Summoner>[] createSummonerResults = await Task.WhenAll(
-            uniqueSummoners
-                .Where(s => existingSummonersPuuids.Contains(s.Puuid) is false)
-                .Select(s => CreateSummonerUsingDataFromRiotApiAsync(s, region)));
+        return await CreateSummonersUsingDataFromRiotApiAsync(
+                uniqueSummoners.Where(s => existingSummonersPuuids.Contains(s.Puuid) is false),
+                region)
+            .Bind(summoners => Result.Success(summoners.Concat(existingSummoners).ToList()));
+    }
 
-        if (createSummonerResults.Any(r => r.IsFailure))
+    private async Task<Result<IEnumerable<Summoner>>> CreateSummonersUsingDataFromRiotApiAsync(
+        IEnumerable<SummonerInfoDto> summonerInfoDtos,
+        Region region)
+    {
+        Result<CreateSummonerDto>[] createCreateSummonerDtoResults =
+            await Task.WhenAll(summonerInfoDtos.Select(s =>
+                CreateCreateSummonerDtosUsingDataFromRiotApiAsync(s, region)));
+
+        if (createCreateSummonerDtoResults.Any(r => r.IsFailure))
         {
             return new ApplicationError(string.Join(
                 Environment.NewLine,
-                createSummonerResults.Where(r => r.IsFailure).Select(r => r.AggregatedErrorMessages)));
+                createCreateSummonerDtoResults.Where(r => r.IsFailure).Select(r => r.AggregatedErrorMessages)));
         }
 
-        return Result.Success(createSummonerResults
-            .Select(r => r.Value)
-            .Concat(existingSummoners).ToList());
+        var summoners = await _summonerDomainService.CreateMultipleAsync(createCreateSummonerDtoResults.Select(r => r.Value));
+
+        return Result.Success(summoners);
     }
 
-    private Task<Result<Summoner>> CreateSummonerUsingDataFromRiotApiAsync(
+    private Task<Result<CreateSummonerDto>> CreateCreateSummonerDtosUsingDataFromRiotApiAsync(
         SummonerInfoDto summonerInfoDto,
         Region region) =>
         _riotClient.GetSummonerByPuuidAsync(summonerInfoDto.Puuid, region)
             .Bind(summonerFromRiotApi => _riotClient.GetSummonerChampionMasteryByPuuid(
                     summonerFromRiotApi.Puuid,
                     region)
-                .Bind(async summonerChampionMasteriesFromRiotApi =>
+                .Map(async summonerChampionMasteriesFromRiotApi =>
                 {
                     var createSummonerDto = new CreateSummonerDto(
                         summonerFromRiotApi.Id,
@@ -157,9 +160,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler
                                 c.LastPlayTime,
                                 c.TokensEarned)));
 
-                    var summoner = await _summonerDomainService.CreateAsync(createSummonerDto);
-
-                    return Result.Success(summoner);
+                    return createSummonerDto;
                 }));
 
 
@@ -199,8 +200,11 @@ public class GetSummonerMatchHistorySummaryQueryHandler
         Guid summonerId)
     {
         var champions = (await _championRepository.GetAllAsync()).ToList();
-        var summonersParticipatedInMatches = await _summonerRepository.GetAllAsync(
-            matches.SelectMany(m => m.Participants.Select(p => p.SummonerId)).ToArray());
+
+        var summs = await _summonerRepository.GetAllAsync();
+
+        var summonersIds = matches.SelectMany(m => m.Participants.Select(p => p.SummonerId)).ToArray();
+        var summonersParticipatedInMatches = await _summonerRepository.GetAllAsync(summonersIds);
         
         return matches.Select(m =>
         {

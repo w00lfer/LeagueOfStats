@@ -16,24 +16,31 @@ public class SummonerRepository : ISummonerRepository
     public Task<Summoner?> GetByIdAsync(Guid id) =>
         _applicationDbContext.Summoners.SingleOrDefaultAsync(s => s.Id == id);
 
-    public Task<Summoner?> GetByPuuidAsync(string puuid) =>
-        _applicationDbContext.Summoners.SingleOrDefaultAsync(s => s.Puuid == puuid);
+    public async Task<Summoner?> GetByPuuidAsync(string puuid) =>
+        await _applicationDbContext.Summoners.SingleOrDefaultAsync(s => s.Puuid == puuid);
+
+    public async Task<IEnumerable<Summoner>> GetByPuuidsAsync(IEnumerable<string> puuids) =>
+        puuids.Any()
+            ? await _applicationDbContext.Summoners.Where(s => puuids.Contains(s.Puuid)).ToListAsync()
+            : await _applicationDbContext.Summoners.ToListAsync();
 
     public async Task<IEnumerable<Summoner>> GetAllAsync(params Guid[] ids) =>
-        (ids.Length > 0
+        ids.Length > 0
             ? await _applicationDbContext.Summoners.Where(s => ids.Contains(s.Id)).ToListAsync()
-            : await _applicationDbContext.Summoners.ToListAsync());
+            : await _applicationDbContext.Summoners.ToListAsync();
 
     public async Task AddAsync(Summoner entity)
     {
-        _applicationDbContext.Summoners.AddAsync(entity);
+        await _applicationDbContext.Summoners.AddAsync(entity);
 
         await _applicationDbContext.SaveChangesAsync();
     }
 
-    public Task AddRangeAsync(IEnumerable<Summoner> entities)
+    public async Task AddRangeAsync(IEnumerable<Summoner> entities)
     {
-        throw new NotImplementedException();
+        await _applicationDbContext.Summoners.AddRangeAsync(entities);
+
+        await _applicationDbContext.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(Summoner entity)

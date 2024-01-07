@@ -99,6 +99,11 @@ public class Participant : Entity
         Win = addParticipantDto.Win;
     }
 
+    private Participant()
+        : base(Guid.Empty)
+    {
+    }
+
     public Match Match { get; }
     
     public Guid ChampionId { get; }

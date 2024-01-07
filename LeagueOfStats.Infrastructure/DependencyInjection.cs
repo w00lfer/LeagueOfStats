@@ -20,7 +20,7 @@ namespace LeagueOfStats.Infrastructure;
 
             // #TODO Move to Scoped when moving from InMemory db to real db
             services.AddScoped<ISummonerRepository, SummonerRepository>();
-            services.AddSingleton<IMatchRepository, MatchRepository>();
+            services.AddScoped<IMatchRepository, MatchRepository>();
 
             AddDb(services);
         }
@@ -39,7 +39,7 @@ namespace LeagueOfStats.Infrastructure;
                 {
                     sqlServerOptionsAction.UseNodaTime();
 
-                    sqlServerOptionsAction.EnableRetryOnFailure(databaseOptions.MaxRetryCount);
+                    //sqlServerOptionsAction.EnableRetryOnFailure(databaseOptions.MaxRetryCount);
 
                     sqlServerOptionsAction.CommandTimeout(databaseOptions.CommandTimeout);
                 });

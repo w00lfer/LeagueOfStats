@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches.Teams;
 
-public class TeamConfiguration : IEntityTypeConfiguration<Team>
+public class TeamConfiguration : EntityConfiguration<Team>, IEntityTypeConfiguration<Team>
 {
     public void Configure(EntityTypeBuilder<Team> builder)
     {
-        builder.HasKey(t => t.Id);
+        ConfigureDefaultProperties(builder);
 
         builder.Property(t => t.Side);
 
@@ -17,6 +17,7 @@ public class TeamConfiguration : IEntityTypeConfiguration<Team>
         builder
             .HasOne(t => t.Objectives)
             .WithOne(o => o.Team)
+            .HasForeignKey<Objectives>(o => o.Id)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder

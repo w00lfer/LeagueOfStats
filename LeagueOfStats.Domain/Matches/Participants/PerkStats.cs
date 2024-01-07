@@ -16,6 +16,11 @@ public class PerkStats : Entity
         Offense = addPerkStatsDto.Offense;
     }
 
+    private PerkStats()
+        : base(Guid.Empty)
+    {
+    }
+
     public Perks Perks { get; }
 
     public int Defense { get; }

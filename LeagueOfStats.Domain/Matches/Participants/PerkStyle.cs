@@ -19,7 +19,12 @@ public class PerkStyle : Entity
         _selections.AddRange(addPerkStyleDto.AddPerkStyleSelectionDtos
             .Select(addPerkStyleSelectionDto => new PerkStyleSelection(addPerkStyleSelectionDto, this)));
     }
-    
+
+    private PerkStyle()
+        : base(Guid.Empty)
+    {
+    }
+
     public Perks Perks { get; }
     
     public string Description { get; }

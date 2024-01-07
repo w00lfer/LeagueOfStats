@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches.Teams;
 
-public class BanConfiguration : IEntityTypeConfiguration<Ban>
+public class BanConfiguration : EntityConfiguration<Ban>, IEntityTypeConfiguration<Ban>
 {
     public void Configure(EntityTypeBuilder<Ban> builder)
     {
-        builder.HasKey(b => b.Id);
+        ConfigureDefaultProperties(builder);
 
         builder.Property(b => b.ChampionId);
 

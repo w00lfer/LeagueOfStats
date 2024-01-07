@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches.Teams;
 
-public class ObjectiveConfiguration : IEntityTypeConfiguration<Objective>
+public class ObjectiveConfiguration : EntityConfiguration<Objective>, IEntityTypeConfiguration<Objective>
 {
     public void Configure(EntityTypeBuilder<Objective> builder)
     {
-        builder.HasKey(o => o.Id);
+        ConfigureDefaultProperties(builder);
 
         builder.Property(o => o.First);
 

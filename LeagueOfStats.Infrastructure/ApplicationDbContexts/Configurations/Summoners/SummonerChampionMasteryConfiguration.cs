@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations;
 
-public class SummonerChampionMasteryConfiguration : IEntityTypeConfiguration<SummonerChampionMastery>
+public class SummonerChampionMasteryConfiguration : EntityConfiguration<SummonerChampionMastery>, IEntityTypeConfiguration<SummonerChampionMastery>
 {
     public void Configure(EntityTypeBuilder<SummonerChampionMastery> builder)
     {
-        builder.HasKey(scm => scm.Id);
+        ConfigureDefaultProperties(builder);
 
         builder.Property(scm => scm.RiotChampionId);
 

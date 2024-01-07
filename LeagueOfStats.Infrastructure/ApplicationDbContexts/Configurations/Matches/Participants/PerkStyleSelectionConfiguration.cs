@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches.Participants;
 
-public class PerkStyleSelectionConfiguration : IEntityTypeConfiguration<PerkStyleSelection>
+public class PerkStyleSelectionConfiguration : EntityConfiguration<PerkStyleSelection>, IEntityTypeConfiguration<PerkStyleSelection>
 {
     public void Configure(EntityTypeBuilder<PerkStyleSelection> builder)
     {
-        builder.HasKey(pss => pss.Id);
+        ConfigureDefaultProperties(builder);
 
         builder.Property(pss => pss.Perk);
 

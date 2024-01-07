@@ -17,6 +17,11 @@ public class PerkStyleSelection : Entity
         Var3 = addPerkStyleSelectionDto.Var3;
     }
 
+    private PerkStyleSelection()
+        : base(Guid.Empty)
+    {
+    }
+
     public PerkStyle PerkStyle { get; }
     
     public int Perk { get; }

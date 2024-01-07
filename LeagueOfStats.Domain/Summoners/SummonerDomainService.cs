@@ -55,6 +55,25 @@ public class SummonerDomainService : ISummonerDomainService
         return summoner;
     }
 
+    public async Task<IEnumerable<Summoner>> CreateMultipleAsync(IEnumerable<CreateSummonerDto> createSummonerDtos)
+    {
+        var summoners = createSummonerDtos.Select(createSummonerDto => new Summoner(
+            createSummonerDto.SummonerId,
+            createSummonerDto.AccountId,
+            createSummonerDto.Name,
+            createSummonerDto.ProfileIconId,
+            createSummonerDto.Puuid,
+            createSummonerDto.SummonerLevel,
+            SummonerName.Create(createSummonerDto.GameName, createSummonerDto.TagLine),
+            createSummonerDto.Region,
+            createSummonerDto.UpdateChampionMasteryDtos,
+            _clock.GetCurrentInstant()));
+
+        await _summonerRepository.AddRangeAsync(summoners);
+
+        return summoners;
+    }
+
     public async Task UpdateDetailsAsync(Summoner summoner,
         UpdateDetailsSummonerDto updateDetailsSummonerDto)
     {
