@@ -27,7 +27,8 @@ public static class DependencyInjection
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
-        services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
+        services.Configure<ApiBehaviorOptions>(options =>
+            { options.SuppressModelStateInvalidFilter = true; });
 
         AddSwagger(builder.Services);
 
@@ -60,14 +61,15 @@ public static class DependencyInjection
         var azureCredential = new DefaultAzureCredential(
             new DefaultAzureCredentialOptions
             {
-                ManagedIdentityClientId = builder.Configuration.GetSection(AppSettingsNameConstants.ManagedIdentityClientId)
-                    .Value!,
+                ManagedIdentityClientId = builder
+                    .Configuration
+                    .GetSection(AppSettingsNameConstants.ManagedIdentityClientId).Value!,
             });
-        var keyVaultUrl = new Uri(builder.Configuration.GetSection(AppSettingsNameConstants.KeyVaultURL)
-            .Value!);
+        var keyVaultUrl = new Uri(builder
+            .Configuration
+            .GetSection(AppSettingsNameConstants.KeyVaultURL).Value!);
 
-        builder.Configuration.AddAzureKeyVault(keyVaultUrl,
-            azureCredential);
+        builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
     }
 
     private static void AddOptions(WebApplicationBuilder builder)

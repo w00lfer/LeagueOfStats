@@ -37,8 +37,6 @@ namespace LeagueOfStats.Infrastructure;
                 {
                     sqlServerOptionsAction.UseNodaTime();
 
-                    //sqlServerOptionsAction.EnableRetryOnFailure(databaseOptions.MaxRetryCount);
-
                     sqlServerOptionsAction.CommandTimeout(databaseOptions.CommandTimeout);
                 });
 

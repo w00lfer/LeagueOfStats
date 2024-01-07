@@ -11,6 +11,4 @@ public class DatabaseOptions
     public bool EnableDetailedErrors { get; init; } = false;
 
     public int CommandTimeout { get; init; } = 10;
-
-    public int MaxRetryCount { get; init; } = 1;
 }
