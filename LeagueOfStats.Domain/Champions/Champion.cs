@@ -18,6 +18,12 @@ public class Champion : AggregateRoot
         Description = description;
         ChampionImage = championImage;
     }
+
+    private Champion()
+        : base(Guid.NewGuid())
+    {
+    }
+
     public int RiotChampionId { get; }
     
     public string Name { get; }

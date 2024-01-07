@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches.Participants;
 
-public class PerkStyleSelectionConfiguration : EntityConfiguration<PerkStyleSelection>, IEntityTypeConfiguration<PerkStyleSelection>
+public class PerkStyleSelectionConfiguration : EntityConfigurationBase<PerkStyleSelection>, IEntityTypeConfiguration<PerkStyleSelection>
 {
     public void Configure(EntityTypeBuilder<PerkStyleSelection> builder)
     {

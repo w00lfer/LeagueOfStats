@@ -14,7 +14,11 @@ public class MatchRepository : IMatchRepository
     }
 
     public Task<Match?> GetByIdAsync(Guid id) =>
-        _applicationDbContext.Matches.SingleOrDefaultAsync(m => m.Id == id);
+        _applicationDbContext.Matches
+            .Include(m => m.Teams).ThenInclude(t => t.Bans)
+            .Include(m => m.Participants).ThenInclude(p => p.Perks.StatPerks)
+            .Include(m => m.Participants).ThenInclude(p => p.Perks.Styles).ThenInclude(s => s.Selections)
+            .SingleOrDefaultAsync(m => m.Id == id);
 
     public Task<IEnumerable<Match>> GetAllAsync(params Guid[] ids)
     {
@@ -43,6 +47,11 @@ public class MatchRepository : IMatchRepository
         throw new NotImplementedException();
     }
 
-    public async Task<IEnumerable<Match>> GetAllByRiotMatchIdsAsync(IEnumerable<string> riotMatchIds) =>
-        await _applicationDbContext.Matches.Where(m => riotMatchIds.Contains(m.RiotMatchId)).ToListAsync();
+    public async Task<IEnumerable<Match>> GetAllByRiotMatchIdsIncludingRelatedEntitiesAsync(IEnumerable<string> riotMatchIds) =>
+        await _applicationDbContext.Matches
+            .Where(m => riotMatchIds.Contains(m.RiotMatchId))
+            .Include(m => m.Teams).ThenInclude(t => t.Bans)
+            .Include(m => m.Participants).ThenInclude(p => p.Perks.StatPerks)
+            .Include(m => m.Participants).ThenInclude(p => p.Perks.Styles).ThenInclude(s => s.Selections)
+            .ToListAsync();
 }

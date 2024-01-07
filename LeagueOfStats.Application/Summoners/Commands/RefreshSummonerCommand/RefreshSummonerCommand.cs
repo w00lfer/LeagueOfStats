@@ -2,6 +2,7 @@ using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.RiotClient;
+using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Summoners;
 using LeagueOfStats.Domain.Summoners.Dtos;
@@ -22,6 +23,7 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
     private readonly IRiotClient _riotClient;
     private readonly IEntityUpdateLockoutService _entityUpdateLockoutService;
     private readonly IClock _clock;
+    private readonly IChampionRepository _championRepository;
 
 
     public RefreshSummonerCommandHandler(
@@ -29,13 +31,15 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
         ISummonerDomainService summonerDomainService,
         IRiotClient riotClient,
         IEntityUpdateLockoutService entityUpdateLockoutService,
-        IClock clock)
+        IClock clock,
+        IChampionRepository championRepository)
     {
         _refreshSummonerCommandValidator = refreshSummonerCommandValidator;
         _summonerDomainService = summonerDomainService;
         _riotClient = riotClient;
         _entityUpdateLockoutService = entityUpdateLockoutService;
         _clock = clock;
+        _championRepository = championRepository;
     }
 
     public Task<Result> Handle(RefreshSummonerCommand command, CancellationToken cancellationToken) =>
@@ -59,21 +63,23 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
                 .GetSummonerChampionMasteryByPuuid(summonerFromRiotApi.Puuid, summoner.Region)
                 .Tap(async summonerChampionMasteriesFromRiotApi =>
                 {
+                    var champions = (await _championRepository.GetAllAsync()).ToList();
+                    
                     await _summonerDomainService.UpdateDetailsAsync(
                         summoner,
                         new UpdateDetailsSummonerDto(
                             summonerFromRiotApi.ProfileIconId,
                             summonerFromRiotApi.SummonerLevel,
-                            summonerChampionMasteriesFromRiotApi.Select(c =>
+                            summonerChampionMasteriesFromRiotApi.Select(cm =>
                                 new UpdateChampionMasteryDto(
-                                    (int)c.ChampionId,
-                                    c.ChampionLevel,
-                                    c.ChampionPoints,
-                                    c.ChampionPointsSinceLastLevel,
-                                    c.ChampionPointsUntilNextLevel,
-                                    c.ChestGranted,
-                                    c.LastPlayTime,
-                                    c.TokensEarned))));
+                                    champions.Single(c => c.RiotChampionId == (int)cm.ChampionId),
+                                    cm.ChampionLevel,
+                                    cm.ChampionPoints,
+                                    cm.ChampionPointsSinceLastLevel,
+                                    cm.ChampionPointsUntilNextLevel,
+                                    cm.ChestGranted,
+                                    cm.LastPlayTime,
+                                    cm.TokensEarned))));
                 }))
             .ToNonValueResult();
 }

@@ -14,7 +14,9 @@ public class SummonerRepository : ISummonerRepository
     }
 
     public Task<Summoner?> GetByIdAsync(Guid id) =>
-        _applicationDbContext.Summoners.SingleOrDefaultAsync(s => s.Id == id);
+        _applicationDbContext.Summoners
+            .Include(s => s.SummonerChampionMasteries)
+            .SingleOrDefaultAsync(s => s.Id == id);
 
     public async Task<Summoner?> GetByPuuidAsync(string puuid) =>
         await _applicationDbContext.Summoners.SingleOrDefaultAsync(s => s.Puuid == puuid);

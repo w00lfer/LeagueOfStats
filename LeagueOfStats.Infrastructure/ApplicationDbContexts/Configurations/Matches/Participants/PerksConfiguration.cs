@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches.Participants;
 
-public class PerksConfiguration : EntityConfiguration<Perks>, IEntityTypeConfiguration<Perks>
+public class PerksConfiguration : EntityConfigurationBase<Perks>, IEntityTypeConfiguration<Perks>
 {
     public void Configure(EntityTypeBuilder<Perks> builder)
     {

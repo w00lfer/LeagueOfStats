@@ -67,7 +67,7 @@ public class SummonerDomainService : ISummonerDomainService
             SummonerName.Create(createSummonerDto.GameName, createSummonerDto.TagLine),
             createSummonerDto.Region,
             createSummonerDto.UpdateChampionMasteryDtos,
-            _clock.GetCurrentInstant()));
+            _clock.GetCurrentInstant())).ToList();
 
         await _summonerRepository.AddRangeAsync(summoners);
 

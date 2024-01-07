@@ -4,5 +4,5 @@ namespace LeagueOfStats.Domain.Matches;
 
 public interface IMatchRepository : IAsyncRepository<Match>
 {
-    Task<IEnumerable<Match>> GetAllByRiotMatchIdsAsync(IEnumerable<string> riotMatchIds);
+    Task<IEnumerable<Match>> GetAllByRiotMatchIdsIncludingRelatedEntitiesAsync(IEnumerable<string> riotMatchIds);
 }

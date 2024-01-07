@@ -38,22 +38,22 @@ public class GetSummonerChampionMasteriesQueryHandler
     private async Task<Result<IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(
         IEnumerable<SummonerChampionMastery> summonerChampionMasteries)
     {
-        var championMasteriesByRiotChampionId = summonerChampionMasteries
-            .ToDictionary(championMastery => championMastery.RiotChampionId, championMastery => championMastery);
+        var championMasteriesByChampionId = summonerChampionMasteries
+            .ToDictionary(championMastery => championMastery.ChampionId, championMastery => championMastery);
 
-        var championsByRiotChampionId = (await _championRepository.GetAllAsync())
-            .ToDictionary(champion => champion.RiotChampionId, champion => champion);
+        var championsById = (await _championRepository.GetAllAsync())
+            .ToDictionary(champion => champion.Id, champion => champion);
 
-        if (championMasteriesByRiotChampionId.Keys.All(cId => championsByRiotChampionId.ContainsKey(cId)) is false)
+        if (championMasteriesByChampionId.Keys.All(cId => championsById.ContainsKey(cId)) is false)
         {
             return new ApplicationError("Champions from masteries differ than champions from domain.");
         }
 
-        var summonerChampionMasteryDtos = championMasteriesByRiotChampionId
-            .Select(championMasteryByRiotChampionId => 
+        var summonerChampionMasteryDtos = championMasteriesByChampionId
+            .Select(championMasteryByChampionId => 
             {
-                var champion = championsByRiotChampionId[championMasteryByRiotChampionId.Key];
-                var championMastery = championMasteryByRiotChampionId.Value;
+                var champion = championsById[championMasteryByChampionId.Key];
+                var championMastery = championMasteryByChampionId.Value;
 
                 return new SummonerChampionMasteryDto(
                     champion!.RiotChampionId,

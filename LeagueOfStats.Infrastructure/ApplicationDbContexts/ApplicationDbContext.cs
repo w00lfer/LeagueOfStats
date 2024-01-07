@@ -1,7 +1,9 @@
+using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Matches;
 using LeagueOfStats.Domain.Matches.Participants;
 using LeagueOfStats.Domain.Matches.Teams;
 using LeagueOfStats.Domain.Summoners;
+using LeagueOfStats.Infrastructure.ApplicationDbContexts.Seeds;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts;
@@ -12,6 +14,8 @@ public class ApplicationDbContext : DbContext
         : base(options)
     {
     }
+    
+    public DbSet<Champion> Champions { get; set; }
 
     public DbSet<Summoner> Summoners { get; set; }
 

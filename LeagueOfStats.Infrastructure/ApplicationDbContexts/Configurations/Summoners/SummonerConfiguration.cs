@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations;
 
-public class SummonerConfiguration : EntityConfiguration<Summoner>, IEntityTypeConfiguration<Summoner>
+public class SummonerConfiguration : EntityConfigurationBase<Summoner>, IEntityTypeConfiguration<Summoner>
 {
     public void Configure(EntityTypeBuilder<Summoner> builder)
     {
@@ -14,7 +14,7 @@ public class SummonerConfiguration : EntityConfiguration<Summoner>, IEntityTypeC
 
         builder.Property(s => s.AccountId);
 
-        builder.Property(s => s.Name);  
+        builder.Property(s => s.Name);
 
         builder.Property(s => s.ProfileIconId);
 

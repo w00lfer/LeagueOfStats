@@ -22,7 +22,7 @@ public static class DependencyInjection
     {
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         ValidatorOptions.Global.LanguageManager.Enabled = false;
-        
+
         services.AddScoped(typeof(Common.Validators.IValidator<>), typeof(Validator<>));
     }
 }

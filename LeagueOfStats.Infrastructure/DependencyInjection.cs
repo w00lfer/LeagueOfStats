@@ -16,9 +16,7 @@ namespace LeagueOfStats.Infrastructure;
     {
         public static void AddInfrastructureDI(this IServiceCollection services)
         {
-            services.AddSingleton<IChampionRepository, ChampionRepository>();
-
-            // #TODO Move to Scoped when moving from InMemory db to real db
+            services.AddScoped<IChampionRepository, ChampionRepository>();
             services.AddScoped<ISummonerRepository, SummonerRepository>();
             services.AddScoped<IMatchRepository, MatchRepository>();
 

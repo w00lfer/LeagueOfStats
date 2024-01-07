@@ -1,3 +1,4 @@
+using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Matches.Participants;
 using LeagueOfStats.Domain.Summoners;
 using Microsoft.EntityFrameworkCore;
@@ -5,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches.Participants;
 
-public class ParticipantConfiguration : EntityConfiguration<Participant>, IEntityTypeConfiguration<Participant>
+public class ParticipantConfiguration : EntityConfigurationBase<Participant>, IEntityTypeConfiguration<Participant>
 {
     public void Configure(EntityTypeBuilder<Participant> builder)
     {
@@ -17,7 +18,10 @@ public class ParticipantConfiguration : EntityConfiguration<Participant>, IEntit
             .HasForeignKey<Perks>(p => p.Id)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Property(p => p.ChampionId);
+        builder
+            .HasOne<Champion>()
+            .WithMany()
+            .HasForeignKey(p => p.ChampionId);
 
         builder.HasOne<Summoner>()
             .WithMany()

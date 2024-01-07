@@ -36,7 +36,7 @@ public class Summoner : AggregateRoot
             .Select(championMasteryForAdd =>
                 new SummonerChampionMastery(
                     this,
-                    championMasteryForAdd.RiotChampionId,
+                    championMasteryForAdd.Champion,
                     championMasteryForAdd.ChampionLevel,
                     championMasteryForAdd.ChampionPoints,
                     championMasteryForAdd.ChampionPointsSinceLastLevel,
@@ -88,37 +88,37 @@ public class Summoner : AggregateRoot
     private void UpdateSummonerChampionMasteries(IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos)
     {
         var existingMasteryForChampionIds = _summonerChampionMasteries
-            .Select(c => c.RiotChampionId)
+            .Select(c => c.ChampionId)
             .ToList();
         
-        var championMasteriesForUpdate =
-            updateChampionMasteryDtos
-                .Where(c => existingMasteryForChampionIds.Contains(c.RiotChampionId));
+        var updateChampionMasteryDtoToBeUpdated = updateChampionMasteryDtos
+                .Where(c => existingMasteryForChampionIds.Contains(c.Champion.Id));
         
-        foreach (var championMasteryForUpdate in championMasteriesForUpdate)
+        foreach (var updateChampionMasteryDto in updateChampionMasteryDtoToBeUpdated)
         {
-            var updateChampionMasteryDto =
+            var summonerChampionMasteryToUpdate =
                 _summonerChampionMasteries.Single(c =>
-                    c.RiotChampionId == championMasteryForUpdate.RiotChampionId);
+                    c.ChampionId == updateChampionMasteryDto.Champion.Id);
             
-            updateChampionMasteryDto.Update(
-                updateChampionMasteryDto.ChampionLevel,
-                updateChampionMasteryDto.ChampionPoints,
-                updateChampionMasteryDto.ChampionPointsSinceLastLevel,
-                updateChampionMasteryDto.ChampionPointsUntilNextLevel,
-                updateChampionMasteryDto.ChestGranted,
-                updateChampionMasteryDto.LastPlayTime,
-                updateChampionMasteryDto.TokensEarned);
+            summonerChampionMasteryToUpdate.Update(
+                summonerChampionMasteryToUpdate.ChampionLevel,
+                summonerChampionMasteryToUpdate.ChampionPoints,
+                summonerChampionMasteryToUpdate.ChampionPointsSinceLastLevel,
+                summonerChampionMasteryToUpdate.ChampionPointsUntilNextLevel,
+                summonerChampionMasteryToUpdate.ChestGranted,
+                summonerChampionMasteryToUpdate.LastPlayTime,
+                summonerChampionMasteryToUpdate.TokensEarned);
         }
 
         var championMasteriesForAdd = updateChampionMasteryDtos
-            .Where(c => existingMasteryForChampionIds.Contains(c.RiotChampionId) is false);
+            .Where(c => existingMasteryForChampionIds.Contains(c.Champion.Id) is false);
+        
         foreach (var championMasteryForAdd in championMasteriesForAdd)
         {
             _summonerChampionMasteries.Add(
                 new SummonerChampionMastery(
                     this,
-                    championMasteryForAdd.RiotChampionId,
+                    championMasteryForAdd.Champion,
                     championMasteryForAdd.ChampionLevel,
                     championMasteryForAdd.ChampionPoints,
                     championMasteryForAdd.ChampionPointsSinceLastLevel,

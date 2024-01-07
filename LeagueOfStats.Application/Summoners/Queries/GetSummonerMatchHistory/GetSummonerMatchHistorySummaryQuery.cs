@@ -114,9 +114,11 @@ public class GetSummonerMatchHistorySummaryQueryHandler
         IEnumerable<SummonerInfoDto> summonerInfoDtos,
         Region region)
     {
+        var champions = (await _championRepository.GetAllAsync()).ToList();
+        
         Result<CreateSummonerDto>[] createCreateSummonerDtoResults =
             await Task.WhenAll(summonerInfoDtos.Select(s =>
-                CreateCreateSummonerDtosUsingDataFromRiotApiAsync(s, region)));
+                CreateCreateSummonerDtosUsingDataFromRiotApiAsync(s, champions, region)));
 
         if (createCreateSummonerDtoResults.Any(r => r.IsFailure))
         {
@@ -132,6 +134,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler
 
     private Task<Result<CreateSummonerDto>> CreateCreateSummonerDtosUsingDataFromRiotApiAsync(
         SummonerInfoDto summonerInfoDto,
+        List<Champion> champions,
         Region region) =>
         _riotClient.GetSummonerByPuuidAsync(summonerInfoDto.Puuid, region)
             .Bind(summonerFromRiotApi => _riotClient.GetSummonerChampionMasteryByPuuid(
@@ -149,16 +152,16 @@ public class GetSummonerMatchHistorySummaryQueryHandler
                         summonerInfoDto.GameName,
                         summonerInfoDto.TagLine,
                         region,
-                        summonerChampionMasteriesFromRiotApi.Select(c =>
+                        summonerChampionMasteriesFromRiotApi.Select(cm =>
                             new UpdateChampionMasteryDto(
-                                (int)c.ChampionId,
-                                c.ChampionLevel,
-                                c.ChampionPoints,
-                                c.ChampionPointsSinceLastLevel,
-                                c.ChampionPointsUntilNextLevel,
-                                c.ChestGranted,
-                                c.LastPlayTime,
-                                c.TokensEarned)));
+                                champions.Single(c => c.RiotChampionId == (int)cm.ChampionId),
+                                cm.ChampionLevel,
+                                cm.ChampionPoints,
+                                cm.ChampionPointsSinceLastLevel,
+                                cm.ChampionPointsUntilNextLevel,
+                                cm.ChestGranted,
+                                cm.LastPlayTime,
+                                cm.TokensEarned)));
 
                     return createSummonerDto;
                 }));
@@ -166,7 +169,8 @@ public class GetSummonerMatchHistorySummaryQueryHandler
 
     private AddMatchDto MapMatchFromRiotApiToAddMatchdto(
         Camille.RiotGames.MatchV5.Match matchFromRiotApi,
-        List<Summoner> participatedSummonersInMatch, List<Champion> champions)
+        List<Summoner> participatedSummonersInMatch,
+        List<Champion> champions)
     {
         var addParticipantDtos = matchFromRiotApi.Info.Participants
             .Select(participant => MapParticipantToAddParticipantDto(
@@ -200,8 +204,6 @@ public class GetSummonerMatchHistorySummaryQueryHandler
         Guid summonerId)
     {
         var champions = (await _championRepository.GetAllAsync()).ToList();
-
-        var summs = await _summonerRepository.GetAllAsync();
 
         var summonersIds = matches.SelectMany(m => m.Participants.Select(p => p.SummonerId)).ToArray();
         var summonersParticipatedInMatches = await _summonerRepository.GetAllAsync(summonersIds);
@@ -411,4 +413,4 @@ public class GetSummonerMatchHistorySummaryQueryHandler
         string Puuid,
         string GameName,
         string TagLine);
-} 
+}

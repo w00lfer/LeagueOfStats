@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Configurations.Matches.Teams;
 
-public class TeamConfiguration : EntityConfiguration<Team>, IEntityTypeConfiguration<Team>
+public class TeamConfiguration : EntityConfigurationBase<Team>, IEntityTypeConfiguration<Team>
 {
     public void Configure(EntityTypeBuilder<Team> builder)
     {
