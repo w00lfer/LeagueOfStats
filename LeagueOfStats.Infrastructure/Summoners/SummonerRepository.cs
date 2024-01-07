@@ -1,44 +1,59 @@
 using LeagueOfStats.Domain.Summoners;
+using LeagueOfStats.Infrastructure.ApplicationDbContexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace LeagueOfStats.Infrastructure.Summoners;
 
 public class SummonerRepository : ISummonerRepository
 {
-    private readonly List<Summoner> _summoners = new();
+    private readonly ApplicationDbContext _applicationDbContext;
+
+    public SummonerRepository(ApplicationDbContext applicationDbContext)
+    {
+        _applicationDbContext = applicationDbContext;
+    }
 
     public Task<Summoner?> GetByIdAsync(Guid id) =>
-        Task.FromResult(_summoners.SingleOrDefault(s => s.Id == id));
+        _applicationDbContext.Summoners
+            .Include(s => s.SummonerChampionMasteries)
+            .SingleOrDefaultAsync(s => s.Id == id);
 
-    public Task<Summoner?> GetByPuuidAsync(string puuid) =>
-        Task.FromResult(_summoners.SingleOrDefault(s => s.Puuid == puuid));
-    
-    public Task<IEnumerable<Summoner>> GetAllAsync(params Guid[] ids) =>
-        Task.FromResult(ids.Length > 0
-            ? _summoners.Where(s => ids.Contains(s.Id))
-            : _summoners);
+    public async Task<Summoner?> GetByPuuidAsync(string puuid) =>
+        await _applicationDbContext.Summoners.SingleOrDefaultAsync(s => s.Puuid == puuid);
 
-    public Task AddAsync(Summoner entity)
+    public async Task<IEnumerable<Summoner>> GetByPuuidsAsync(IEnumerable<string> puuids) =>
+        puuids.Any()
+            ? await _applicationDbContext.Summoners.Where(s => puuids.Contains(s.Puuid)).ToListAsync()
+            : await _applicationDbContext.Summoners.ToListAsync();
+
+    public async Task<IEnumerable<Summoner>> GetAllAsync(params Guid[] ids) =>
+        ids.Length > 0
+            ? await _applicationDbContext.Summoners.Where(s => ids.Contains(s.Id)).ToListAsync()
+            : await _applicationDbContext.Summoners.ToListAsync();
+
+    public async Task AddAsync(Summoner entity)
     {
-        _summoners.Add(entity);
+        await _applicationDbContext.Summoners.AddAsync(entity);
 
-        return Task.CompletedTask;
+        await _applicationDbContext.SaveChangesAsync();
     }
 
-    public Task AddRangeAsync(IEnumerable<Summoner> entities)
+    public async Task AddRangeAsync(IEnumerable<Summoner> entities)
     {
-        throw new NotImplementedException();
+        await _applicationDbContext.Summoners.AddRangeAsync(entities);
+
+        await _applicationDbContext.SaveChangesAsync();
     }
 
-    public Task DeleteAsync(Summoner entity)
+    public async Task DeleteAsync(Summoner entity)
     {
-        _summoners.Remove(entity);
+        _applicationDbContext.Summoners.Remove(entity);
 
-        return Task.CompletedTask;
+        await _applicationDbContext.SaveChangesAsync();
     }
 
-    public Task UpdateAsync(Summoner entity)
+    public async Task UpdateAsync(Summoner entity)
     {
-        // As it' in memory stored once smbd updates entity it should be done automatically
-        return Task.CompletedTask;
+        await _applicationDbContext.SaveChangesAsync();
     }
 }

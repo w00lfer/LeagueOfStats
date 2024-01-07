@@ -6,15 +6,23 @@ namespace LeagueOfStats.Domain.Matches.Teams;
 public class Objective : Entity
 {
     internal Objective(
-        AddObjectiveDto addObjectiveDto)
+        AddObjectiveDto addObjectiveDto,
+        Objectives objectives)
         : base(Guid.NewGuid())
     {
+        Objectives = objectives;
         First = addObjectiveDto.First;
         Kills = addObjectiveDto.Kills;
     }
 
+    private Objective()
+        : base(Guid.Empty)
+    {
+    }
+
+    public Objectives Objectives { get; }
+
     public bool First { get; }
 
     public int Kills { get; }
-
 }

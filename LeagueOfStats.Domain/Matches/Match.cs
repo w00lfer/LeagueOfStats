@@ -26,13 +26,18 @@ public class Match : AggregateRoot
         PlatformId = addMatchDto.PlatformId;
         Queue = addMatchDto.Queue;
         TournamentCode = addMatchDto.TournamentCode;
-        
+
         _participants.AddRange(addMatchDto.AddParticipantDtos
-            .Select(addParticipantDto => new Participant(addParticipantDto)));
+            .Select(addParticipantDto => new Participant(addParticipantDto, this)));
         _teams.AddRange(addMatchDto.AddTeamDtos
-            .Select(addTeamDto => new Team(addTeamDto)));
+            .Select(addTeamDto => new Team(addTeamDto, this)));
     }
-    
+
+    private Match()
+        : base(Guid.Empty)
+    {
+    }
+
     public string RiotMatchId { get; }
     
     public string GameVersion { get; }

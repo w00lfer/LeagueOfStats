@@ -1,42 +1,23 @@
-using System.Collections.Immutable;
-using System.Text.Json;
 using LeagueOfStats.Domain.Champions;
-using LeagueOfStats.Infrastructure.Extensions;
-using LeagueOfStats.Infrastructure.JsonConfigurations;
+using LeagueOfStats.Infrastructure.ApplicationDbContexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace LeagueOfStats.Infrastructure.Champions;
 
 public class ChampionRepository : IChampionRepository
 {
-    private readonly ImmutableDictionary<Guid, Champion> _championsById;
+    private readonly ApplicationDbContext _applicationDbContext;
 
-    public ChampionRepository()
+    public ChampionRepository(ApplicationDbContext applicationDbContext)
     {
-        using StreamReader r = new StreamReader(ConfigurationPaths.GetChampionConfigurationPath());
-        var championConfigurationModel = JsonSerializer.Deserialize<ChampionConfigurationModel>(r.ReadToEnd());
-        var champions = championConfigurationModel.ChampionDataConfigurationModels.Select(c =>
-            new Champion(
-                Int32.Parse(c.Value.Id),
-                c.Value.Name,
-                c.Value.Title,
-                c.Value.Description,
-                ChampionImage.Create(
-                    c.Value.ChampionConfigurationImageModel.FullFileName,
-                    c.Value.ChampionConfigurationImageModel.SpriteFileName,
-                    c.Value.ChampionConfigurationImageModel.Height,
-                    c.Value.ChampionConfigurationImageModel.Width)));
-            
-        _championsById = champions.ToImmutableDictionary(c => c.Id, c => c);
+        _applicationDbContext = applicationDbContext;
     }
 
     public Task<Champion?> GetByIdAsync(Guid id) =>
-        Task.FromResult(
-            _championsById.TryGetValue(id, out var champion)
-                ? champion
-                : null);
+        _applicationDbContext.Champions.SingleOrDefaultAsync(c => c.Id == id);
 
-    public Task<IEnumerable<Champion>> GetAllAsync(params Guid[] ids) =>
-        Task.FromResult(ids.Length > 0
-            ? _championsById.GetMultiple(ids)
-            : _championsById.Values);
+    public async Task<IEnumerable<Champion>> GetAllAsync(params Guid[] ids) =>
+        ids.Length > 0
+            ? await _applicationDbContext.Champions.Where(c => ids.Contains(c.Id)).AsNoTracking().ToListAsync()
+            : await _applicationDbContext.Champions.AsNoTracking().ToListAsync();
 }

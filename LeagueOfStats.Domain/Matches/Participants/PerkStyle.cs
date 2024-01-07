@@ -8,15 +8,24 @@ public class PerkStyle : Entity
     private readonly List<PerkStyleSelection> _selections = new();
     
     public PerkStyle(
-        AddPerkStyleDto addPerkStyleDto)
+        AddPerkStyleDto addPerkStyleDto,
+        Perks perks)
         : base(Guid.NewGuid())
     {
+        Perks = perks;
         Description = addPerkStyleDto.Description;
         Style = addPerkStyleDto.Style;
         
         _selections.AddRange(addPerkStyleDto.AddPerkStyleSelectionDtos
-            .Select(addPerkStyleSelectionDto => new PerkStyleSelection(addPerkStyleSelectionDto)));
+            .Select(addPerkStyleSelectionDto => new PerkStyleSelection(addPerkStyleSelectionDto, this)));
     }
+
+    private PerkStyle()
+        : base(Guid.Empty)
+    {
+    }
+
+    public Perks Perks { get; }
     
     public string Description { get; }
 

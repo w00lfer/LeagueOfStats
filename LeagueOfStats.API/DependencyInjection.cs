@@ -1,11 +1,13 @@
 using System.Text.Json.Serialization;
 using Azure.Identity;
 using FluentValidation.AspNetCore;
+using LeagueOfStats.API.Configurations;
+using LeagueOfStats.API.Configurations.Options;
 using LeagueOfStats.API.Environments;
 using LeagueOfStats.API.Infrastructure.RiotClient;
-using LeagueOfStats.API.Options;
 using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.RiotClient;
+using LeagueOfStats.Infrastructure.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using NodaTime;
@@ -25,28 +27,26 @@ public static class DependencyInjection
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
-        services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
+        services.Configure<ApiBehaviorOptions>(options =>
+            { options.SuppressModelStateInvalidFilter = true; });
 
-        AddSwagger(builder);
+        AddSwagger(builder.Services);
 
         AddKeyVault(builder);
 
         services.AddFluentValidationAutoValidation()
             .AddFluentValidationClientsideAdapters();
 
-        services.Configure<EntityUpdateLockoutOptions>(
-            builder.Configuration.GetSection(nameof(EntityUpdateLockoutOptions)));
-        services.Configure<RiotApiKeyOptions>(
-            builder.Configuration.GetSection(nameof(RiotApiKeyOptions)));
+        AddOptions(builder);
 
         services.AddSingleton<IEntityUpdateLockoutService, EntityUpdateLockoutService>();
         services.AddScoped<IRiotClient, RiotClient>();
     }
 
-    private static void AddSwagger(WebApplicationBuilder builder)
+    private static void AddSwagger(IServiceCollection services)
     {
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(c =>
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(c =>
         {
             c.AddEnumsWithValuesFixFilters();
             c.MapType<Instant>(() => new OpenApiSchema
@@ -61,13 +61,24 @@ public static class DependencyInjection
         var azureCredential = new DefaultAzureCredential(
             new DefaultAzureCredentialOptions
             {
-                ManagedIdentityClientId = builder.Configuration.GetSection("ManagedIdentityClientId")
-                    .Value!,
+                ManagedIdentityClientId = builder
+                    .Configuration
+                    .GetSection(AppSettingsNameConstants.ManagedIdentityClientId).Value!,
             });
-        var keyVaultUrl = new Uri((builder.Configuration.GetSection("KeyVaultURL")
-            .Value!));
+        var keyVaultUrl = new Uri(builder
+            .Configuration
+            .GetSection(AppSettingsNameConstants.KeyVaultURL).Value!);
 
-        builder.Configuration.AddAzureKeyVault(keyVaultUrl,
-            azureCredential);
+        builder.Configuration.AddAzureKeyVault(keyVaultUrl, azureCredential);
+    }
+
+    private static void AddOptions(WebApplicationBuilder builder)
+    {
+        builder.Services.Configure<EntityUpdateLockoutOptions>(
+            builder.Configuration.GetSection(nameof(EntityUpdateLockoutOptions)));
+        builder.Services.Configure<RiotApiKeyOptions>(
+            builder.Configuration.GetSection(nameof(RiotApiKeyOptions)));
+        builder.Services.Configure<DatabaseOptions>(
+            builder.Configuration.GetSection(nameof(DatabaseOptions)));
     }
 }

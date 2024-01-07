@@ -1,13 +1,24 @@
 using LeagueOfStats.Domain.Matches;
+using LeagueOfStats.Infrastructure.ApplicationDbContexts;
+using Microsoft.EntityFrameworkCore;
 
 namespace LeagueOfStats.Infrastructure.Matches;
 
 public class MatchRepository : IMatchRepository
 {
-    private readonly List<Match> _matches = new();
-    
-    public Task<Match?> GetByIdAsync(Guid id) => 
-        Task.FromResult(_matches.FirstOrDefault(m => m.Id == id));
+    private readonly ApplicationDbContext _applicationDbContext;
+
+    public MatchRepository(ApplicationDbContext applicationDbContext)
+    {
+        _applicationDbContext = applicationDbContext;
+    }
+
+    public Task<Match?> GetByIdAsync(Guid id) =>
+        _applicationDbContext.Matches
+            .Include(m => m.Teams).ThenInclude(t => t.Bans)
+            .Include(m => m.Participants).ThenInclude(p => p.Perks.StatPerks)
+            .Include(m => m.Participants).ThenInclude(p => p.Perks.Styles).ThenInclude(s => s.Selections)
+            .SingleOrDefaultAsync(m => m.Id == id);
 
     public Task<IEnumerable<Match>> GetAllAsync(params Guid[] ids)
     {
@@ -19,11 +30,11 @@ public class MatchRepository : IMatchRepository
         throw new NotImplementedException();
     }
 
-    public Task AddRangeAsync(IEnumerable<Match> entities)
+    public async Task AddRangeAsync(IEnumerable<Match> entities)
     {
-        _matches.AddRange(entities);
+        await _applicationDbContext.Matches.AddRangeAsync(entities);
 
-        return Task.CompletedTask;
+        await _applicationDbContext.SaveChangesAsync();
     }
 
     public Task DeleteAsync(Match entity)
@@ -36,6 +47,11 @@ public class MatchRepository : IMatchRepository
         throw new NotImplementedException();
     }
 
-    public Task<IEnumerable<Match>> GetAllByRiotMatchIdsAsync(IEnumerable<string> riotMatchIds) => 
-        Task.FromResult(_matches.Where(m => riotMatchIds.Contains(m.RiotMatchId)));
+    public async Task<IEnumerable<Match>> GetAllByRiotMatchIdsIncludingRelatedEntitiesAsync(IEnumerable<string> riotMatchIds) =>
+        await _applicationDbContext.Matches
+            .Where(m => riotMatchIds.Contains(m.RiotMatchId))
+            .Include(m => m.Teams).ThenInclude(t => t.Bans)
+            .Include(m => m.Participants).ThenInclude(p => p.Perks.StatPerks)
+            .Include(m => m.Participants).ThenInclude(p => p.Perks.Styles).ThenInclude(s => s.Selections)
+            .ToListAsync();
 }

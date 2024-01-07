@@ -24,9 +24,9 @@ public class MatchDomainService : IMatchDomainService
     public async Task<Result<IEnumerable<Match>>> AddMatchesAsync(IEnumerable<AddMatchDto> addMatchDtos)
     {
         var alreadyExistingMatches =
-            (await _matchRepository.GetAllByRiotMatchIdsAsync(addMatchDtos.Select(m => m.RiotMatchId)))
+            (await _matchRepository.GetAllByRiotMatchIdsIncludingRelatedEntitiesAsync(addMatchDtos.Select(m => m.RiotMatchId)))
             .ToList();
-        
+
         List<string> alreadyExistingMatchRiotMatchIds = alreadyExistingMatches
             .Select(m => m.RiotMatchId)
             .ToList();

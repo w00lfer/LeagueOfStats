@@ -1,4 +1,4 @@
-namespace LeagueOfStats.API.Options;
+namespace LeagueOfStats.API.Configurations.Options;
 
 public class EntityUpdateLockoutOptions
 {

@@ -13,21 +13,25 @@ namespace LeagueOfStats.API.Controllers;
 public class SummonerMatchHistoryController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IClock _clock;
 
-    public SummonerMatchHistoryController(IMediator mediator)
+    public SummonerMatchHistoryController(
+        IMediator mediator,
+        IClock clock)
     {
         _mediator = mediator;
+        _clock = clock;
     }
     
     [HttpGet]
     public Task<IActionResult> GetMatchHistorySummary(
         Guid summonerId,
-        [FromQuery] Instant gameEndedAt,
-        [FromQuery] QueueFilter queueFilter,
-        [FromQuery] int limit = 20) =>
+        [FromQuery] QueueFilter queueFilter = QueueFilter.All,
+        [FromQuery] int limit = 5,
+        [FromQuery] Instant? gameEndedAt = null) =>
         _mediator.Send(new GetSummonerMatchHistorySummaryQuery(
                 summonerId,
-                gameEndedAt,
+                gameEndedAt ?? _clock.GetCurrentInstant(),
                 queueFilter,
                 limit > 5 
                     ? 5 

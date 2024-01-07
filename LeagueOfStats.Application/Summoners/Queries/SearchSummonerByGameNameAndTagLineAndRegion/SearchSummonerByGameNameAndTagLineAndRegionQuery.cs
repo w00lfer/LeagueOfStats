@@ -1,6 +1,7 @@
 using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.RiotClient;
+using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Summoners;
@@ -23,17 +24,20 @@ public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler
     private readonly IRiotClient _riotClient;
     private readonly ISummonerDomainService _summonerDomainService;
     private readonly IEntityUpdateLockoutService _entityUpdateLockoutService;
+    private readonly IChampionRepository _championRepository;
 
     public SearchSummonerByGameNameAndTagLineAndRegionQueryHandler(
         IValidator<SearchSummonerByGameNameAndTagLineAndRegionQuery> searchSummonerByGameNameAndTagLineAndRegionQueryValidator,
         IRiotClient riotClient,
         ISummonerDomainService summonerDomainService,
-        IEntityUpdateLockoutService entityUpdateLockoutService)
+        IEntityUpdateLockoutService entityUpdateLockoutService,
+        IChampionRepository championRepository)
     {
         _searchSummonerByGameNameAndTagLineAndRegionQueryValidator = searchSummonerByGameNameAndTagLineAndRegionQueryValidator;
         _riotClient = riotClient;
         _summonerDomainService = summonerDomainService;
         _entityUpdateLockoutService = entityUpdateLockoutService;
+        _championRepository = championRepository;
     }
 
     public Task<Result<SummonerDto>> Handle(
@@ -60,6 +64,8 @@ public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler
             _riotClient.GetSummonerChampionMasteryByPuuid(summonerFromRiotApi.Puuid, region)
                 .Bind(async summonerChampionMasteriesFromRiotApi =>
                 {
+                    var champions = (await _championRepository.GetAllAsync()).ToList();
+                    
                     var createSummonerDto = new CreateSummonerDto(
                         summonerFromRiotApi.Id,
                         summonerFromRiotApi.AccountId,
@@ -70,16 +76,16 @@ public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler
                         gameName,
                         tagLine,
                         region,
-                        summonerChampionMasteriesFromRiotApi.Select(c =>
+                        summonerChampionMasteriesFromRiotApi.Select(cm =>
                             new UpdateChampionMasteryDto(
-                                (int)c.ChampionId,
-                                c.ChampionLevel,
-                                c.ChampionPoints,
-                                c.ChampionPointsSinceLastLevel,
-                                c.ChampionPointsUntilNextLevel,
-                                c.ChestGranted,
-                                c.LastPlayTime,
-                                c.TokensEarned)));
+                                champions.Single(c => c.RiotChampionId == (int)cm.ChampionId),
+                                cm.ChampionLevel,
+                                cm.ChampionPoints,
+                                cm.ChampionPointsSinceLastLevel,
+                                cm.ChampionPointsUntilNextLevel,
+                                cm.ChestGranted,
+                                cm.LastPlayTime,
+                                cm.TokensEarned)));
 
                    var summoner = await _summonerDomainService.CreateAsync(createSummonerDto);
 
