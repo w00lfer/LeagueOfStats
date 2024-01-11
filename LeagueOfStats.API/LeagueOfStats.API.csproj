@@ -30,15 +30,15 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\LeagueOfStats.Application\LeagueOfStats.Application.csproj" />
       <ProjectReference Include="..\LeagueOfStats.Domain\LeagueOfStats.Domain.csproj" />
       <ProjectReference Include="..\LeagueOfStats.Infrastructure\LeagueOfStats.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>
