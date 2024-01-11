@@ -23,14 +23,14 @@ jobs:
       uses: docker/login-action@v2
       with:
         registry: https://leagueofstatscregdev.azurecr.io/
-        username: ${{ secrets.AzureAppService_ContainerUsername_22a3e1075c3e41d5ac3e63724620a945 }}
-        password: ${{ secrets.AzureAppService_ContainerPassword_b39de362627847e484cf773a10c230df }}
+        username: ${{ secrets.AzureAppService_ContainerUsername_30bbe3dfbc1041788b8905f3fb259264 }}
+        password: ${{ secrets.AzureAppService_ContainerPassword_93415ec330e34af687e42e1f4d8705e5 }}
 
     - name: Build and push container image to registry
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: leagueofstatscregdev.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_22a3e1075c3e41d5ac3e63724620a945 }}/LeagueOfStatsImage:${{ github.sha }}
+        tags: leagueofstatscregdev.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30bbe3dfbc1041788b8905f3fb259264 }}/leagueofstats:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -47,5 +47,5 @@ jobs:
       with:
         app-name: 'leagueofstats-web-dev-api'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_13e1a1001d1a4a86a8c63fbb25710d65 }}
-        images: 'leagueofstatscregdev.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_22a3e1075c3e41d5ac3e63724620a945 }}/LeagueOfStatsImage:${{ github.sha }}'
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_d37e1de88758478291c105c6d4853e00 }}
+        images: 'leagueofstatscregdev.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30bbe3dfbc1041788b8905f3fb259264 }}/leagueofstats:${{ github.sha }}'
