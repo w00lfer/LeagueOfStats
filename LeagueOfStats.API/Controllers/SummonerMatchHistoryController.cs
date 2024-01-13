@@ -9,7 +9,7 @@ using NodaTime;
 namespace LeagueOfStats.API.Controllers;
 
 [ApiController]
-[Route("Summoner/{summonerId:guid}/MatchHistory")]
+[Route("Summoners/{summonerId:guid}/MatchHistory")]
 public class SummonerMatchHistoryController : ControllerBase
 {
     private readonly IMediator _mediator;

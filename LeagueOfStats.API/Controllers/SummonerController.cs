@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LeagueOfStats.API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("Summoners")]
 public class SummonerController : ControllerBase
 {
     private readonly IMediator _mediator;
