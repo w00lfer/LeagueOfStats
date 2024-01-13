@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LeagueOfStats.API.Controllers;
 
 [ApiController]
-[Route("Summoner/{summonerId}/ChampionMastery")]
+[Route("Summoners/{summonerId}/ChampionMastery")]
 public class SummonerChampionMasteryController : ControllerBase
 {
     private readonly IMediator _mediator;
