@@ -22,7 +22,7 @@ namespace LeagueOfStats.Application.Summoners.Queries.GetSummonerMatchHistory;
 public record GetSummonerMatchHistorySummaryQuery(
     Guid SummonerId,
     Instant GameEndedAt,
-    QueueFilter QueueFilter,
+    MatchHistoryQueueFilter MatchHistoryQueueFilter,
     int Limit)
     : IRequest<Result<IEnumerable<MatchHistorySummaryDto>>>;
 
@@ -62,7 +62,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler
                     summoner.Puuid,
                     query.Limit,
                     query.GameEndedAt,
-                    query.QueueFilter))
+                    query.MatchHistoryQueueFilter))
                 .Bind(matchesFromRiotApi => GetOrCreateSummonersForMatchesByPuuid(
                         matchesFromRiotApi,
                         summoner.Region)

@@ -9,4 +9,4 @@ public record GetSummonerMatchHistoryDto(
     string Puuid,
     int Count,
     Instant GameEndedAt,
-    QueueFilter QueueFilter);
+    MatchHistoryQueueFilter MatchHistoryQueueFilter);

@@ -26,13 +26,13 @@ public class SummonerMatchHistoryController : ControllerBase
     [HttpGet]
     public Task<IActionResult> GetMatchHistorySummary(
         Guid summonerId,
-        [FromQuery] QueueFilter queueFilter = QueueFilter.All,
+        [FromQuery] MatchHistoryQueueFilter matchHistoryQueueFilter = MatchHistoryQueueFilter.All,
         [FromQuery] int limit = 5,
         [FromQuery] Instant? gameEndedAt = null) =>
         _mediator.Send(new GetSummonerMatchHistorySummaryQuery(
                 summonerId,
                 gameEndedAt ?? _clock.GetCurrentInstant(),
-                queueFilter,
+                matchHistoryQueueFilter,
                 limit > 5 
                     ? 5 
                     : limit))

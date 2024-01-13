@@ -1,6 +1,6 @@
 namespace LeagueOfStats.Application.Common.Enums;
 
-public enum QueueFilter
+public enum MatchHistoryQueueFilter
 {
     All,
     Custom,

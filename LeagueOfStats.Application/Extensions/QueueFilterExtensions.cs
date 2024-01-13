@@ -5,11 +5,11 @@ namespace LeagueOfStats.Application.Extensions;
 
 public static class QueueFilterExtensions
 {
-    public static Queue? ToNullableQueue(this QueueFilter queueFilter) =>
-        queueFilter switch
+    public static Queue? ToNullableQueue(this MatchHistoryQueueFilter matchHistoryQueueFilter) =>
+        matchHistoryQueueFilter switch
         {
-            QueueFilter.All => null,
-            QueueFilter.Custom => Queue.CUSTOM,
-            _ => throw new ArgumentOutOfRangeException(nameof(queueFilter), queueFilter, null)
+            MatchHistoryQueueFilter.All => null,
+            MatchHistoryQueueFilter.Custom => Queue.CUSTOM,
+            _ => throw new ArgumentOutOfRangeException(nameof(matchHistoryQueueFilter), matchHistoryQueueFilter, null)
         };
 }

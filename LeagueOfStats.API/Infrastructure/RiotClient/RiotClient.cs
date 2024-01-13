@@ -113,7 +113,7 @@ public class RiotClient : IRiotClient
                     getSummonerMatchHistoryDto.Puuid,
                     getSummonerMatchHistoryDto.Count,
                     getSummonerMatchHistoryDto.GameEndedAt.ToUnixTimeSeconds(),
-                    getSummonerMatchHistoryDto.QueueFilter.ToNullableQueue());
+                    getSummonerMatchHistoryDto.MatchHistoryQueueFilter.ToNullableQueue());
 
             var matches = await Task.WhenAll(
                 matchHistoryIds.Select(mId =>
