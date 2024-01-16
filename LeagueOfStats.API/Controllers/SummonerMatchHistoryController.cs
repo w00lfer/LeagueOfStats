@@ -1,5 +1,5 @@
 using LeagueOfStats.API.Extensions;
-using LeagueOfStats.Application.Common.Enums;
+using LeagueOfStats.Application.Summoners.Enums;
 using LeagueOfStats.Application.Summoners.Queries.GetSummonerMatchById;
 using LeagueOfStats.Application.Summoners.Queries.GetSummonerMatchHistory;
 using MediatR;

@@ -5,6 +5,7 @@ using LeagueOfStats.API.Configurations;
 using LeagueOfStats.API.Configurations.Options;
 using LeagueOfStats.API.Environments;
 using LeagueOfStats.API.Infrastructure.RiotClient;
+using LeagueOfStats.API.Infrastructure.RiotGamesShopClient;
 using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Infrastructure.Options;
@@ -40,7 +41,14 @@ public static class DependencyInjection
         AddOptions(builder);
 
         services.AddSingleton<IEntityUpdateLockoutService, EntityUpdateLockoutService>();
+        
+        AddExternalApiClients(services);
+    }
+
+    private static void AddExternalApiClients(IServiceCollection services)
+    {
         services.AddScoped<IRiotClient, RiotClient>();
+        services.ConfigureRiotGamesShopClient();
     }
 
     private static void AddSwagger(IServiceCollection services)

@@ -1,4 +1,5 @@
-using LeagueOfStats.Application.Common.Enums;
+using LeagueOfStats.Application.Leaderboards;
+using LeagueOfStats.Application.Leaderboards.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LeagueOfStats.API.Controllers;

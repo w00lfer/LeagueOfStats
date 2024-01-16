@@ -1,4 +1,4 @@
-using LeagueOfStats.Application.Common.Enums;
+using LeagueOfStats.Application.Summoners.Enums;
 using LeagueOfStats.Domain.Common.Enums;
 using NodaTime;
 
