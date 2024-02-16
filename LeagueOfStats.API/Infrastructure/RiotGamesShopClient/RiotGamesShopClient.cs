@@ -1,4 +1,5 @@
 using LeagueOfStats.API.Common.Errors;
+using LeagueOfStats.Application.Common.NodaTimeHelpers;
 using LeagueOfStats.Application.Discounts.RiotGamesShopClient;
 using LeagueOfStats.Domain.Common.Rails.Results;
 
@@ -13,23 +14,57 @@ public class RiotGamesShopClient : IRiotGamesShopClient
         _httpClient = httpClient;
     }
 
-    public async Task<Result<IEnumerable<ProductDto>>> GetCurrentDiscountsAsync()
+    public async Task<Result<IEnumerable<RiotGamesShopDiscount>>> GetCurrentDiscountsAsync()
     {
-        var response = await _httpClient.GetFromJsonAsync<GetCollectionsResponseDto>("collections/");
+        var response1 = await _httpClient.GetFromJsonAsync<List<GetCollectionsResponseItemDto>>("collections/");
 
-        if (response is null)
+        if (response1 is null)
         {
             return new ApiError("");
         }
 
-        var currentDiscounts = response.Collections.Where(c => c.Dynamic).ToList();
+        var currentDiscounts = response1.Where(item => item.Dynamic).ToList();
 
-        var championDiscounts = currentDiscounts.Select(c =>
-            c.DynamicCollection.DiscountedProductsByProductType.Single(kv => kv.Key is "CHAMPION").Value);
+        var localDateTimePattern = LocalDateTimePatternHelper.RiotLocalDateTimePattern;
+        
+        var championDiscounts = currentDiscounts
+            .Select(c => c.DynamicCollection.DiscountedProductsByProductType.Champions)
+            .Where(championDiscounts => championDiscounts is not null)
+            .SelectMany(championDiscounts => championDiscounts)
+            .Select(championDiscount =>
+            {
+                var price = championDiscount.Prices.ElementAtOrDefault(0);
+                var salesStart = localDateTimePattern.Parse(price.Discount.SaleStart).Value;
+                var salesEnd = localDateTimePattern.Parse(price.Discount.SaleEnd).Value;    
+                
+                return new RiotGamesShopDiscount(
+                    championDiscount.Id,
+                    championDiscount.Type,
+                    price.OriginalPrice.Cost,
+                    price.Discount.DiscountedProductPrice.Cost,
+                    salesStart,
+                    salesEnd);
+            });
 
-        var skinDiscounts = currentDiscounts.Select(c =>
-            c.DynamicCollection.DiscountedProductsByProductType.Single(kv => kv.Key is "CHAMPION_SKIN").Value);
+        var skinDiscounts = currentDiscounts
+            .Select(c => c.DynamicCollection.DiscountedProductsByProductType.ChampionSkin)
+            .Where(skinDiscounts => skinDiscounts is not null)
+            .SelectMany(skinDiscounts => skinDiscounts)
+            .Select(championDiscount =>
+            {
+                var price = championDiscount.Prices.ElementAtOrDefault(0);
+                var salesStart = localDateTimePattern.Parse(price.Discount.SaleStart).Value; 
+                var salesEnd = localDateTimePattern.Parse(price.Discount.SaleEnd).Value;    
+                
+                return new RiotGamesShopDiscount(
+                    championDiscount.Id,
+                    championDiscount.Type,
+                    price.OriginalPrice.Cost,
+                    price.Discount.DiscountedProductPrice.Cost,
+                    salesStart,
+                    salesEnd);
+            });
 
-        return Result.Success(championDiscounts.Concat(skinDiscounts).DistinctBy(p => new { p.Type, p.Id }));
+        return Result.Success(championDiscounts.Concat(skinDiscounts));
     }
 }

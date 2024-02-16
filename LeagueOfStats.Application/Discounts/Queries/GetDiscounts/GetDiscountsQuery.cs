@@ -5,12 +5,11 @@ using NodaTime;
 
 namespace LeagueOfStats.Application.Discounts.Queries.GetDiscounts;
 
-public record GetDiscountsQuery(
-    LocalDate DiscountsFromDate)
-    : IRequest<Result<IEnumerable<DiscountDto>>>;
+public record GetDiscountsQuery()
+    : IRequest<Result<IEnumerable<RiotGamesShopDiscount>>>;
 
 public class GetDiscountsQueryHandler 
-    : IRequestHandler<GetDiscountsQuery, Result<IEnumerable<DiscountDto>>>
+    : IRequestHandler<GetDiscountsQuery, Result<IEnumerable<RiotGamesShopDiscount>>>
 {
     private readonly IRiotGamesShopClient _riotGamesShopClient;
 
@@ -19,12 +18,12 @@ public class GetDiscountsQueryHandler
         _riotGamesShopClient = riotGamesShopClient;
     }
 
-    public Task<Result<IEnumerable<DiscountDto>>> Handle(GetDiscountsQuery request, CancellationToken cancellationToken)
-    {
+    public Task<Result<IEnumerable<RiotGamesShopDiscount>>> Handle(GetDiscountsQuery request, CancellationToken cancellationToken)
+    { 
         return _riotGamesShopClient.GetCurrentDiscountsAsync()
-            .Bind(discounts =>
-            {
-                
-            });
+        .Bind(discounts =>
+        {
+            return Result.Success(discounts);
+        });
     }
 }

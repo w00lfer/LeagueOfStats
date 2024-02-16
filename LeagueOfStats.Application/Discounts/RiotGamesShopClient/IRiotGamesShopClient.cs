@@ -4,5 +4,5 @@ namespace LeagueOfStats.Application.Discounts.RiotGamesShopClient;
 
 public interface IRiotGamesShopClient
 {
-    Task<Result<IEnumerable<ProductDto>>> GetCurrentDiscountsAsync();
+    Task<Result<IEnumerable<RiotGamesShopDiscount>>> GetCurrentDiscountsAsync();
 }

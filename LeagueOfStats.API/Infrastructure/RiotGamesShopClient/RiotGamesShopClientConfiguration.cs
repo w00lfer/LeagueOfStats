@@ -1,3 +1,5 @@
+using LeagueOfStats.Application.Discounts.RiotGamesShopClient;
+
 namespace LeagueOfStats.API.Infrastructure.RiotGamesShopClient;
 
 public static class RiotGamesShopClientConfiguration
@@ -6,7 +8,7 @@ public static class RiotGamesShopClientConfiguration
     
     public static void ConfigureRiotGamesShopClient(this IServiceCollection services)
     {
-        services.AddHttpClient<RiotGamesShopClient>(client =>
+        services.AddHttpClient<IRiotGamesShopClient, RiotGamesShopClient>(client =>
         {
             client.BaseAddress = new Uri(RiotGamesShopUrl);
         });
