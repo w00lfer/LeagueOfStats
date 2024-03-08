@@ -8,8 +8,8 @@ public class DiscountedChampion : Entity
     public DiscountedChampion(
         Discount discount,
         Champion champion,
-        int OldPrice,
-        int NewPrice)
+        int oldPrice,
+        int newPrice)
         : base(Guid.NewGuid())
     {
     }

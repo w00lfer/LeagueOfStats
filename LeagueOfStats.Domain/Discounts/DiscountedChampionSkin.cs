@@ -8,8 +8,10 @@ public class DiscountedChampionSkin : Entity
     public DiscountedChampionSkin(
         Discount discount,
         Champion champion,
-        int OldPrice,
-        int NewPrice)
+        int oldPrice,
+        int newPrice,
+        string name,
+        string imagePath)
         : base(Guid.NewGuid())
     {
     }

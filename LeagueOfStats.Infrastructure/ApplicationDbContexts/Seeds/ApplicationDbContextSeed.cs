@@ -15,6 +15,11 @@ public static class ApplicationDbContextSeed
         {
             await SeedChampionsAsync(applicationDbContext);
         }
+
+        // if (await applicationDbContext.Skins.AnyAsync() is false)
+        // {
+        //     await SeedChampionSkinsAsync(applicationDbContext);
+        // }
     }
 
     private static async Task SeedChampionsAsync(ApplicationDbContext applicationDbContext)
@@ -22,6 +27,11 @@ public static class ApplicationDbContextSeed
         await applicationDbContext.Champions.AddRangeAsync(GetChampions());
 
         await applicationDbContext.SaveChangesAsync();
+    }
+
+    private static async Task SeedChampionSkinsAsync(ApplicationDbContext applicationDbContext)
+    {
+        
     }
 
     private static List<Champion> GetChampions()
