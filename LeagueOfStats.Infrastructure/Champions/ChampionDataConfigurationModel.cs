@@ -7,4 +7,4 @@ public record ChampionDataConfigurationModel(
     [property: JsonPropertyName("name")] string Name,
     [property: JsonPropertyName("title")] string Title,
     [property: JsonPropertyName("blurb")] string Description,
-    [property: JsonPropertyName("image")] ChampionConfigurationImageModel ChampionConfigurationImageModel);
+    [property: JsonPropertyName("image")] ChampionDataConfigurationImageModel ChampionDataConfigurationImageModel);
