@@ -2,6 +2,7 @@ using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Matches;
 using LeagueOfStats.Domain.Matches.Participants;
 using LeagueOfStats.Domain.Matches.Teams;
+using LeagueOfStats.Domain.Skins;
 using LeagueOfStats.Domain.Summoners;
 using LeagueOfStats.Infrastructure.ApplicationDbContexts.Seeds;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,10 @@ public class ApplicationDbContext : DbContext
     }
     
     public DbSet<Champion> Champions { get; set; }
+    
+    public DbSet<Skin> Skins { get; set; }
+    
+    public DbSet<SkinChroma> SkinChromas { get; set; }
 
     public DbSet<Summoner> Summoners { get; set; }
 

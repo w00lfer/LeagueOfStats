@@ -5,14 +5,14 @@ namespace LeagueOfStats.Domain.Champions;
 public class Champion : AggregateRoot
 {
     public Champion(
-        int id,
+        int riotChampionId,
         string name,
         string title,
         string description,
         ChampionImage championImage)
         : base(Guid.NewGuid())
     {
-        RiotChampionId = id;
+        RiotChampionId = riotChampionId;
         Name = name;
         Title = title;
         Description = description;

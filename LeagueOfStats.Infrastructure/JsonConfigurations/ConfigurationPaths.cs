@@ -8,4 +8,7 @@ public static class ConfigurationPaths
 
     public static string GetChampionConfigurationPath() =>
         Path.Combine(CurrentDirectory, ConfigurationsPath, "champion.json");
+
+    public static string GetSkinsConfigurationPath() =>
+        Path.Combine(CurrentDirectory, ConfigurationsPath, "skins.json");
 }
