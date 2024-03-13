@@ -1,4 +1,4 @@
-using LeagueOfStats.Domain.Discounts.Enums;
+using LeagueOfStats.Application.Discounts.Enums;
 
 namespace LeagueOfStats.Application.Discounts.RiotGamesShopClient;
 

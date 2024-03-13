@@ -1,6 +1,6 @@
+using LeagueOfStats.Domain.Discounts;
 using LeagueOfStats.Domain.Matches;
 using LeagueOfStats.Domain.Summoners;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
 
@@ -13,5 +13,6 @@ public static class DependencyInjection
         services.AddSingleton<IClock>(c => SystemClock.Instance);
         services.AddScoped<ISummonerDomainService, SummonerDomainService>();
         services.AddScoped<IMatchDomainService, MatchDomainService>();
+        services.AddScoped<IDiscountDomainService, DiscountDomainService>();
     }
 }

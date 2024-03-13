@@ -1,4 +1,4 @@
-namespace LeagueOfStats.Domain.Discounts.Enums;
+namespace LeagueOfStats.Application.Discounts.Enums;
 
 public enum DiscountType
 {

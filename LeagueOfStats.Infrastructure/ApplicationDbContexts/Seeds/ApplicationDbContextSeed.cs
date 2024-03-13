@@ -3,6 +3,7 @@ using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Skins;
 using LeagueOfStats.Infrastructure.Champions;
 using LeagueOfStats.Infrastructure.JsonConfigurations;
+using LeagueOfStats.Infrastructure.Skins;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 

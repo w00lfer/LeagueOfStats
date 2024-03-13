@@ -1,31 +1,31 @@
-using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Entities;
+using LeagueOfStats.Domain.Skins;
 
 namespace LeagueOfStats.Domain.Discounts;
 
-public class DiscountedChampion : Entity
+public class DiscountedSkin : Entity
 {
-    public DiscountedChampion(
+    public DiscountedSkin(
         Discount discount,
-        Champion champion,
+        Skin skin,
         int oldPrice,
         int newPrice)
         : base(Guid.NewGuid())
     {
         Discount = discount;
-        ChampionId = champion.Id;
+        SkinId = skin.Id;
         OldPrice = oldPrice;
         NewPrice = newPrice;
     }
     
-    private DiscountedChampion()
+    private DiscountedSkin()
         : base(Guid.Empty)
     {
     }
     
     public Discount Discount { get; }
     
-    public Guid ChampionId { get; }
+    public Guid SkinId { get; }
     
     public int OldPrice { get; }
     

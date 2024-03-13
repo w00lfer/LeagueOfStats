@@ -2,7 +2,7 @@ using NodaTime;
 
 namespace LeagueOfStats.Application.Discounts.Queries.GetDiscounts;
 
-public record DiscountDto(
+public record DiscountSummaryDto(
     Guid Id,
-    LocalDate StartDate,
-    LocalDate EndDate);
+    LocalDateTime StartDateTime,
+    LocalDateTime EndDateTime);

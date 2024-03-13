@@ -1,6 +1,6 @@
 using LeagueOfStats.API.Extensions;
+using LeagueOfStats.Application.Discounts.Enums;
 using LeagueOfStats.Application.Discounts.Queries.GetDiscounts;
-using LeagueOfStats.Domain.Discounts.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;

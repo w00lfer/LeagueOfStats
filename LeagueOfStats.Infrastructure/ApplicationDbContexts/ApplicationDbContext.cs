@@ -1,4 +1,5 @@
 using LeagueOfStats.Domain.Champions;
+using LeagueOfStats.Domain.Discounts;
 using LeagueOfStats.Domain.Matches;
 using LeagueOfStats.Domain.Matches.Participants;
 using LeagueOfStats.Domain.Matches.Teams;
@@ -45,7 +46,13 @@ public class ApplicationDbContext : DbContext
     public DbSet<PerkStyle> PerkStyles { get; set; }
 
     public DbSet<PerkStyleSelection> PerkStyleSelections { get; set; }
+    
+    public DbSet<Discount> Discounts { get; set; }
 
+    public DbSet<DiscountedChampion> DiscountedChampions { get; set; }
+    
+    public DbSet<DiscountedSkin> DiscountedSkins { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);

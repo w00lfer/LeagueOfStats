@@ -1,5 +1,6 @@
 using LeagueOfStats.API.Common.Errors;
 using LeagueOfStats.Application.Common.NodaTimeHelpers;
+using LeagueOfStats.Application.Discounts.Enums;
 using LeagueOfStats.Application.Discounts.RiotGamesShopClient;
 using LeagueOfStats.Domain.Common.Rails.Results;
 
@@ -16,7 +17,7 @@ public class RiotGamesShopClient : IRiotGamesShopClient
 
     public async Task<Result<IEnumerable<RiotGamesShopDiscount>>> GetCurrentDiscountsAsync()
     {
-        var response1 = await _httpClient.GetFromJsonAsync<List<GetCollectionsResponseItemDto>>("collections/");
+        var response1 = await _httpClient.GetFromJsonAsync<List<RiotGamesShopClientGetCollectionsResponseItemDto>>("collections/");
 
         if (response1 is null)
         {
@@ -39,7 +40,7 @@ public class RiotGamesShopClient : IRiotGamesShopClient
                 
                 return new RiotGamesShopDiscount(
                     championDiscount.Id,
-                    championDiscount.Type,
+                    DiscountType.Champion,
                     price.OriginalPrice.Cost,
                     price.Discount.DiscountedProductPrice.Cost,
                     salesStart,
@@ -50,15 +51,15 @@ public class RiotGamesShopClient : IRiotGamesShopClient
             .Select(c => c.DynamicCollection.DiscountedProductsByProductType.ChampionSkin)
             .Where(skinDiscounts => skinDiscounts is not null)
             .SelectMany(skinDiscounts => skinDiscounts)
-            .Select(championDiscount =>
+            .Select(skinDiscount =>
             {
-                var price = championDiscount.Prices.ElementAtOrDefault(0);
+                var price = skinDiscount.Prices.ElementAtOrDefault(0);
                 var salesStart = localDateTimePattern.Parse(price.Discount.SaleStart).Value; 
                 var salesEnd = localDateTimePattern.Parse(price.Discount.SaleEnd).Value;    
                 
                 return new RiotGamesShopDiscount(
-                    championDiscount.Id,
-                    championDiscount.Type,
+                    skinDiscount.Id,
+                    DiscountType.ChampionSkin,
                     price.OriginalPrice.Cost,
                     price.Discount.DiscountedProductPrice.Cost,
                     salesStart,
