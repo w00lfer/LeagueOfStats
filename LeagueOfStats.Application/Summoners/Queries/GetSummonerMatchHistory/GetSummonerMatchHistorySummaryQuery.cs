@@ -1,9 +1,9 @@
 using Camille.RiotGames.MatchV5;
-using LeagueOfStats.Application.Common.Enums;
 using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.Extensions;
 using LeagueOfStats.Application.RiotClient;
+using LeagueOfStats.Application.Summoners.Enums;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Rails.Results;

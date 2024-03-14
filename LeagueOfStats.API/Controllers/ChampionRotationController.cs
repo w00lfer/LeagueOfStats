@@ -10,7 +10,7 @@ public class ChampionRotationController : ControllerBase
 {
     [HttpGet()]
     public Task<IActionResult> GetRecentChampionRotations(
-        [FromQuery] Instant? rotationsFromDate = null) =>
+        [FromQuery] LocalDate? rotationsFromDate = null) =>
         throw new NotImplementedException();
 
     [HttpGet("{id:guid}")]

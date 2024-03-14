@@ -1,4 +1,4 @@
-namespace LeagueOfStats.Application.Common.Enums;
+namespace LeagueOfStats.Application.Leaderboards.Enums;
 
 public enum LeagueQueueFilter
 {

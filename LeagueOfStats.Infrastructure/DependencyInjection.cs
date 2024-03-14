@@ -1,10 +1,14 @@
 using LeagueOfStats.Domain.Champions;
+using LeagueOfStats.Domain.Discounts;
 using LeagueOfStats.Domain.Matches;
+using LeagueOfStats.Domain.Skins;
 using LeagueOfStats.Domain.Summoners;
 using LeagueOfStats.Infrastructure.ApplicationDbContexts;
 using LeagueOfStats.Infrastructure.Champions;
+using LeagueOfStats.Infrastructure.Discounts;
 using LeagueOfStats.Infrastructure.Matches;
 using LeagueOfStats.Infrastructure.Options;
+using LeagueOfStats.Infrastructure.Skins;
 using LeagueOfStats.Infrastructure.Summoners;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +23,8 @@ namespace LeagueOfStats.Infrastructure;
             services.AddScoped<IChampionRepository, ChampionRepository>();
             services.AddScoped<ISummonerRepository, SummonerRepository>();
             services.AddScoped<IMatchRepository, MatchRepository>();
+            services.AddScoped<ISkinRepository, SkinRepository>();
+            services.AddScoped<IDiscountRepository, DiscountRepository>();
 
             AddDb(services);
         }

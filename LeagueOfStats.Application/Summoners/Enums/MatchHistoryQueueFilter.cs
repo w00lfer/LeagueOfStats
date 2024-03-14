@@ -1,4 +1,4 @@
-namespace LeagueOfStats.Application.Common.Enums;
+namespace LeagueOfStats.Application.Summoners.Enums;
 
 public enum MatchHistoryQueueFilter
 {

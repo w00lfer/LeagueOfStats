@@ -5,7 +5,6 @@ using LeagueOfStats.Infrastructure.Champions;
 using LeagueOfStats.Infrastructure.JsonConfigurations;
 using LeagueOfStats.Infrastructure.Skins;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts.Seeds;
