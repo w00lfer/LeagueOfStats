@@ -20,4 +20,9 @@ public class ChampionRepository : IChampionRepository
         ids.Length > 0
             ? await _applicationDbContext.Champions.Where(c => ids.Contains(c.Id)).AsNoTracking().ToListAsync()
             : await _applicationDbContext.Champions.AsNoTracking().ToListAsync();
+
+    public async Task<IEnumerable<Champion>> GetByRiotIdsAsync(int[] riotIds) =>
+        riotIds.Length > 0
+            ? await _applicationDbContext.Champions.Where(c => riotIds.Contains(c.RiotChampionId)).AsNoTracking().ToListAsync()
+            : await _applicationDbContext.Champions.AsNoTracking().ToListAsync();
 }

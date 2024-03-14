@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 
+namespace LeagueOfStats.Application.RiotGamesShopClient;
+
 public record RiotGamesShopClientDiscountedChampion(
     string Game,
     string Type,

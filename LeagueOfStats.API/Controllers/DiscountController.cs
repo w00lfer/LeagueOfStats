@@ -1,6 +1,7 @@
 using LeagueOfStats.API.Extensions;
-using LeagueOfStats.Application.Discounts.Enums;
+using LeagueOfStats.Application.Discounts.Queries.GetDiscountById;
 using LeagueOfStats.Application.Discounts.Queries.GetDiscounts;
+using LeagueOfStats.Application.RiotGamesShopClient.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;
@@ -24,11 +25,9 @@ public class DiscountController : ControllerBase
     public Task<IActionResult> GetDiscounts() =>
         _mediator.Send(new GetDiscountsQuery())
             .ToIActionResult(this);
-    
+
     [HttpGet("{id}")]
-    [ApiExplorerSettings(IgnoreApi = true)]
-    public Task<IActionResult> GetDiscountById(
-        Guid id,
-        DiscountType? discountType = null) =>
-        throw new NotImplementedException();
+    public Task<IActionResult> GetDiscountById(Guid id, DiscountType? discountType = null) =>
+        _mediator.Send(new GetDiscountByIdQuery(id))
+            .ToIActionResult(this);
 }

@@ -1,6 +1,6 @@
-using LeagueOfStats.Application.Discounts.Enums;
+using LeagueOfStats.Application.RiotGamesShopClient.Enums;
 
-namespace LeagueOfStats.Application.Discounts.RiotGamesShopClient;
+namespace LeagueOfStats.Application.RiotGamesShopClient;
 
 public record DiscountedProductDto(
     DiscountType DiscountType,

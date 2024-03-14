@@ -1,4 +1,4 @@
-using LeagueOfStats.Application.Discounts.RiotGamesShopClient;
+using LeagueOfStats.Application.RiotGamesShopClient;
 
 namespace LeagueOfStats.API.Infrastructure.RiotGamesShopClient;
 
