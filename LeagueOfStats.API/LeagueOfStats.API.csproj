@@ -21,6 +21,8 @@
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
         <PackageReference Include="NodaTime.Serialization.SystemTextJson" Version="1.1.2" />
+        <PackageReference Include="Quartz" Version="3.8.1" />
+        <PackageReference Include="Quartz.AspNetCore" Version="3.8.1" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
         <PackageReference Include="Unchase.Swashbuckle.AspNetCore.Extensions" Version="2.7.1" />
     </ItemGroup>
@@ -35,6 +37,10 @@
       <Content Include="..\.dockerignore">
         <Link>.dockerignore</Link>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Infrastructure\ApiClients\" />
     </ItemGroup>
 
 </Project>

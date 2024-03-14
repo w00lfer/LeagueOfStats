@@ -1,6 +1,6 @@
 using LeagueOfStats.Domain.Common.Rails.Results;
 
-namespace LeagueOfStats.Application.RiotGamesShopClient;
+namespace LeagueOfStats.Application.ApiClients.RiotGamesShopClient;
 
 public interface IRiotGamesShopClient
 {

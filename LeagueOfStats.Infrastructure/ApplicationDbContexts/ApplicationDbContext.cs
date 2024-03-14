@@ -5,7 +5,6 @@ using LeagueOfStats.Domain.Matches.Participants;
 using LeagueOfStats.Domain.Matches.Teams;
 using LeagueOfStats.Domain.Skins;
 using LeagueOfStats.Domain.Summoners;
-using LeagueOfStats.Infrastructure.ApplicationDbContexts.Seeds;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts;

@@ -7,13 +7,13 @@ using Camille.RiotGames.SummonerV4;
 using Camille.RiotGames.Util;
 using LeagueOfStats.API.Common.Errors;
 using LeagueOfStats.API.Configurations.Options;
+using LeagueOfStats.Application.ApiClients.RiotClient;
 using LeagueOfStats.Application.Extensions;
-using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using Microsoft.Extensions.Options;
 
-namespace LeagueOfStats.API.Infrastructure.RiotClient;
+namespace LeagueOfStats.API.Infrastructure.ApiClients.RiotClient;
 
 public class RiotClient : IRiotClient
 {

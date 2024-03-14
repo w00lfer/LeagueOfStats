@@ -20,13 +20,9 @@ public class ChampionConfiguration :EntityConfigurationBase<Champion>, IEntityTy
 
         builder.ComplexProperty(c => c.ChampionImage, ciBuilder =>
         {
-            ciBuilder.Property(ci => ci.FullFileName);
+            ciBuilder.Property(ci => ci.SplashUrl);
 
-            ciBuilder.Property(ci => ci.SpriteFileName);
-
-            ciBuilder.Property(ci => ci.Width);
-
-            ciBuilder.Property(ci => ci.Height);
+            ciBuilder.Property(ci => ci.IconUrl);
         });
     }
 }

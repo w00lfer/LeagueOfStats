@@ -1,8 +1,11 @@
 using System.Text.Json.Serialization;
 
-namespace LeagueOfStats.Infrastructure.Skins;
+namespace LeagueOfStats.Application.ApiClients.CommunityDragonClient;
 
-public record SkinDataConfigurationModel(
+public record CommunityDragonSkinDto(
+    Dictionary<string, CommunityDragonSkinDataDto> SkinDataConfigurationModels);
+    
+public record CommunityDragonSkinDataDto(
     [property: JsonPropertyName("id")] int Id,
     [property: JsonPropertyName("isBase")] bool IsBase,
     [property: JsonPropertyName("name")] string Name,
@@ -18,9 +21,15 @@ public record SkinDataConfigurationModel(
     [property: JsonPropertyName("collectionSplashVideoPath")] object CollectionSplashVideoPath,
     [property: JsonPropertyName("featuresText")] object FeaturesText,
     [property: JsonPropertyName("chromaPath")] string ChromaPath,
-    [property: JsonPropertyName("chromas")] IReadOnlyList<SkinDataConfigurationChromaModel> SkinDataConfigurationChromas,
+    [property: JsonPropertyName("chromas")] IReadOnlyList<CommunityDragonSkinDataChromaDto> SkinDataConfigurationChromas,
     [property: JsonPropertyName("emblems")] object Emblems,
     [property: JsonPropertyName("regionRarityId")] int RegionRarityId,
     [property: JsonPropertyName("rarityGemPath")] object RarityGemPath,
     [property: JsonPropertyName("skinAugments")] object SkinAugments,
     [property: JsonPropertyName("description")] string Description);
+    
+public record CommunityDragonSkinDataChromaDto(
+    [property: JsonPropertyName("id")] int Id,
+    [property: JsonPropertyName("chromaPath")] string ChromaPath,
+    [property: JsonPropertyName("colors")] IReadOnlyList<string> Colors
+);

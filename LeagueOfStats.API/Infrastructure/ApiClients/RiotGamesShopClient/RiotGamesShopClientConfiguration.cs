@@ -1,6 +1,6 @@
-using LeagueOfStats.Application.RiotGamesShopClient;
+using LeagueOfStats.Application.ApiClients.RiotGamesShopClient;
 
-namespace LeagueOfStats.API.Infrastructure.RiotGamesShopClient;
+namespace LeagueOfStats.API.Infrastructure.ApiClients.RiotGamesShopClient;
 
 public static class RiotGamesShopClientConfiguration
 {

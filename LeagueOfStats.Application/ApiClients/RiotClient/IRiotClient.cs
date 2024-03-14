@@ -5,7 +5,7 @@ using Camille.RiotGames.SummonerV4;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Rails.Results;
 
-namespace LeagueOfStats.Application.RiotClient;
+namespace LeagueOfStats.Application.ApiClients.RiotClient;
 
 public interface IRiotClient
 {

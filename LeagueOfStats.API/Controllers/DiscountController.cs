@@ -1,7 +1,7 @@
 using LeagueOfStats.API.Extensions;
+using LeagueOfStats.Application.ApiClients.RiotGamesShopClient.Enums;
 using LeagueOfStats.Application.Discounts.Queries.GetDiscountById;
 using LeagueOfStats.Application.Discounts.Queries.GetDiscounts;
-using LeagueOfStats.Application.RiotGamesShopClient.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NodaTime;

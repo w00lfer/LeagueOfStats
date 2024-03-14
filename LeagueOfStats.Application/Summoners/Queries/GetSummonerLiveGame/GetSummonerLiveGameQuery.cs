@@ -1,7 +1,7 @@
 using Camille.RiotGames.SpectatorV4;
+using LeagueOfStats.Application.ApiClients.RiotClient;
 using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.Extensions;
-using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Summoners;
@@ -57,7 +57,7 @@ public class GetSummonerLiveGameQueryHandler
                 return new LiveGameBannedChampionDto(
                     bannedChampion.Id,
                     bannedChampion.Name,
-                    bannedChampion.ChampionImage.FullFileName,
+                    bannedChampion.ChampionImage.SplashUrl,
                     bc.PickTurn,
                     bc.TeamId.ToSide());
             }),
@@ -72,7 +72,7 @@ public class GetSummonerLiveGameQueryHandler
                         return new LiveGameTeamParticipantDto(
                             championPlayedByParticipant.Id,
                             championPlayedByParticipant.Name,
-                            championPlayedByParticipant.ChampionImage.FullFileName,
+                            championPlayedByParticipant.ChampionImage.SplashUrl,
                             p.SummonerName,
                             p.Bot,
                             (int)p.ProfileIconId,

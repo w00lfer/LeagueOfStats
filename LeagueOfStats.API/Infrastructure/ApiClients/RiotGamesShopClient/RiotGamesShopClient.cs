@@ -1,11 +1,11 @@
 using LeagueOfStats.API.Common.Errors;
+using LeagueOfStats.Application.ApiClients.RiotGamesShopClient;
+using LeagueOfStats.Application.ApiClients.RiotGamesShopClient.Enums;
 using LeagueOfStats.Application.Common.NodaTimeHelpers;
-using LeagueOfStats.Application.RiotGamesShopClient;
-using LeagueOfStats.Application.RiotGamesShopClient.Enums;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using NodaTime.Text;
 
-namespace LeagueOfStats.API.Infrastructure.RiotGamesShopClient;
+namespace LeagueOfStats.API.Infrastructure.ApiClients.RiotGamesShopClient;
 
 public class RiotGamesShopClient : IRiotGamesShopClient
 {

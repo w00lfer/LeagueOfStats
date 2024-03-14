@@ -1,6 +1,6 @@
+using LeagueOfStats.Application.ApiClients.RiotClient;
 using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.Common.Validators;
-using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Rails.Results;

@@ -12,18 +12,16 @@ public class Skin : AggregateRoot
         IsBase = addSkinDto.IsBase;
         Name = addSkinDto.Name;
         Description = addSkinDto.Description;
-        SplashPath = addSkinDto.SplashPath;
-        UncenteredSplashPath = addSkinDto.UncenteredSplashPath;
-        TilePath = addSkinDto.TilePath;
-        LoadScreenPath = addSkinDto.LoadScreenPath;
-        LoadScreenVintagePath = addSkinDto.LoadScreenVintagePath;
+        SplashUrl = addSkinDto.SplashUrl;
+        UncenteredSplashUrl = addSkinDto.UncenteredSplashUrl;
+        TileUrl = addSkinDto.TileUrl;
         Rarity = addSkinDto.Rarity;
         IsLegacy = addSkinDto.IsLegacy;
         ChromaPath = addSkinDto.ChromaPath;
         
         _chromas.AddRange(addSkinDto.AddSkinChromaDtos.Select(addSkinChromaDto => new SkinChroma(
             addSkinChromaDto.RiotChromaId,
-            addSkinDto.ChromaPath,
+            addSkinChromaDto.ChromaPath,
             addSkinChromaDto.ColorAsStrings,
             this)));
     }
@@ -41,15 +39,11 @@ public class Skin : AggregateRoot
     
     public string? Description { get; }
     
-    public string SplashPath { get; }
+    public string SplashUrl { get; }
     
-    public string UncenteredSplashPath { get; }
+    public string UncenteredSplashUrl { get; }
     
-    public string TilePath { get; }
-    
-    public string LoadScreenPath { get; }
-    
-    public string? LoadScreenVintagePath { get; }
+    public string TileUrl { get; }
     
     public string Rarity { get; }
     

@@ -1,6 +1,6 @@
+using LeagueOfStats.Application.ApiClients.RiotGamesShopClient;
+using LeagueOfStats.Application.ApiClients.RiotGamesShopClient.Enums;
 using LeagueOfStats.Application.Common.Errors;
-using LeagueOfStats.Application.RiotGamesShopClient;
-using LeagueOfStats.Application.RiotGamesShopClient.Enums;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Discounts;
@@ -84,14 +84,14 @@ public class GetDiscountsQueryHandler
                 var addDiscountedChampionDtos = listOfRiotgamesShopDiscounts
                     .Where(rd => rd.DiscountType == DiscountType.Champion)
                     .Select(rdc => new AddDiscountedChampionDto(
-                        champions.Single(c => c.RiotChampionId == Int32.Parse(rdc.Id)),
+                        champions.Single(c => c.RiotChampionId == int.Parse(rdc.Id)),
                         rdc.OriginalPrice,
                         rdc.DiscountedPrice));
                 
                 var addDiscountedSkinDtos = listOfRiotgamesShopDiscounts
                     .Where(rd => rd.DiscountType == DiscountType.ChampionSkin)
                     .Select(rds => new AddDiscountedSkinDto(
-                        skins.Single(c => c.RiotSkinId == Int32.Parse(rds.Id)),
+                        skins.Single(c => c.RiotSkinId == int.Parse(rds.Id)),
                         rds.OriginalPrice,
                         rds.DiscountedPrice));
                 
@@ -114,7 +114,7 @@ public class GetDiscountsQueryHandler
 
         var allSkinIdsFromRiotGamesShopDiscountsMatchPersistedSkins = listOfRiotgamesShopDiscounts
             .Where(rd => rd.DiscountType == DiscountType.ChampionSkin)
-            .All(rds => skinRiotIds.Contains(Int32.Parse(rds.Id)));
+            .All(rds => skinRiotIds.Contains(int.Parse(rds.Id)));
         return allSkinIdsFromRiotGamesShopDiscountsMatchPersistedSkins;
     }
 
@@ -124,7 +124,7 @@ public class GetDiscountsQueryHandler
 
         var allChampionIdsFromRiotGamesShopDiscountsMatchPersistedChampions = listOfRiotgamesShopDiscounts
             .Where(rd => rd.DiscountType == DiscountType.Champion)
-            .All(rdc => championRiotIds.Contains(Int32.Parse(rdc.Id)));
+            .All(rdc => championRiotIds.Contains(int.Parse(rdc.Id)));
         return allChampionIdsFromRiotGamesShopDiscountsMatchPersistedChampions;
     }
 

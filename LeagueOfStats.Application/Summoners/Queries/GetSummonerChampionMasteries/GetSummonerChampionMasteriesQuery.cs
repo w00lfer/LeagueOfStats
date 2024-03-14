@@ -61,10 +61,8 @@ public class GetSummonerChampionMasteriesQueryHandler
                     championMastery.ChampionLevel,
                     champion.Title,
                     champion.Description,
-                    champion.ChampionImage.FullFileName,
-                    champion.ChampionImage.SpriteFileName,
-                    champion.ChampionImage.Height,
-                    champion.ChampionImage.Width,
+                    champion.ChampionImage.SplashUrl,
+                    champion.ChampionImage.IconUrl,
                     championMastery.ChampionPoints,
                     championMastery.ChestGranted);
             });

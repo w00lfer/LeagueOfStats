@@ -1,7 +1,7 @@
-using LeagueOfStats.Application.RiotGamesShopClient.Enums;
+using LeagueOfStats.Application.ApiClients.RiotGamesShopClient.Enums;
 using NodaTime;
 
-namespace LeagueOfStats.Application.RiotGamesShopClient;
+namespace LeagueOfStats.Application.ApiClients.RiotGamesShopClient;
 
 public record RiotGamesShopDiscount(
     string Id,
