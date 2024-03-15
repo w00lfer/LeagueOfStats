@@ -1,15 +1,31 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.API", "LeagueOfStats.API\LeagueOfStats.API.csproj", "{1BDC855F-C286-4125-A557-3A098AABC60D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.API", "src\LeagueOfStats.API\LeagueOfStats.API.csproj", "{1BDC855F-C286-4125-A557-3A098AABC60D}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7871060F-B108-4FD2-9112-3E05191371D4} = {7871060F-B108-4FD2-9112-3E05191371D4}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Application", "LeagueOfStats.Application\LeagueOfStats.Application.csproj", "{7871060F-B108-4FD2-9112-3E05191371D4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Application", "src\LeagueOfStats.Application\LeagueOfStats.Application.csproj", "{7871060F-B108-4FD2-9112-3E05191371D4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Domain", "LeagueOfStats.Domain\LeagueOfStats.Domain.csproj", "{6EB6CCA0-F8F4-4FC4-8873-9D39C6AC52F1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Domain", "src\LeagueOfStats.Domain\LeagueOfStats.Domain.csproj", "{6EB6CCA0-F8F4-4FC4-8873-9D39C6AC52F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Infrastructure", "LeagueOfStats.Infrastructure\LeagueOfStats.Infrastructure.csproj", "{8D7682BC-E818-487B-BB4A-0CC2B56C5F6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Infrastructure", "src\LeagueOfStats.Infrastructure\LeagueOfStats.Infrastructure.csproj", "{8D7682BC-E818-487B-BB4A-0CC2B56C5F6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{739E7C0E-847C-4258-9BEE-A1644E86A3BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{9EDF100F-FC62-4161-926A-A0B5EAE5ECE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Jobs", "src\LeagueOfStats.Jobs\LeagueOfStats.Jobs.csproj", "{CE930D94-F5FC-4E1F-B275-F0B64F2FA9D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Domain.Tests", "test\LeagueOfStats.Domain.Tests\LeagueOfStats.Domain.Tests.csproj", "{BFFE47B4-BC2E-4996-A384-E36A6701BF73}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Application.Tests", "test\LeagueOfStats.Application.Tests\LeagueOfStats.Application.Tests.csproj", "{3D63413C-B3C8-420C-A37D-32CC61279DCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Integration.Tests", "test\LeagueOfStats.Integration.Tests\LeagueOfStats.Integration.Tests.csproj", "{72FE939D-7FC2-4169-B7FD-DF2AE12CD8E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.API.Tests", "test\LeagueOfStats.API.Tests\LeagueOfStats.API.Tests.csproj", "{C49F4514-9F45-4C76-8963-F61EC0A1CC8E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfStats.Jobs.Tests", "test\LeagueOfStats.Jobs.Tests\LeagueOfStats.Jobs.Tests.csproj", "{E9A4B861-348C-406C-A084-142FBC4A8D12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,5 +49,41 @@ Global
 		{8D7682BC-E818-487B-BB4A-0CC2B56C5F6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D7682BC-E818-487B-BB4A-0CC2B56C5F6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D7682BC-E818-487B-BB4A-0CC2B56C5F6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE930D94-F5FC-4E1F-B275-F0B64F2FA9D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE930D94-F5FC-4E1F-B275-F0B64F2FA9D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE930D94-F5FC-4E1F-B275-F0B64F2FA9D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE930D94-F5FC-4E1F-B275-F0B64F2FA9D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFFE47B4-BC2E-4996-A384-E36A6701BF73}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFFE47B4-BC2E-4996-A384-E36A6701BF73}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFFE47B4-BC2E-4996-A384-E36A6701BF73}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFFE47B4-BC2E-4996-A384-E36A6701BF73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D63413C-B3C8-420C-A37D-32CC61279DCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D63413C-B3C8-420C-A37D-32CC61279DCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D63413C-B3C8-420C-A37D-32CC61279DCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D63413C-B3C8-420C-A37D-32CC61279DCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72FE939D-7FC2-4169-B7FD-DF2AE12CD8E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72FE939D-7FC2-4169-B7FD-DF2AE12CD8E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72FE939D-7FC2-4169-B7FD-DF2AE12CD8E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72FE939D-7FC2-4169-B7FD-DF2AE12CD8E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C49F4514-9F45-4C76-8963-F61EC0A1CC8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C49F4514-9F45-4C76-8963-F61EC0A1CC8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C49F4514-9F45-4C76-8963-F61EC0A1CC8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C49F4514-9F45-4C76-8963-F61EC0A1CC8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E9A4B861-348C-406C-A084-142FBC4A8D12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E9A4B861-348C-406C-A084-142FBC4A8D12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E9A4B861-348C-406C-A084-142FBC4A8D12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E9A4B861-348C-406C-A084-142FBC4A8D12}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6EB6CCA0-F8F4-4FC4-8873-9D39C6AC52F1} = {739E7C0E-847C-4258-9BEE-A1644E86A3BD}
+		{8D7682BC-E818-487B-BB4A-0CC2B56C5F6F} = {739E7C0E-847C-4258-9BEE-A1644E86A3BD}
+		{1BDC855F-C286-4125-A557-3A098AABC60D} = {739E7C0E-847C-4258-9BEE-A1644E86A3BD}
+		{7871060F-B108-4FD2-9112-3E05191371D4} = {739E7C0E-847C-4258-9BEE-A1644E86A3BD}
+		{CE930D94-F5FC-4E1F-B275-F0B64F2FA9D5} = {739E7C0E-847C-4258-9BEE-A1644E86A3BD}
+		{BFFE47B4-BC2E-4996-A384-E36A6701BF73} = {9EDF100F-FC62-4161-926A-A0B5EAE5ECE6}
+		{3D63413C-B3C8-420C-A37D-32CC61279DCF} = {9EDF100F-FC62-4161-926A-A0B5EAE5ECE6}
+		{72FE939D-7FC2-4169-B7FD-DF2AE12CD8E8} = {9EDF100F-FC62-4161-926A-A0B5EAE5ECE6}
+		{C49F4514-9F45-4C76-8963-F61EC0A1CC8E} = {9EDF100F-FC62-4161-926A-A0B5EAE5ECE6}
+		{E9A4B861-348C-406C-A084-142FBC4A8D12} = {9EDF100F-FC62-4161-926A-A0B5EAE5ECE6}
 	EndGlobalSection
 EndGlobal
