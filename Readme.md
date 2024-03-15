@@ -4,5 +4,5 @@
 
 ## Road Map for MVP
 
-* Chron job every 2 week to sync discounts
+* Chron job every week to sync discounts 
 * Chron job every 2 week to sync patch data like new skins, new champions
