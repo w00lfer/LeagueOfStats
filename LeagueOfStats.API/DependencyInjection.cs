@@ -4,15 +4,21 @@ using FluentValidation.AspNetCore;
 using LeagueOfStats.API.Configurations;
 using LeagueOfStats.API.Configurations.Options;
 using LeagueOfStats.API.Environments;
-using LeagueOfStats.API.Infrastructure.RiotClient;
-using LeagueOfStats.API.Infrastructure.RiotGamesShopClient;
+using LeagueOfStats.API.Infrastructure.ApiClients.CommunityDragonClient;
+using LeagueOfStats.API.Infrastructure.ApiClients.DataDragonClient;
+using LeagueOfStats.API.Infrastructure.ApiClients.RiotClient;
+using LeagueOfStats.API.Infrastructure.ApiClients.RiotGamesShopClient;
+using LeagueOfStats.Application.ApiClients.RiotClient;
 using LeagueOfStats.Application.Common;
-using LeagueOfStats.Application.RiotClient;
+using LeagueOfStats.Application.Jobs;
+using LeagueOfStats.Application.Jobs.JobListeners;
 using LeagueOfStats.Infrastructure.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using NodaTime;
 using NodaTime.Serialization.SystemTextJson;
+using Quartz;
+using Quartz.AspNetCore;
 using Unchase.Swashbuckle.AspNetCore.Extensions.Extensions;
 
 namespace LeagueOfStats.API;
@@ -28,14 +34,14 @@ public static class DependencyInjection
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
-        services.Configure<ApiBehaviorOptions>(options =>
-            { options.SuppressModelStateInvalidFilter = true; });
+        services.Configure<ApiBehaviorOptions>(options => { options.SuppressModelStateInvalidFilter = true; });
 
         AddSwagger(builder.Services);
 
         AddKeyVault(builder);
 
-        services.AddFluentValidationAutoValidation()
+        services
+            .AddFluentValidationAutoValidation()
             .AddFluentValidationClientsideAdapters();
 
         AddOptions(builder);
@@ -43,12 +49,16 @@ public static class DependencyInjection
         services.AddSingleton<IEntityUpdateLockoutService, EntityUpdateLockoutService>();
         
         AddExternalApiClients(services);
+        
+        AddQuartz(builder);
     }
 
     private static void AddExternalApiClients(IServiceCollection services)
     {
         services.AddScoped<IRiotClient, RiotClient>();
         services.ConfigureRiotGamesShopClient();
+        services.ConfigureDataDragonClient();
+        services.ConfigureCommunityDragonClient();
     }
 
     private static void AddSwagger(IServiceCollection services)
@@ -88,5 +98,65 @@ public static class DependencyInjection
             builder.Configuration.GetSection(nameof(RiotApiKeyOptions)));
         builder.Services.Configure<DatabaseOptions>(
             builder.Configuration.GetSection(nameof(DatabaseOptions)));
+    }
+
+    private static void AddQuartz(WebApplicationBuilder builder)
+    {
+        builder.Services.AddQuartz(q =>
+        {
+            q.UsePersistentStore(c =>
+            {
+                c.UseSqlServer(sqlServerOptions =>
+                {
+                    var dbConnectionString = builder.Configuration
+                        .GetSection(nameof(DatabaseOptions))
+                        .GetSection(nameof(DatabaseOptions.DatabaseConnectionString)).Value;
+                    
+                    var dbAdminPassword = builder.Configuration
+                        .GetSection(nameof(DatabaseOptions))
+                        .GetSection(nameof(DatabaseOptions.DatabaseAdminPassword)).Value;
+                    
+                    var connectionString = string.Format(dbConnectionString, dbAdminPassword);
+                    
+                    sqlServerOptions.ConnectionString = connectionString;
+                });
+
+                //c.UseProperties = true;
+                
+                c.UseNewtonsoftJsonSerializer();
+            });
+            
+            q.AddJobListener<JobFailureHandler>();
+            
+            string syncChampionAndSkiNdataAfterPatchJobKey = nameof(SyncChampionAndSkinDataJob);
+            q.AddJob<SyncChampionAndSkinDataJob>(opts => opts
+                .StoreDurably()
+                .WithIdentity(syncChampionAndSkiNdataAfterPatchJobKey));
+
+            q.AddTrigger(opts => opts
+                .ForJob(syncChampionAndSkiNdataAfterPatchJobKey)
+                .WithIdentity($"{syncChampionAndSkiNdataAfterPatchJobKey}-trigger")
+                .StartAt(new DateTimeOffset(2024, 3, 6, 6, 0, 0, TimeSpan.Zero))
+                .WithSchedule(CronScheduleBuilder
+                    .WeeklyOnDayAndHourAndMinute(DayOfWeek.Tuesday, 6, 0)));
+            
+            string syncDiscountDataJobKey = nameof(SyncDiscountsDataJob);
+            q.AddJob<SyncDiscountsDataJob>(opts => opts
+                .StoreDurably()
+                .WithIdentity(syncDiscountDataJobKey));
+
+            q.AddTrigger(opts => opts
+                .ForJob(syncDiscountDataJobKey)
+                .WithIdentity($"{syncDiscountDataJobKey}-trigger")
+                .StartAt(new DateTimeOffset(2024, 3, 10, 17, 0, 0, TimeSpan.Zero))
+                .WithSchedule(CronScheduleBuilder
+                    .WeeklyOnDayAndHourAndMinute(DayOfWeek.Monday, 17, 0)));
+            
+        });
+        
+        builder.Services.AddQuartzServer(options =>
+        {
+            options.WaitForJobsToComplete = true;
+        });
     }
 }

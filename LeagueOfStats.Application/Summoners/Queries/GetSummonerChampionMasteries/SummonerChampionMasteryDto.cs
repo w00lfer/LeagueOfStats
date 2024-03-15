@@ -8,7 +8,5 @@ public record SummonerChampionMasteryDto(
     string ChampionDescription,
     string ChampionImageFullFileName,
     string ChampionImageSpriteFileName,
-    int ChampionImageHeight,
-    int ChampionImageWidth,
     int ChampionPoints,
     bool ChestGranted);

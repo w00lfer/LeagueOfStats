@@ -1,10 +1,8 @@
 using LeagueOfStats.API.Extensions;
 using LeagueOfStats.Application.Discounts.Queries.GetDiscountById;
 using LeagueOfStats.Application.Discounts.Queries.GetDiscounts;
-using LeagueOfStats.Application.RiotGamesShopClient.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using NodaTime;
 
 namespace LeagueOfStats.API.Controllers;
 
@@ -13,12 +11,10 @@ namespace LeagueOfStats.API.Controllers;
 public class DiscountController : ControllerBase
 {
     private readonly IMediator _mediator;
-    private readonly IClock _clock;
 
-    public DiscountController(IMediator mediator, IClock clock)
+    public DiscountController(IMediator mediator)
     {
         _mediator = mediator;
-        _clock = clock;
     }
 
     [HttpGet("")]
@@ -27,7 +23,7 @@ public class DiscountController : ControllerBase
             .ToIActionResult(this);
 
     [HttpGet("{id}")]
-    public Task<IActionResult> GetDiscountById(Guid id, DiscountType? discountType = null) =>
+    public Task<IActionResult> GetDiscountById(Guid id) =>
         _mediator.Send(new GetDiscountByIdQuery(id))
             .ToIActionResult(this);
 }

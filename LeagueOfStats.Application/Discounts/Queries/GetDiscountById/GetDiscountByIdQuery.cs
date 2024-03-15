@@ -1,4 +1,3 @@
-using LeagueOfStats.Application.Common.RiotUrls;
 using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.Discounts.Queries.GetDiscountById.Dtos;
 using LeagueOfStats.Domain.Champions;
@@ -55,7 +54,7 @@ public class GetDiscountByIdQueryHandler
                         
                         return new DiscountedChampionDto(
                             champion.Name,
-                            RiotUrlBuilder.MapFromLeagueClientPathToCommunityDragonUrlForChampion(champion.RiotChampionId),
+                            champion.ChampionImage.SplashUrl,
                             dc.OldPrice,
                             dc.NewPrice);
                     }),
@@ -65,7 +64,7 @@ public class GetDiscountByIdQueryHandler
 
                         return new DiscountedSkinDto(
                             skin.Name,
-                            RiotUrlBuilder.MapFromLeagueClientPathToCommunityDragonUrlForSkin(skin.SplashPath),
+                            skin.SplashUrl,
                             skin.Rarity,
                             ds.OldPrice,
                             ds.NewPrice);

@@ -5,36 +5,37 @@ namespace LeagueOfStats.Domain.Champions;
 public class ChampionImage : ValueObject
 {
     private ChampionImage(
-        string fullFileName,
-        string spriteFileName,
-        int width,
-        int height)
+        string splashUrl,
+        string uncenteredSplashUrl,
+        string iconUrl,
+        string tileUrl)
     {
-        FullFileName = fullFileName;
-        SpriteFileName = spriteFileName;
-        Width = width;
-        Height = height;
+        SplashUrl = splashUrl;
+        UncenteredSplashUrl = uncenteredSplashUrl;
+        IconUrl = iconUrl;
+        TileUrl = tileUrl;
     }
 
     public static ChampionImage Create(
-        string fullFileName,
-        string spriteFileName,
-        int width,
-        int height) =>
-        new(fullFileName, spriteFileName, width, height);
+        string splashUrl,
+        string uncenteredSplashUrl,
+        string iconUrl,
+        string tileUrl) =>
+        new(splashUrl, uncenteredSplashUrl, iconUrl, tileUrl);
     
-    public string FullFileName { get; }
+    public string SplashUrl { get; }
+    
+    public string UncenteredSplashUrl { get; }
         
-    public string SpriteFileName { get; }
-        
-    public int Width { get; }
-        
-    public int Height { get; }
+    public string IconUrl { get; }
+    
+    public string TileUrl { get; }
+    
     public override IEnumerable<object> GetEqualityComponents()
     {
-        yield return FullFileName;
-        yield return SpriteFileName;
-        yield return Width;
-        yield return Height;
+        yield return SplashUrl;
+        yield return UncenteredSplashUrl;
+        yield return IconUrl;
+        yield return TileUrl;
     }
 }

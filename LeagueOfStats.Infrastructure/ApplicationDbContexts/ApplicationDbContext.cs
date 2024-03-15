@@ -1,3 +1,5 @@
+using AppAny.Quartz.EntityFrameworkCore.Migrations;
+using AppAny.Quartz.EntityFrameworkCore.Migrations.SqlServer;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Discounts;
 using LeagueOfStats.Domain.Matches;
@@ -5,7 +7,6 @@ using LeagueOfStats.Domain.Matches.Participants;
 using LeagueOfStats.Domain.Matches.Teams;
 using LeagueOfStats.Domain.Skins;
 using LeagueOfStats.Domain.Summoners;
-using LeagueOfStats.Infrastructure.ApplicationDbContexts.Seeds;
 using Microsoft.EntityFrameworkCore;
 
 namespace LeagueOfStats.Infrastructure.ApplicationDbContexts;
@@ -56,5 +57,6 @@ public class ApplicationDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        modelBuilder.AddQuartz(builder => builder.UseSqlServer("QRTZ_", null));
     }
 }

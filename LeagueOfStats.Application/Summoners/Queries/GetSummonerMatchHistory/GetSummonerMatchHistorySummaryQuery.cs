@@ -1,8 +1,8 @@
 using Camille.RiotGames.MatchV5;
+using LeagueOfStats.Application.ApiClients.RiotClient;
 using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.Extensions;
-using LeagueOfStats.Application.RiotClient;
 using LeagueOfStats.Application.Summoners.Enums;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Enums;
@@ -218,7 +218,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler
                 new MatchHistorySummarySummonerDto(
                     championPlayedBySummoner.Id,
                     championPlayedBySummoner.Name,
-                    championPlayedBySummoner.ChampionImage.FullFileName,
+                    championPlayedBySummoner.ChampionImage.SplashUrl,
                     participantAsSummoner.ChampLevel,
                     participantAsSummoner.Kills,
                     participantAsSummoner.Deaths,
@@ -267,7 +267,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler
                             summoner.Id,
                             summoner.SummonerName.ToString(),
                             champion.Name,
-                            champion.ChampionImage.FullFileName);
+                            champion.ChampionImage.SplashUrl);
                     }),
                     g.Select(p => p.Side).Distinct().Single(),
                     g.Select(p => p.Win).Distinct().Single()));
@@ -284,7 +284,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler
                         summoner.Id,
                         summoner.SummonerName.ToString(),
                         champion.Name,
-                        champion.ChampionImage.FullFileName);
+                        champion.ChampionImage.SplashUrl);
                 }),
                 g.Select(p => p.Side).Distinct().Single(),
                 g.Select(p => p.Win).Distinct().Single()));

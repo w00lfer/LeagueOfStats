@@ -5,12 +5,10 @@ public record AddSkinDto(
     bool IsBase,
     string Name,
     string Description,
-    string SplashPath,
-    string UncenteredSplashPath,
-    string TilePath,
-    string LoadScreenPath,
-    string LoadScreenVintagePath,
+    string SplashUrl,
+    string UncenteredSplashUrl, 
+    string TileUrl,
     string Rarity,
     bool IsLegacy,
     string ChromaPath,
-    IEnumerable<AddSkinChromaDto> AddSkinChromaDtos);
+    IEnumerable<AddSkinChromaDto>? AddSkinChromaDtos);
