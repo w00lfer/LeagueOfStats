@@ -1,3 +1,5 @@
+using LeagueOfStats.Application.ApiClients.CommunityDragonClient;
+using LeagueOfStats.Application.ApiClients.DataDragonClient;
 using LeagueOfStats.Application.ApiClients.RiotGamesShopClient;
 using LeagueOfStats.Application.ApiClients.RiotGamesShopClient.Enums;
 using LeagueOfStats.Application.Common.Errors;
@@ -21,23 +23,27 @@ public class GetDiscountsQueryHandler
     private readonly IRiotGamesShopClient _riotGamesShopClient;
     private readonly IChampionRepository _championRepository;
     private readonly ISkinRepository _skinRepository;
-
+    private readonly ICommunityDragonClient _dataDragonClient;
+    
     public GetDiscountsQueryHandler(
         IDiscountDomainService discountDomainService,
         IClock clock, 
         IRiotGamesShopClient riotGamesShopClient,
         IChampionRepository championRepository,
-        ISkinRepository skinRepository)
+        ISkinRepository skinRepository, ICommunityDragonClient dataDragonClient)
     {
         _discountDomainService = discountDomainService;
         _clock = clock;
         _riotGamesShopClient = riotGamesShopClient;
         _championRepository = championRepository;
         _skinRepository = skinRepository;
+        _dataDragonClient = dataDragonClient;
     }
 
     public async Task<Result<IEnumerable<DiscountSummaryDto>>> Handle(GetDiscountsQuery request, CancellationToken cancellationToken)
     {
+        await _dataDragonClient.GetSkinsAsync();
+        
         List<Discount> discounts = (await _discountDomainService.GetAllAsync()).ToList();
 
         var currentDate = _clock.GetCurrentInstant().InUtc().LocalDateTime;

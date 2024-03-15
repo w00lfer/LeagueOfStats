@@ -22,7 +22,11 @@ public class ChampionConfiguration :EntityConfigurationBase<Champion>, IEntityTy
         {
             ciBuilder.Property(ci => ci.SplashUrl);
 
+            ciBuilder.Property(ci => ci.UncenteredSplashUrl);
+            
             ciBuilder.Property(ci => ci.IconUrl);
+            
+            ciBuilder.Property(ci => ci.TileUrl);
         });
     }
 }

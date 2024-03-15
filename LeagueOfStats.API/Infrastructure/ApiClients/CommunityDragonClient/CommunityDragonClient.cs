@@ -1,3 +1,4 @@
+using LeagueOfStats.API.Common.Errors;
 using LeagueOfStats.Application.ApiClients.CommunityDragonClient;
 using LeagueOfStats.Domain.Common.Rails.Results;
 
@@ -12,8 +13,31 @@ public class CommunityDragonClient : ICommunityDragonClient
         _httpClient = httpClient;
     }
 
-    public Task<Result<IEnumerable<SkinDto>>> GetSkins()
+    public async Task<Result<IEnumerable<SkinDto>>> GetSkinsAsync()
     {
-        throw new NotImplementedException();
+        var communityDragonGetSkinsResponse = await _httpClient.GetFromJsonAsync<Dictionary<String, CommunityDragonSkinDataDto>>("skins.json");
+
+        if (communityDragonGetSkinsResponse is null)
+        {
+            return new ApiError("Community Dragon can't be accessed.");
+        }
+        
+        var skinDtos = communityDragonGetSkinsResponse.Values.Select(s =>
+            new SkinDto(
+                s.Id,
+                s.IsBase,
+                s.Name,
+                s.Description,
+                s.Rarity,
+                s.IsLegacy,
+                s.ChromaPath,
+                s.SkinDataConfigurationChromas is null
+                    ? Enumerable.Empty<SkinChromaDto>()
+                    : s.SkinDataConfigurationChromas.Select(sc => new SkinChromaDto(
+                        sc.Id,
+                        sc.ChromaPath,
+                        sc.Colors))));
+
+        return Result.Success(skinDtos);
     }
 }

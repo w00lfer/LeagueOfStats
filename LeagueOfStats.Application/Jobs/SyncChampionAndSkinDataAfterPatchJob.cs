@@ -51,7 +51,7 @@ public class SyncChampionAndSkinDataAfterPatchJob : IJob
     
     private async Task AddAnyNewChampions()
     {
-        Result<IEnumerable<ChampionDto>> getChampionsResult = await _dataDragonClient.GetChampions();
+        Result<IEnumerable<ChampionDto>> getChampionsResult = await _dataDragonClient.GetChampionsAsync();
 
         if (getChampionsResult.IsFailure)
         {
@@ -79,7 +79,7 @@ public class SyncChampionAndSkinDataAfterPatchJob : IJob
 
     private async Task AddAnyNewSkins()
     {
-        Result<IEnumerable<SkinDto>> getSkinsResult = await _communityDragonClient.GetSkins();
+        Result<IEnumerable<SkinDto>> getSkinsResult = await _communityDragonClient.GetSkinsAsync();
 
         if (getSkinsResult.IsFailure)
         {

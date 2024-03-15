@@ -51,7 +51,7 @@ public static class DependencyInjection
         
         AddExternalApiClients(services);
         
-        AddQuartz(services);
+        AddQuartz(builder);
     }
 
     private static void AddExternalApiClients(IServiceCollection services)
@@ -101,13 +101,36 @@ public static class DependencyInjection
             builder.Configuration.GetSection(nameof(DatabaseOptions)));
     }
 
-    private static void AddQuartz(IServiceCollection services)
+    private static void AddQuartz(WebApplicationBuilder builder)
     {
-        services.AddQuartz(q =>
+        builder.Services.AddQuartz(q =>
         {
+            q.UsePersistentStore(c =>
+            {
+                c.UseSqlServer(sqlServerOptions =>
+                {
+                    var dbConnectionString = builder.Configuration
+                        .GetSection(nameof(DatabaseOptions))
+                        .GetSection(nameof(DatabaseOptions.DatabaseConnectionString)).Value;
+                    
+                    var dbAdminPassword = builder.Configuration
+                        .GetSection(nameof(DatabaseOptions))
+                        .GetSection(nameof(DatabaseOptions.DatabaseAdminPassword)).Value;
+                    
+                    var connectionString = string.Format(dbConnectionString, dbAdminPassword);
+                    
+                    sqlServerOptions.ConnectionString = connectionString;
+                });
+
+                c.UseProperties = true;
+                
+                c.UseNewtonsoftJsonSerializer();
+            });
+            
             string syncChampionAndSkiNdataAfterPatchJobKey = nameof(SyncChampionAndSkinDataAfterPatchJob);
-            q.AddJob<SyncChampionAndSkinDataAfterPatchJob>(opts =>
-                opts.WithIdentity(syncChampionAndSkiNdataAfterPatchJobKey));
+            q.AddJob<SyncChampionAndSkinDataAfterPatchJob>(opts => opts
+                .StoreDurably()
+                .WithIdentity(syncChampionAndSkiNdataAfterPatchJobKey));
 
             q.AddTrigger(opts => opts
                 .ForJob(syncChampionAndSkiNdataAfterPatchJobKey)
@@ -118,7 +141,7 @@ public static class DependencyInjection
             
         });
         
-        services.AddQuartzServer(options =>
+        builder.Services.AddQuartzServer(options =>
         {
             options.WaitForJobsToComplete = true;
         });

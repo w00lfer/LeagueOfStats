@@ -4,7 +4,7 @@ namespace LeagueOfStats.API.Infrastructure.ApiClients.DataDragonClient;
 
 public static class DataDragonClientConfiguration
 {
-    private const string DataDragonUrl = "https://ddragon.leagueoflegends.com/cdn/";
+    private const string DataDragonUrl = "https://ddragon.leagueoflegends.com/";
     
     public static void ConfigureDataDragonClient(this IServiceCollection services)
     {

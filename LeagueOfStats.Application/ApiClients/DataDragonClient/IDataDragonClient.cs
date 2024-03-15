@@ -4,5 +4,5 @@ namespace LeagueOfStats.Application.ApiClients.DataDragonClient;
 
 public interface IDataDragonClient
 {
-    Task<Result<IEnumerable<ChampionDto>>> GetChampions();
+    Task<Result<IEnumerable<ChampionDto>>> GetChampionsAsync();
 }

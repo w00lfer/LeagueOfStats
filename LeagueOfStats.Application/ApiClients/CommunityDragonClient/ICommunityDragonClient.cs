@@ -4,5 +4,5 @@ namespace LeagueOfStats.Application.ApiClients.CommunityDragonClient;
 
 public interface ICommunityDragonClient
 {
-    Task<Result<IEnumerable<SkinDto>>> GetSkins();
+    Task<Result<IEnumerable<SkinDto>>> GetSkinsAsync();
 }
