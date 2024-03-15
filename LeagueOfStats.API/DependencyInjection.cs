@@ -11,6 +11,7 @@ using LeagueOfStats.API.Infrastructure.ApiClients.RiotGamesShopClient;
 using LeagueOfStats.Application.ApiClients.RiotClient;
 using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.Jobs;
+using LeagueOfStats.Application.Jobs.JobListeners;
 using LeagueOfStats.Infrastructure.Options;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
@@ -46,8 +47,6 @@ public static class DependencyInjection
         AddOptions(builder);
 
         services.AddSingleton<IEntityUpdateLockoutService, EntityUpdateLockoutService>();
-
-        //services.AddScoped<ISyncChampionAndSkinService, SyncChampionAndSkinService>();
         
         AddExternalApiClients(services);
         
@@ -122,13 +121,15 @@ public static class DependencyInjection
                     sqlServerOptions.ConnectionString = connectionString;
                 });
 
-                c.UseProperties = true;
+                //c.UseProperties = true;
                 
                 c.UseNewtonsoftJsonSerializer();
             });
             
-            string syncChampionAndSkiNdataAfterPatchJobKey = nameof(SyncChampionAndSkinDataAfterPatchJob);
-            q.AddJob<SyncChampionAndSkinDataAfterPatchJob>(opts => opts
+            q.AddJobListener<JobFailureHandler>();
+            
+            string syncChampionAndSkiNdataAfterPatchJobKey = nameof(SyncChampionAndSkinDataJob);
+            q.AddJob<SyncChampionAndSkinDataJob>(opts => opts
                 .StoreDurably()
                 .WithIdentity(syncChampionAndSkiNdataAfterPatchJobKey));
 
@@ -138,6 +139,18 @@ public static class DependencyInjection
                 .StartAt(new DateTimeOffset(2024, 3, 6, 6, 0, 0, TimeSpan.Zero))
                 .WithSchedule(CronScheduleBuilder
                     .WeeklyOnDayAndHourAndMinute(DayOfWeek.Tuesday, 6, 0)));
+            
+            string syncDiscountDataJobKey = nameof(SyncDiscountsDataJob);
+            q.AddJob<SyncDiscountsDataJob>(opts => opts
+                .StoreDurably()
+                .WithIdentity(syncDiscountDataJobKey));
+
+            q.AddTrigger(opts => opts
+                .ForJob(syncDiscountDataJobKey)
+                .WithIdentity($"{syncDiscountDataJobKey}-trigger")
+                .StartAt(new DateTimeOffset(2024, 3, 10, 17, 0, 0, TimeSpan.Zero))
+                .WithSchedule(CronScheduleBuilder
+                    .WeeklyOnDayAndHourAndMinute(DayOfWeek.Monday, 17, 0)));
             
         });
         

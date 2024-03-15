@@ -1,4 +1,3 @@
-using System.Text.Json;
 using LeagueOfStats.Application.ApiClients.CommunityDragonClient;
 using LeagueOfStats.Application.ApiClients.DataDragonClient;
 using LeagueOfStats.Application.Common.RiotUrls;
@@ -6,20 +5,20 @@ using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Skins;
 using LeagueOfStats.Infrastructure.ApplicationDbContexts;
-using LeagueOfStats.Infrastructure.JsonConfigurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Quartz;
 
 namespace LeagueOfStats.Application.Jobs;
 
-public class SyncChampionAndSkinDataAfterPatchJob : IJob
+[PersistJobDataAfterExecution]
+public class SyncChampionAndSkinDataJob : IJob
 {
+    private readonly ApplicationDbContext _applicationDbContext;
     private readonly IDataDragonClient _dataDragonClient;
     private readonly ICommunityDragonClient _communityDragonClient;
-    private readonly ApplicationDbContext _applicationDbContext;
 
-    public SyncChampionAndSkinDataAfterPatchJob(
+    public SyncChampionAndSkinDataJob(
         ApplicationDbContext applicationDbContext,
         IDataDragonClient dataDragonClient,
         ICommunityDragonClient communityDragonClient)
@@ -31,7 +30,7 @@ public class SyncChampionAndSkinDataAfterPatchJob : IJob
 
     public async Task Execute(IJobExecutionContext context)
     {
-        IDbContextTransaction transaction = _applicationDbContext.Database.BeginTransaction();
+        IDbContextTransaction transaction = await _applicationDbContext.Database.BeginTransactionAsync();
         
         try
         {

@@ -1,4 +1,3 @@
-using LeagueOfStats.Application.Common.RiotUrls;
 using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.Discounts.Queries.GetDiscountById.Dtos;
 using LeagueOfStats.Domain.Champions;
