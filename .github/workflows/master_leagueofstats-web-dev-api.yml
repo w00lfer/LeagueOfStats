@@ -31,7 +31,7 @@ jobs:
       with:
         push: true
         tags: leagueofstatscregdev.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_30bbe3dfbc1041788b8905f3fb259264 }}/leagueofstats:${{ github.sha }}
-        file: ../../LeagueOfStats.API/Dockerfile
+        file: ../../src/LeagueOfStats.API/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
