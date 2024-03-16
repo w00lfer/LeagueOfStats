@@ -9,14 +9,21 @@ public class Champion : AggregateRoot
         string name,
         string title,
         string description,
-        ChampionImage championImage)
+        string splashUrl,
+        string uncenteredSplashUrl,
+        string iconUrl,
+        string tileUrl)
         : base(Guid.NewGuid())
     {
         RiotChampionId = riotChampionId;
         Name = name;
         Title = title;
         Description = description;
-        ChampionImage = championImage;
+        ChampionImage = ChampionImage.Create(
+            splashUrl,
+            uncenteredSplashUrl,
+            iconUrl,
+            tileUrl);
     }
 
     protected Champion()

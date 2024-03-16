@@ -18,15 +18,18 @@ public class SkinConfiguration : EntityConfigurationBase<Skin>, IEntityTypeConfi
         
         builder.Property(s => s.Description);
         
-        builder.Property(s => s.SplashUrl);
-        
-        builder.Property(s => s.UncenteredSplashUrl);
-        
-        builder.Property(s => s.TileUrl);
-        
         builder.Property(s => s.Rarity);
         
         builder.Property(s => s.ChromaPath);
+
+        builder.ComplexProperty(s => s.SkinImage, siBuilder =>
+        {
+            siBuilder.Property(si => si.SplashUrl);
+
+            siBuilder.Property(si => si.UncenteredSplashUrl);
+
+            siBuilder.Property(si => si.TileUrl);
+        });
 
         builder
             .HasMany(s => s.Chromas)

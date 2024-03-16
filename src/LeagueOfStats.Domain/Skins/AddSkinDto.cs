@@ -11,4 +11,4 @@ public record AddSkinDto(
     string Rarity,
     bool IsLegacy,
     string ChromaPath,
-    IEnumerable<AddSkinChromaDto>? AddSkinChromaDtos);
+    IEnumerable<AddSkinChromaDto> AddSkinChromaDtos);

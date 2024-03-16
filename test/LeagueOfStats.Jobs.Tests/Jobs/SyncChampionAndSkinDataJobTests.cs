@@ -81,7 +81,7 @@ public class SyncChampionAndSkinDataJobTests
             .Setup(x => x.GetChampionsAsync())
             .ReturnsAsync(Domain.Common.Rails.Results.Result.Success(championDtos));
 
-        var champion = Mock.Of<Champion>(c => c.RiotChampionId == championDto1.RiotChampionId);
+        var champion = new Champion(championDto1.RiotChampionId, "name", "title", "description", "splashUrl", "uncenteredSplashUrl", "iconUrl", "tileUrl");
         IEnumerable<Champion> champions = new List<Champion>
         {
             champion
@@ -101,7 +101,7 @@ public class SyncChampionAndSkinDataJobTests
             .Setup(x => x.GetSkinsAsync())
             .ReturnsAsync(Domain.Common.Rails.Results.Result.Success(skinDtos));
 
-        var skin = Mock.Of<Skin>(s => s.RiotSkinId == skinDto1.RiotSkinId);
+        var skin = new Skin(new AddSkinDto(skinDto1.RiotSkinId, true, "name", "description", "splashUrl", "uncenteredSplashUrl", "tileUrl", "rarity", false, "chromaPath", Enumerable.Empty<AddSkinChromaDto>()));
         IEnumerable<Skin> skins = new List<Skin>
         {
             skin
@@ -116,11 +116,12 @@ public class SyncChampionAndSkinDataJobTests
         _dataDragonClientMock.Verify(x => x.GetChampionsAsync(), Times.Once);
         _championRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
         _championRepositoryMock.Verify(x => x.AddRangeAsync(It.Is<IEnumerable<Champion>>(ec => ec.Any(c =>
-            c.RiotChampionId == championDto1.RiotChampionId))), Times.Once);
+            c.RiotChampionId == championDto2.RiotChampionId))), Times.Once);
         _communityDragonClientMock.Verify(x => x.GetSkinsAsync(), Times.Once);
         _skinRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
         _skinRepositoryMock.Verify(x => x.AddRangeAsync(It.Is<IEnumerable<Skin>>(es => es.Any(s =>
-            s.RiotSkinId == skinDto1.RiotSkinId))), Times.Once);
+            s.RiotSkinId == skinDto2.RiotSkinId))), Times.Once);
+        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(default), Times.Once);
         dbTransactionMock.Verify(x => x.Commit(), Times.Once);
         dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
         VerifyNoOtherCalls();

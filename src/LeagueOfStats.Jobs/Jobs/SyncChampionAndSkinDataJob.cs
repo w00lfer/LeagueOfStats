@@ -81,11 +81,10 @@ public class SyncChampionAndSkinDataJob : IJob
             c.Name,
             c.Title,
             c.Description,
-            ChampionImage.Create(
-                RiotUrlBuilder.GetChampionSplashByRiotChampionId(c.RiotChampionId),
-                RiotUrlBuilder.GetChampionUncenteredSplashByRiotChampionId(c.RiotChampionId),
-                RiotUrlBuilder.GetChampionIconByRiotChampionId(c.RiotChampionId),
-                RiotUrlBuilder.GetChampionTileByRiotChampionId(c.RiotChampionId))));
+            RiotUrlBuilder.GetChampionSplashByRiotChampionId(c.RiotChampionId),
+            RiotUrlBuilder.GetChampionUncenteredSplashByRiotChampionId(c.RiotChampionId),
+            RiotUrlBuilder.GetChampionIconByRiotChampionId(c.RiotChampionId),
+            RiotUrlBuilder.GetChampionTileByRiotChampionId(c.RiotChampionId)));
 
         await _championRepository.AddRangeAsync(championsToAdd);
         
@@ -118,12 +117,10 @@ public class SyncChampionAndSkinDataJob : IJob
                 s.Rarity,
                 s.IsLegacy,
                 s.ChromaPath,
-                s.SkinChromaDtos is null
-                    ? Enumerable.Empty<AddSkinChromaDto>()
-                    : s.SkinChromaDtos.Select(sc => new AddSkinChromaDto(
-                        sc.RiotChromaId,
-                        sc.ChromaPath,
-                        sc.ColorAsStrings)))));
+                s.SkinChromaDtos.Select(sc => new AddSkinChromaDto(
+                    sc.RiotChromaId,
+                    sc.ChromaPath,
+                    sc.ColorAsStrings)))));
 
         await _skinRepository.AddRangeAsync(skinsToAdd);
 

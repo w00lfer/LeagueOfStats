@@ -12,12 +12,13 @@ public class Skin : AggregateRoot
         IsBase = addSkinDto.IsBase;
         Name = addSkinDto.Name;
         Description = addSkinDto.Description;
-        SplashUrl = addSkinDto.SplashUrl;
-        UncenteredSplashUrl = addSkinDto.UncenteredSplashUrl;
-        TileUrl = addSkinDto.TileUrl;
         Rarity = addSkinDto.Rarity;
         IsLegacy = addSkinDto.IsLegacy;
         ChromaPath = addSkinDto.ChromaPath;
+        SkinImage = SkinImage.Create(
+            addSkinDto.SplashUrl,
+            addSkinDto.UncenteredSplashUrl,
+            addSkinDto.TileUrl);
         
         _chromas.AddRange(addSkinDto.AddSkinChromaDtos.Select(addSkinChromaDto => new SkinChroma(
             addSkinChromaDto.RiotChromaId,
@@ -50,6 +51,8 @@ public class Skin : AggregateRoot
     public bool IsLegacy { get; }
     
     public string? ChromaPath { get; }
+    
+    public SkinImage SkinImage { get; }
 
     public List<SkinChroma> Chromas => _chromas;
 }
