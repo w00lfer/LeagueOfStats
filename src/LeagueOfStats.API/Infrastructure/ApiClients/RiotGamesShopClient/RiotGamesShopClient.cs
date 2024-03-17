@@ -48,7 +48,7 @@ public class RiotGamesShopClient : IRiotGamesShopClient
                 var salesEnd = localDateTimePattern.Parse(price.Discount.SaleEnd).Value;    
                 
                 return new RiotGamesShopDiscount(
-                    skinDiscount.Id,
+                    int.Parse(skinDiscount.Id),
                     DiscountType.ChampionSkin,
                     price.OriginalPrice.Cost,
                     price.Discount.DiscountedProductPrice.Cost,
@@ -69,7 +69,7 @@ public class RiotGamesShopClient : IRiotGamesShopClient
                 var salesEnd = localDateTimePattern.Parse(price.Discount.SaleEnd).Value;
 
                 return new RiotGamesShopDiscount(
-                    championDiscount.Id,
+                    int.Parse(championDiscount.Id),
                     DiscountType.Champion,
                     price.OriginalPrice.Cost,
                     price.Discount.DiscountedProductPrice.Cost,

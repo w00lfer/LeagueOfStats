@@ -4,7 +4,7 @@ using NodaTime;
 namespace LeagueOfStats.Jobs.ApiClients.RiotGamesShopClient;
 
 public record RiotGamesShopDiscount(
-    string Id,
+    int RiotId,
     DiscountType DiscountType,
     int OriginalPrice,
     int DiscountedPrice,
