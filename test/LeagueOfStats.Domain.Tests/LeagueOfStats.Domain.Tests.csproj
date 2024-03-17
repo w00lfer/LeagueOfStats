@@ -19,10 +19,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Discounts\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\..\src\LeagueOfStats.Domain\LeagueOfStats.Domain.csproj" />
     </ItemGroup>
 

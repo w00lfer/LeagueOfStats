@@ -29,7 +29,7 @@ public class Discount : AggregateRoot
                 addDiscountedSkinDto.NewPrice)));
     }    
     
-    private Discount()
+    protected Discount()
         : base(Guid.Empty)
     {
     }
