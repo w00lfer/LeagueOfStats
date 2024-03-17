@@ -2,15 +2,32 @@
 
 * Set **WEBSITES_PORT** application setting to **8080**
 
+## Configuring AppSettings
+
+* "KeyVaultURL": *string* - Url to AzureKeyVault
+* "ManagedIdentityClientId": *string* - ManagedIdentityClientId used to connect to AzureKeyVault
+* "DatabaseOptions"
+    - "DatabaseConnectionString": *string* - connection string to database where password is argumented {0} like this.
+    - "DatabaseAdminPassword": *string* - password to datbase in connection string
+    - "EnablesSensitiveDataLogging": *boolean* - sensitive logging for ef core
+    - "EnableDetailedErrors": *boolean* - detailed login for ef core
+    - "CommandTimeout": *integer* - timeout for ef core
+
+* "RiotApiKeyOptions"
+    - RiotApiKey": *string* - ApiKey from RiotGames
+      
+* "EntityUpdateLockoutOptions"
+    "SummonerUpdateLockout": *integer* - lockout in minutes to prevent extensive querying summoners
+
 ## Chron jobs
 
-* Chron job every week to sync discounts 
-* Chron job every 2 week to sync patch data like new skins, new champions
+* Chron job every week to sync discounts :white_check_mark:
+* Chron job every 2 week to sync patch data like new skins, new champions :white_check_mark:
 
 ## Features
 
 Summoner
-* Search summoner by name, taglinie, region
+* Search summoner by name, taglinie, region :white_check_mark:
     - Id,
     - RiotAccountId
     - RiotSummonerId
@@ -23,7 +40,7 @@ Summoner
     - LastUpdated
     - When can be updated (Refresh)
 
-* Search summoner by ResourceId
+* Search summoner by ResourceId :white_check_mark:
     - Id,
     - RiotAccountId
     - RiotSummonerId
@@ -36,7 +53,7 @@ Summoner
     - LastUpdated
     - When can be updated (Refresh)
 
-* Search summoner's live game by ResourceId
+* Search summoner's live game by ResourceId :white_check_mark:
     - Banned champs
     - Teams with players and champions
     - How many minutes in game
@@ -49,7 +66,7 @@ Summoner
     - Schedules job to refresh summoner's champion masteries and details like icon, level etc
 
 ChampionMasteries
-* Summoner Champion Masteries by ResurceId
+* Summoner Champion Masteries by ResurceId :white_check_mark:
     - Lists all of masteries earned on champions for Summoner
     - Level of champ
     - ImageUrl
@@ -57,7 +74,7 @@ ChampionMasteries
     - Has earned chest in this split
 
 SummonerMatchHistory
-* MatchHistorySummary by ResourceId
+* MatchHistorySummary by ResourceId :white_check_mark: 
     - Shortened match history summary (default to 5 games) by daty and type of queue
     - Info about summoner
     - Info about summoners in game
@@ -69,19 +86,19 @@ SummonerMatchHistory
     - Custom, Normal, Tutorial
     - Map
 
-* MatchHistory by ResourceId
+* MatchHistory by ResourceId :white_check_mark:
     - Same as above but more in detail. More coming soon
 
 SummonerChallenges
-* Challenges
+* Challenges :x:
     - Info about challenges in current split / season (and in older if data was persisted)
 
 ChampionRotation
-* ChampionRotation
+* ChampionRotation :x:
     - List of all persisted champion rotations
     - Date
 
-* ChampionRotation by ResourceId
+* ChampionRotation by ResourceId :x:
     - Detailed champion rotation
     - Champ info
     - Date
@@ -89,17 +106,17 @@ ChampionRotation
 Leagues
 * Master's ladder per region
 
-* GrandMaster's ladder per region
+* GrandMaster's ladder per region :x:
 
-* Cutoff for GrandMaster per region
+* Cutoff for GrandMaster per region :x:
 
-* Challenger's ladder per region
+* Challenger's ladder per region :x:
 
-* Cutooff for GrandMaster per region
+* Cutooff for GrandMaster per region :x:
 
 Discounts
-* Discounts
+* Discounts :white_check_mark:
     - List of Discoutns with dates
 
-* Discounts by ResourceId
+* Discounts by ResourceId :white_check_mark:
     - List of skins and champion on sale
