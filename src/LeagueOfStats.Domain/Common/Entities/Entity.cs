@@ -2,7 +2,7 @@ namespace LeagueOfStats.Domain.Common.Entities;
 
 public abstract class Entity : IEquatable<Entity>
 {
-    public Guid Id { get; protected set; }
+    public virtual Guid Id { get; protected set; }
 
     protected Entity(Guid id)
     {

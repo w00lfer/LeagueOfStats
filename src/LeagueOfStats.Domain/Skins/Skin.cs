@@ -27,7 +27,7 @@ public class Skin : AggregateRoot
             this)));
     }
 
-    private Skin()
+    protected Skin()
         : base(Guid.Empty)
     {
     }

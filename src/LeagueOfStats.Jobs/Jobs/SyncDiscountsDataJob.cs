@@ -48,6 +48,7 @@ public class SyncDiscountsDataJob : IJob
 
             if (isCurrentDiscountAlreadyPersisted)
             {
+                transaction.Commit();
                 return;
             }
             
@@ -75,6 +76,11 @@ public class SyncDiscountsDataJob : IJob
         {
             return new JobError("Riot Games Shop can't be accessed.");
         }
+
+        if (getCurrentDiscountsResult.Value.Count() == 0)
+        {
+            return Result.Success();
+        }
         
         var listOfRiotGamesShopDiscounts = getCurrentDiscountsResult.Value.ToList();
 
@@ -85,7 +91,7 @@ public class SyncDiscountsDataJob : IJob
 
         if (ValidateDiscountsEndDate(listOfRiotGamesShopDiscounts) is false)
         {
-            return new JobError("Discounted items should have same discount start end.");
+            return new JobError("Discounted items should have same discount end date.");
         }
 
         var champions = (await _championRepository.GetAllAsync()).ToList();
@@ -106,14 +112,14 @@ public class SyncDiscountsDataJob : IJob
         var addDiscountedChampionDtos = listOfRiotGamesShopDiscounts
             .Where(rd => rd.DiscountType == DiscountType.Champion)
             .Select(rdc => new AddDiscountedChampionDto(
-                champions.Single(c => c.RiotChampionId == int.Parse(rdc.Id)),
+                champions.Single(c => c.RiotChampionId == rdc.RiotId),
                 rdc.OriginalPrice,
                 rdc.DiscountedPrice));
 
         var addDiscountedSkinDtos = listOfRiotGamesShopDiscounts
             .Where(rd => rd.DiscountType == DiscountType.ChampionSkin)
             .Select(rds => new AddDiscountedSkinDto(
-                skins.Single(c => c.RiotSkinId == int.Parse(rds.Id)),
+                skins.Single(c => c.RiotSkinId == rds.RiotId),
                 rds.OriginalPrice,
                 rds.DiscountedPrice));
 
@@ -135,7 +141,7 @@ public class SyncDiscountsDataJob : IJob
 
         var allSkinIdsFromRiotGamesShopDiscountsMatchPersistedSkins = listOfRiotgamesShopDiscounts
             .Where(rd => rd.DiscountType == DiscountType.ChampionSkin)
-            .All(rds => skinRiotIds.Contains(int.Parse(rds.Id)));
+            .All(rds => skinRiotIds.Contains(rds.RiotId));
         return allSkinIdsFromRiotGamesShopDiscountsMatchPersistedSkins;
     }
 
@@ -145,7 +151,7 @@ public class SyncDiscountsDataJob : IJob
 
         var allChampionIdsFromRiotGamesShopDiscountsMatchPersistedChampions = listOfRiotgamesShopDiscounts
             .Where(rd => rd.DiscountType == DiscountType.Champion)
-            .All(rdc => championRiotIds.Contains(int.Parse(rdc.Id)));
+            .All(rdc => championRiotIds.Contains(rdc.RiotId));
         return allChampionIdsFromRiotGamesShopDiscountsMatchPersistedChampions;
     }
 

@@ -1,7 +1,6 @@
 using System.Data;
 using System.Data.Common;
 using LeagueOfStats.Domain.Champions;
-using LeagueOfStats.Domain.Common.Rails.Errors;
 using LeagueOfStats.Domain.Common.Repositories;
 using LeagueOfStats.Domain.Skins;
 using LeagueOfStats.Jobs.ApiClients.CommunityDragonClient;
@@ -63,6 +62,51 @@ public class SyncChampionAndSkinDataJobTests
     }
     
     [Test]
+    public async Task Execute_AllValid_CommunityDragonReturnsError_DoesNothingAndRollbackTransaction()
+    {
+        Mock<IDbTransaction> dbTransactionMock = new();
+        _unitOfWorkMock
+            .Setup(x => x.BeginTransaction())
+            .Returns(dbTransactionMock.Object);
+
+        var championDto1 = new ChampionDto(1, "name1", "title1", "description1");
+        var championDto2 = new ChampionDto(2, "name1", "title2", "description2");
+        IEnumerable<ChampionDto> championDtos = new List<ChampionDto>()
+        {
+            championDto1,
+            championDto2
+        };
+        _dataDragonClientMock
+            .Setup(x => x.GetChampionsAsync())
+            .ReturnsAsync(Result.Success(championDtos));
+
+        var champion = new Champion(championDto1.RiotChampionId, "name", "title", "description", "splashUrl", "uncenteredSplashUrl", "iconUrl", "tileUrl");
+        IEnumerable<Champion> champions = new List<Champion>
+        {
+            champion
+        };
+        _championRepositoryMock
+            .Setup(x => x.GetAllAsync())
+            .ReturnsAsync(champions);
+        
+        _communityDragonClientMock
+            .Setup(x => x.GetSkinsAsync())
+            .ReturnsAsync(new EntityNotFoundError("error"));
+        
+        await _syncChampionAndSkinDataJob.Execute(Mock.Of<IJobExecutionContext>());
+        
+        _unitOfWorkMock.Verify(x => x.BeginTransaction(), Times.Once);
+        _dataDragonClientMock.Verify(x => x.GetChampionsAsync(), Times.Once);
+        _championRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
+        _championRepositoryMock.Verify(x => x.AddRangeAsync(It.Is<IEnumerable<Champion>>(ec => ec.Any(c =>
+            c.RiotChampionId == championDto2.RiotChampionId))), Times.Once);
+        _communityDragonClientMock.Verify(x => x.GetSkinsAsync(), Times.Once);
+        dbTransactionMock.Verify(x => x.Rollback(), Times.Once);
+        dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
+        VerifyNoOtherCalls();
+    }
+    
+    [Test]
     public async Task Execute_AllValid_AddAnyNewChampionAndSkinDataAndCommitTransaction()
     {
         Mock<IDbTransaction> dbTransactionMock = new();
@@ -79,7 +123,7 @@ public class SyncChampionAndSkinDataJobTests
         };
         _dataDragonClientMock
             .Setup(x => x.GetChampionsAsync())
-            .ReturnsAsync(Domain.Common.Rails.Results.Result.Success(championDtos));
+            .ReturnsAsync(Result.Success(championDtos));
 
         var champion = new Champion(championDto1.RiotChampionId, "name", "title", "description", "splashUrl", "uncenteredSplashUrl", "iconUrl", "tileUrl");
         IEnumerable<Champion> champions = new List<Champion>
@@ -99,7 +143,7 @@ public class SyncChampionAndSkinDataJobTests
         };
         _communityDragonClientMock
             .Setup(x => x.GetSkinsAsync())
-            .ReturnsAsync(Domain.Common.Rails.Results.Result.Success(skinDtos));
+            .ReturnsAsync(Result.Success(skinDtos));
 
         var skin = new Skin(new AddSkinDto(skinDto1.RiotSkinId, true, "name", "description", "splashUrl", "uncenteredSplashUrl", "tileUrl", "rarity", false, "chromaPath", Enumerable.Empty<AddSkinChromaDto>()));
         IEnumerable<Skin> skins = new List<Skin>
