@@ -17,7 +17,7 @@
     - RiotApiKey": *string* - ApiKey from RiotGames
       
 * "EntityUpdateLockoutOptions"
-    "SummonerUpdateLockout": *integer* - lockout in minutes to prevent extensive querying summoners
+    - "SummonerUpdateLockout": *integer* - lockout in minutes to prevent extensive querying summoners
 
 ## Chron jobs
 
