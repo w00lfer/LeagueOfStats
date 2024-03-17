@@ -10,7 +10,7 @@
 ## Features
 
 Summoner
-* Search summoner by name, taglinie, regionie
+* Search summoner by name, taglinie, region
     - Id,
     - RiotAccountId
     - RiotSummonerId
