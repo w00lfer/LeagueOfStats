@@ -1,6 +1,5 @@
 using LeagueOfStats.Domain.Matches.Teams;
 using LeagueOfStats.Domain.Matches.Teams.Dtos;
-using LeagueOfStats.Domain.Matches.Teams.Enums;
 using Moq;
 using NUnit.Framework;
 
@@ -10,7 +9,7 @@ namespace LeagueOfStats.Domain.Tests.Matches.Teams;
 public class ObjectivesTests
 {
     [Test]
-    public void Constructor_AllValid_CreatesTeamAndBansAndObjectivesWithProvidedData()
+    public void Constructor_AllValid_CreatesObjectivesWithProvidedData()
     {
         Team team = Mock.Of<Team>();
         

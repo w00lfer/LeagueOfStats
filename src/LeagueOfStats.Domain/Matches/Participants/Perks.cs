@@ -19,7 +19,7 @@ public class Perks : Entity
             .Select(addPerkStyleDto => new PerkStyle(addPerkStyleDto, this)));
     }
 
-    private Perks()
+    protected Perks()
         : base(Guid.Empty)
     {
     }

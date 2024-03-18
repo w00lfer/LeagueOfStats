@@ -16,7 +16,7 @@ public class PerkStats : Entity
         Offense = addPerkStatsDto.Offense;
     }
 
-    private PerkStats()
+    protected PerkStats()
         : base(Guid.Empty)
     {
     }

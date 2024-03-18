@@ -99,7 +99,7 @@ public class Participant : Entity
         Win = addParticipantDto.Win;
     }
 
-    private Participant()
+    protected Participant()
         : base(Guid.Empty)
     {
     }

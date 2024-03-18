@@ -15,7 +15,7 @@ public class Ban : Entity
         PickTurn = addBanDto.PickTurn;
     }
 
-    private Ban()
+    protected Ban()
         : base(Guid.Empty)
     {
     }

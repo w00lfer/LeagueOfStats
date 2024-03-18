@@ -9,7 +9,7 @@ namespace LeagueOfStats.Domain.Tests.Matches.Teams;
 public class ObjectiveTests
 {
     [Test]
-    public void Constructor_AllValid_CreatesTeamAndBansAndObjectivesWithProvidedData()
+    public void Constructor_AllValid_CreatesObjectiveWithProvidedData()
     {
         Objectives objectives = Mock.Of<Objectives>();
         

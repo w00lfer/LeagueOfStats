@@ -17,7 +17,7 @@ public class PerkStyleSelection : Entity
         Var3 = addPerkStyleSelectionDto.Var3;
     }
 
-    private PerkStyleSelection()
+    protected PerkStyleSelection()
         : base(Guid.Empty)
     {
     }

@@ -15,7 +15,7 @@ public class Objective : Entity
         Kills = addObjectiveDto.Kills;
     }
 
-    private Objective()
+    protected Objective()
         : base(Guid.Empty)
     {
     }

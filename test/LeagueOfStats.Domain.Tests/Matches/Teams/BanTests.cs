@@ -10,7 +10,7 @@ namespace LeagueOfStats.Domain.Tests.Matches.Teams;
 public class BanTests
 {
     [Test]
-    public void Constructor_AllValid_CreatesTeamAndBansAndObjectivesWithProvidedData()
+    public void Constructor_AllValid_CreatesBanWithProvidedData()
     {
         Team team = Mock.Of<Team>();
 
