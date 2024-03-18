@@ -32,7 +32,7 @@ public class SummonerDomainServiceTests
     {
         Guid invalidSummonerId = Guid.NewGuid();
         _summonerRepositoryMock
-            .Setup(x => x.GetByIdAsync(invalidSummonerId))
+            .Setup(x => x.GetByIdWithAllIncludesAsync(invalidSummonerId))
             .ReturnsAsync((Summoner)null);
 
         Result<Summoner> result = await _summonerDomainService.GetByIdAsync(invalidSummonerId);
