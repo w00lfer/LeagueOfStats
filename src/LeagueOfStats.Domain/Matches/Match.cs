@@ -33,7 +33,7 @@ public class Match : AggregateRoot
             .Select(addTeamDto => new Team(addTeamDto, this)));
     }
 
-    private Match()
+    protected Match()
         : base(Guid.Empty)
     {
     }

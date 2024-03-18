@@ -22,7 +22,7 @@ public class Objectives : Entity
         TowerObjective = new Objective(addObjectivesDto.AddTowerObjectiveDto, this);
     }
 
-    private Objectives()
+    protected Objectives()
         : base(Guid.Empty)
     {
     }

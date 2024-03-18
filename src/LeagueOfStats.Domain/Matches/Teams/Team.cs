@@ -21,7 +21,7 @@ public class Team : Entity
         _bans.AddRange(addTeamDto.AddBanDtos.Select(addBanDto => new Ban(addBanDto, this)));
     }
 
-    private Team()
+    protected Team()
         : base(Guid.Empty)
     {
     }
