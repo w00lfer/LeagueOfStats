@@ -19,6 +19,8 @@ public class DiscountDomainServiceTests
     [SetUp]
     public void SetUp()
     {
+        _discountRepositoryMock.Reset();
+        
         _discountDomainService = new DiscountDomainService(_discountRepositoryMock.Object);
     }
     
@@ -54,6 +56,7 @@ public class DiscountDomainServiceTests
         Assert.That(result.Value, Is.EqualTo(discount));
         
         _discountRepositoryMock.Verify(x => x.GetByIdAsync(discountId), Times.Once);
+        _discountRepositoryMock.VerifyNoOtherCalls();
     }
 
     [Test]
@@ -73,10 +76,11 @@ public class DiscountDomainServiceTests
         Assert.That(discounts, Is.EqualTo(expectedDiscounts));
         
         _discountRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
+        _discountRepositoryMock.VerifyNoOtherCalls();
     }
 
     [Test]
-    public async Task AddAsync_AllValid_CreatesDiscountAndCallsRepoAddAsyncAndReturnDiscount()
+    public async Task AddAsync_AllValid_CreatessDiscountAndCallsRepoAddAsyncAndReturnDiscount()
     {
         LocalDateTime startDateTime = LocalDateTime.MaxIsoValue;
         LocalDateTime endDateTime = LocalDateTime.MinIsoValue;
@@ -131,5 +135,6 @@ public class DiscountDomainServiceTests
         Assert.That(discountedSkin.NewPrice, Is.EqualTo(skinNewPrice));
         
         _discountRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Discount>()), Times.Once);
+        _discountRepositoryMock.VerifyNoOtherCalls();
     }
 }

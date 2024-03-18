@@ -11,7 +11,7 @@ namespace LeagueOfStats.Domain.Tests.Discounts;
 public class DiscountTests
 {
     [Test]
-    public void Constructor_AllValid_CreateDiscountWithDiscountedChampionsAndDiscountedSkinsWithProvidedData()
+    public void Constructor_AllValid_CreatesDiscountWithDiscountedChampionsAndDiscountedSkinsWithProvidedData()
     {
         LocalDateTime startDateTime = LocalDateTime.MaxIsoValue;
         LocalDateTime endDateTime = LocalDateTime.MinIsoValue;

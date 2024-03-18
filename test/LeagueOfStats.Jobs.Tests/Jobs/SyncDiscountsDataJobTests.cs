@@ -10,7 +10,6 @@ using Moq;
 using NodaTime;
 using NUnit.Framework;
 using Quartz;
-using Champion = LeagueOfStats.Domain.Champions.Champion;
 
 namespace LeagueOfStats.Jobs.Tests.Jobs;
 

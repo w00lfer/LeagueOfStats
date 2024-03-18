@@ -8,7 +8,7 @@ namespace LeagueOfStats.Domain.Tests.Skins;
 public class SkinChromaTests
 {
     [Test]
-    public void Constructor_AllValid_CreateSkinChromaWithProvidedData()
+    public void Constructor_AllValid_CreatesSkinChromaWithProvidedData()
     {
         
         const int riotChromaId = 2;

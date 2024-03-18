@@ -29,7 +29,7 @@ public class SummonerChampionMastery : Entity
         TokensEarned = tokensEarned;
     }
 
-    private SummonerChampionMastery()
+    protected SummonerChampionMastery()
         : base(Guid.Empty)
     {
     }

@@ -7,7 +7,7 @@ namespace LeagueOfStats.Domain.Tests.Champions;
 public class ChampionImageTests
 {
     [Test]
-    public void Create_AllValid_CreateChampionImageWithProvidedData()
+    public void Create_AllValid_CreatesChampionImageWithProvidedData()
     {
         const string splashUrl = "splashUrl";
         const string uncenteredSplashUrl = "uncenteredSplashUrl";

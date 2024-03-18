@@ -8,7 +8,7 @@ namespace LeagueOfStats.Domain.Tests.Discounts;
 public class DiscountedChampionTests
 {
     [Test]
-    public void Constructor_AllValid_CreateDiscountedChampionWithProvidedData()
+    public void Constructor_AllValid_CreatesDiscountedChampionWithProvidedData()
     {
         const int oldPrice = 10;
         const int newPrice = 5;

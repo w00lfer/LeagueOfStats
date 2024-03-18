@@ -7,7 +7,7 @@ namespace LeagueOfStats.Domain.Tests.Champions;
 public class ChampionTests
 {
     [Test]
-    public void Constructor_AllValid_CreateChampionAndChampionImageWithProvidedData()
+    public void Constructor_AllValid_CreatesChampionAndChampionImageWithProvidedData()
     {
         const int riotChampionId = 1;
         const string name = "name";

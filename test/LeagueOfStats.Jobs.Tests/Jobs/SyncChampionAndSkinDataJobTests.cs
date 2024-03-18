@@ -1,5 +1,4 @@
 using System.Data;
-using System.Data.Common;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Repositories;
 using LeagueOfStats.Domain.Skins;

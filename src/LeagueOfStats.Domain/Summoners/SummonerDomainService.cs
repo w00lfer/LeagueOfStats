@@ -45,7 +45,8 @@ public class SummonerDomainService : ISummonerDomainService
             createSummonerDto.ProfileIconId,
             createSummonerDto.Puuid,
             createSummonerDto.SummonerLevel,
-            SummonerName.Create(createSummonerDto.GameName, createSummonerDto.TagLine),
+            createSummonerDto.GameName,
+            createSummonerDto.TagLine,
             createSummonerDto.Region,
             createSummonerDto.UpdateChampionMasteryDtos,
             _clock.GetCurrentInstant());
@@ -64,7 +65,8 @@ public class SummonerDomainService : ISummonerDomainService
             createSummonerDto.ProfileIconId,
             createSummonerDto.Puuid,
             createSummonerDto.SummonerLevel,
-            SummonerName.Create(createSummonerDto.GameName, createSummonerDto.TagLine),
+            createSummonerDto.GameName,
+            createSummonerDto.TagLine,
             createSummonerDto.Region,
             createSummonerDto.UpdateChampionMasteryDtos,
             _clock.GetCurrentInstant())).ToList();
@@ -74,7 +76,8 @@ public class SummonerDomainService : ISummonerDomainService
         return summoners;
     }
 
-    public async Task UpdateDetailsAsync(Summoner summoner,
+    public async Task UpdateDetailsAsync(
+        Summoner summoner,
         UpdateDetailsSummonerDto updateDetailsSummonerDto)
     {
         summoner.Update(

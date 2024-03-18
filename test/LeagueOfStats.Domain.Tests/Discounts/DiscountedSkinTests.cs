@@ -9,7 +9,7 @@ namespace LeagueOfStats.Domain.Tests.Discounts;
 public class DiscountedSkinTests
 {
     [Test]
-    public void Constructor_AllValid_CreateDiscountedSkinWithProvidedData()
+    public void Constructor_AllValid_CreatesDiscountedSkinWithProvidedData()
     {
         const int oldPrice = 10;
         const int newPrice = 5;

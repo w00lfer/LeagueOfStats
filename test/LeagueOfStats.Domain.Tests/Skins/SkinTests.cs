@@ -7,43 +7,43 @@ namespace LeagueOfStats.Domain.Tests.Skins;
 public class SkinTests
 {
     [Test]
-    public void Constructor_AllValid_CreateSkinAndSkinImageAndSkinChromasWithProvidedData()
+    public void Constructor_AllValid_CreatesSkinAndSkinImageAndSkinChromasWithProvidedData()
     {
         
         const int riotSkinId = 1;
-                const bool isBase = false;
-                const string name = "name";
-                const string description = "description";
-                const string splashUrl = "splashUrl";
-                const string uncenteredSplashUrl = "uncenteredSplashUrl";
-                const string tileUrl = "titleUrl";
-                const string rarity = "rarity";
-                const bool isLegacy = false;
-                const string skinChromaPath = "chromaPath";
+        const bool isBase = false;
+        const string name = "name";
+        const string description = "description";
+        const string splashUrl = "splashUrl";
+        const string uncenteredSplashUrl = "uncenteredSplashUrl";
+        const string tileUrl = "titleUrl";
+        const string rarity = "rarity";
+        const bool isLegacy = false;
+        const string skinChromaPath = "chromaPath";
+
+        const int riotChromaId = 2;
+        const string chromaPath = "chromaPath";
+        string[] colorAsStrings = { "red", "blue" };
+        AddSkinChromaDto addSkinChromaDto = new(riotChromaId, chromaPath, colorAsStrings);
+        IEnumerable<AddSkinChromaDto> addSkinChromaDtos = new List<AddSkinChromaDto>
+        {
+            addSkinChromaDto
+        };
+
+        AddSkinDto addSkinDto = new AddSkinDto(
+            riotSkinId,
+            isBase,
+            name,
+            description,
+            splashUrl,
+            uncenteredSplashUrl,
+            tileUrl,
+            rarity,
+            isLegacy,
+            skinChromaPath,
+            addSkinChromaDtos);
         
-                const int riotChromaId = 2;
-                const string chromaPath = "chromaPath";
-                string[] colorAsStrings = { "red", "blue" };
-                AddSkinChromaDto addSkinChromaDto = new(riotChromaId, chromaPath, colorAsStrings);
-                IEnumerable<AddSkinChromaDto> addSkinChromaDtos = new List<AddSkinChromaDto>
-                {
-                    addSkinChromaDto
-                };
-        
-                AddSkinDto addSkinDto = new AddSkinDto(
-                    riotSkinId,
-                    isBase,
-                    name,
-                    description,
-                    splashUrl,
-                    uncenteredSplashUrl,
-                    tileUrl,
-                    rarity,
-                    isLegacy,
-                    skinChromaPath,
-                    addSkinChromaDtos);
-                
-                Skin skin = new Skin(addSkinDto);
+        Skin skin = new Skin(addSkinDto);
         Assert.That(skin.RiotSkinId, Is.EqualTo(riotSkinId));
         Assert.That(skin.IsBase, Is.EqualTo(isBase));
         Assert.That(skin.Name, Is.EqualTo(name));

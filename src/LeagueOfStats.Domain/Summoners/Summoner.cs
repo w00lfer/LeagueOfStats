@@ -16,7 +16,8 @@ public class Summoner : AggregateRoot
         int profileIconId,
         string puuid,
         long summonerLevel,
-        SummonerName summonerName,
+        string gameName,
+        string tagLine,
         Region region,
         IEnumerable<UpdateChampionMasteryDto> updateChampionMasteryDtos,
         Instant lastUpdated)
@@ -24,7 +25,7 @@ public class Summoner : AggregateRoot
     {
         SummonerId = summonerId;
         AccountId = accountId;
-        SummonerName = summonerName;
+        SummonerName = SummonerName.Create(gameName, tagLine);
         Name = name;
         ProfileIconId = profileIconId;
         Puuid = puuid;
@@ -46,7 +47,7 @@ public class Summoner : AggregateRoot
                     championMasteryForAdd.TokensEarned)));
     }
 
-    private Summoner()
+    protected Summoner()
         : base(Guid.Empty)
     {
     }
@@ -101,13 +102,13 @@ public class Summoner : AggregateRoot
                     c.ChampionId == updateChampionMasteryDto.Champion.Id);
             
             summonerChampionMasteryToUpdate.Update(
-                summonerChampionMasteryToUpdate.ChampionLevel,
-                summonerChampionMasteryToUpdate.ChampionPoints,
-                summonerChampionMasteryToUpdate.ChampionPointsSinceLastLevel,
-                summonerChampionMasteryToUpdate.ChampionPointsUntilNextLevel,
-                summonerChampionMasteryToUpdate.ChestGranted,
-                summonerChampionMasteryToUpdate.LastPlayTime,
-                summonerChampionMasteryToUpdate.TokensEarned);
+                updateChampionMasteryDto.ChampionLevel,
+                updateChampionMasteryDto.ChampionPoints,
+                updateChampionMasteryDto.ChampionPointsSinceLastLevel,
+                updateChampionMasteryDto.ChampionPointsUntilNextLevel,
+                updateChampionMasteryDto.ChestGranted,
+                updateChampionMasteryDto.LastPlayTime,
+                updateChampionMasteryDto.TokensEarned);
         }
 
         var championMasteriesForAdd = updateChampionMasteryDtos
