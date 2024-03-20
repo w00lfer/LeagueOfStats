@@ -2,6 +2,14 @@ namespace LeagueOfStats.Domain.Common.Rails.Results;
 
 public static class ResultExtensions
 {
+    public static Result ToNonValueResult<TIn>(
+        this Result<TIn> result)
+    {
+        return result.IsFailure
+            ? Result.Failure(result.Errors)
+            : Result.Success();
+    }
+    
     public static async Task<Result> ToNonValueResult<TIn>(
         this Task<Result<TIn>> taskResult)
     {
