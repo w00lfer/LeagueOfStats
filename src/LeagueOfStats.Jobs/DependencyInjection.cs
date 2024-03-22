@@ -12,7 +12,9 @@ public static class DependencyInjection
 {
     public static void AddJobsDI(this IServiceCollection services, IConfiguration configuration)
     {
-        AddQuartz(services, configuration);
+#if !TEST
+                AddQuartz(services, configuration);
+#endif
     }
     
     private static void AddQuartz(IServiceCollection services, IConfiguration configuration)
@@ -27,13 +29,7 @@ public static class DependencyInjection
                         .GetSection(nameof(DatabaseOptions))
                         .GetSection(nameof(DatabaseOptions.DatabaseConnectionString)).Value;
                     
-                    var dbAdminPassword = configuration
-                        .GetSection(nameof(DatabaseOptions))
-                        .GetSection(nameof(DatabaseOptions.DatabaseAdminPassword)).Value;
-                    
-                    var connectionString = string.Format(dbConnectionString, dbAdminPassword);
-                    
-                    sqlServerOptions.ConnectionString = connectionString;
+                    sqlServerOptions.ConnectionString = dbConnectionString;
                 });
                 
                 c.UseNewtonsoftJsonSerializer();
