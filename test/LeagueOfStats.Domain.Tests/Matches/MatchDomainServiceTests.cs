@@ -1,6 +1,8 @@
 using LeagueOfStats.Domain.Common.Rails.Errors;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Matches;
+using LeagueOfStats.Domain.Matches.Participants.Dtos;
+using LeagueOfStats.Domain.Matches.Teams.Dtos;
 using Moq;
 using NUnit.Framework;
 using Match = LeagueOfStats.Domain.Matches.Match;
@@ -65,8 +67,37 @@ public class MatchDomainServiceTests
     }
     
     [Test]
-    public async Task AddMatchesAsync_AllValid_CreatesMatchesAndCallsRepoAddRangeAsyncAndReturnsMatches()
+    public async Task AddMatchesAsync_AllValidAndOneAddMatchDtoHasExistingMatch_CreatesMatchForNotExistingAddMatchDtoAndCallsRepoAddRangeAsyncAndReturnsMatches()
     {
+        const string existingRiotMatchId = "existingId";
+        AddMatchDto addMatchDtoForExistingMatch = new AddMatchDto(existingRiotMatchId, default, default, default, default, default, default, default, default, default, default, Enumerable.Empty<AddParticipantDto>(), Enumerable.Empty<AddTeamDto>());
         
+        const string notExistingRiotMatchId = "notExistingId";
+        AddMatchDto addMatchDtoForNotExistingMatch = new AddMatchDto(notExistingRiotMatchId, default, default, default, default, default, default, default, default, default, default, Enumerable.Empty<AddParticipantDto>(), Enumerable.Empty<AddTeamDto>());
+
+        IEnumerable<AddMatchDto> addMatchDtos = new List<AddMatchDto>
+        {
+            addMatchDtoForExistingMatch,
+            addMatchDtoForNotExistingMatch
+        };
+
+        Match existingMatch = new Match(addMatchDtoForExistingMatch);
+        IEnumerable<Match> existingMatches = new List<Match> { existingMatch } ;
+        _matchRepository
+            .Setup(x => x.GetAllByRiotMatchIdsIncludingRelatedEntitiesAsync(
+                It.Is<IEnumerable<string>>(e => e.Any(riotMatchId => riotMatchId == existingRiotMatchId || riotMatchId == notExistingRiotMatchId))))
+            .ReturnsAsync(existingMatches);
+
+        Result<IEnumerable<Match>> result = await _matchDomainService.AddMatchesAsync(addMatchDtos);
+        
+        Assert.That(result.IsSuccess, Is.True);
+        Assert.That(result.Value.Any(m => m.RiotMatchId == existingRiotMatchId));
+        Assert.That(result.Value.Any(m => m.RiotMatchId == notExistingRiotMatchId));
+        
+        _matchRepository.Verify(x => x.GetAllByRiotMatchIdsIncludingRelatedEntitiesAsync(
+            It.Is<IEnumerable<string>>(e => e.Any(riotMatchId => riotMatchId == existingRiotMatchId || riotMatchId == notExistingRiotMatchId))), Times.Once);
+        _matchRepository.Verify(x => x.AddRangeAsync(
+            It.Is<IEnumerable<Match>>(e => e.Single(m => m.RiotMatchId == notExistingRiotMatchId) != null)), Times.Once);
+        _matchRepository.VerifyNoOtherCalls();
     }
 }

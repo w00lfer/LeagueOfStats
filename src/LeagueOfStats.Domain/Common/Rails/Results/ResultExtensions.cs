@@ -2,6 +2,14 @@ namespace LeagueOfStats.Domain.Common.Rails.Results;
 
 public static class ResultExtensions
 {
+    public static Result ToNonValueResult<TIn>(
+        this Result<TIn> result)
+    {
+        return result.IsFailure
+            ? Result.Failure(result.Errors)
+            : Result.Success();
+    }
+    
     public static async Task<Result> ToNonValueResult<TIn>(
         this Task<Result<TIn>> taskResult)
     {
@@ -143,9 +151,9 @@ public static class ResultExtensions
             : await errorFuncToAwait();
     }
 
-    public static Result<TIn> Tap<TIn>(
-        this Result<TIn> result,
-        Action<TIn> action)
+    public static Result<TOut> Tap<TOut>(
+        this Result<TOut> result,
+        Action<TOut> action)
     {
         if (result.IsSuccess)
         {
@@ -155,8 +163,8 @@ public static class ResultExtensions
         return result;
     }
     
-    public static async Task<Result<TIn>> Tap<TIn>(
-        this Result<TIn> result,
+    public static async Task<Result<TOut>> Tap<TOut>(
+        this Result<TOut> result,
         Func<Task> func)
            {
                if (result.IsSuccess)
@@ -167,11 +175,11 @@ public static class ResultExtensions
                return result;
     }
     
-    public static async Task<Result<TIn>> Tap<TIn>(
-        this Task<Result<TIn>> resultTask,
-        Func<TIn, Task> func)
+    public static async Task<Result<TOut>> Tap<TOut>(
+        this Task<Result<TOut>> resultTask,
+        Func<TOut, Task> func)
     {
-        Result<TIn> result = await resultTask;
+        Result<TOut> result = await resultTask;
         
         if (result.IsSuccess)
         {

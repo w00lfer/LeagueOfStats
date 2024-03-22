@@ -69,12 +69,7 @@ public class Result
 
     public static Result<TValue> Failure<TValue>(Error[] errors) =>
         new(default, false, errors);
-
-    public static Result<TValue> Create<TValue>(TValue? value) =>
-        value is not null
-            ? Success(value)
-            : Failure<TValue>((Error)null);
-
+    
     public static Result<T> Ensure<T>(T value, Func<T, bool> predicate, Error error) =>
         predicate(value)
             ? Success(value)
