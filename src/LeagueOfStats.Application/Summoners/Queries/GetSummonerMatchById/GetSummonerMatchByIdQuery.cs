@@ -1,4 +1,3 @@
-using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Matches;
@@ -18,20 +17,17 @@ public record GetSummonerMatchByIdQuery(
 public class GetSummonerMatchByIdQueryHandler
     : IRequestHandler<GetSummonerMatchByIdQuery, Result<MatchDetailsDto>>
 {
-    private readonly IValidator<GetSummonerMatchByIdQuery> _getSummonerMatchByIdQuery;
     private readonly ISummonerDomainService _summonerDomainService;
     private readonly ISummonerRepository _summonerRepository;
     private readonly IMatchDomainService _matchDomainService;
     private readonly IChampionRepository _championRepository;
 
     public GetSummonerMatchByIdQueryHandler(
-        IValidator<GetSummonerMatchByIdQuery> getSummonerMatchByIdQuery,
         ISummonerDomainService summonerDomainService,
         ISummonerRepository summonerRepository,
         IMatchDomainService matchDomainService,
         IChampionRepository championRepository)
     {
-        _getSummonerMatchByIdQuery = getSummonerMatchByIdQuery;
         _summonerDomainService = summonerDomainService;
         _summonerRepository = summonerRepository;
         _matchDomainService = matchDomainService;
@@ -41,8 +37,7 @@ public class GetSummonerMatchByIdQueryHandler
     public Task<Result<MatchDetailsDto>> Handle(
         GetSummonerMatchByIdQuery query,
         CancellationToken cancellationToken) =>
-        _getSummonerMatchByIdQuery.ValidateAsync(query)
-            .Bind(() => _summonerDomainService.GetByIdAsync(query.SummonerId))
+        _summonerDomainService.GetByIdAsync(query.SummonerId)
             .Bind(_ => _matchDomainService.GetByIdAsync(query.Id))
             .Map(match => MapToMatchDetailsDtoAsync(match, query.SummonerId));
     

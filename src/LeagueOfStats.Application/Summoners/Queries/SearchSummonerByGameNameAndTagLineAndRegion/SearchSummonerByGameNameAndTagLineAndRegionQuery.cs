@@ -1,6 +1,5 @@
 using LeagueOfStats.Application.ApiClients.RiotClient;
 using LeagueOfStats.Application.Common;
-using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Common.Rails.Results;
@@ -20,20 +19,17 @@ public record SearchSummonerByGameNameAndTagLineAndRegionQuery(
 public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler
     : IRequestHandler<SearchSummonerByGameNameAndTagLineAndRegionQuery, Result<SummonerDto>>
 {
-    private readonly IValidator<SearchSummonerByGameNameAndTagLineAndRegionQuery> _searchSummonerByGameNameAndTagLineAndRegionQueryValidator;
     private readonly IRiotClient _riotClient;
     private readonly ISummonerDomainService _summonerDomainService;
     private readonly IEntityUpdateLockoutService _entityUpdateLockoutService;
     private readonly IChampionRepository _championRepository;
 
     public SearchSummonerByGameNameAndTagLineAndRegionQueryHandler(
-        IValidator<SearchSummonerByGameNameAndTagLineAndRegionQuery> searchSummonerByGameNameAndTagLineAndRegionQueryValidator,
         IRiotClient riotClient,
         ISummonerDomainService summonerDomainService,
         IEntityUpdateLockoutService entityUpdateLockoutService,
         IChampionRepository championRepository)
     {
-        _searchSummonerByGameNameAndTagLineAndRegionQueryValidator = searchSummonerByGameNameAndTagLineAndRegionQueryValidator;
         _riotClient = riotClient;
         _summonerDomainService = summonerDomainService;
         _entityUpdateLockoutService = entityUpdateLockoutService;
@@ -42,11 +38,8 @@ public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler
 
     public Task<Result<SummonerDto>> Handle(
         SearchSummonerByGameNameAndTagLineAndRegionQuery query,
-        CancellationToken cancellationToken) =>
-        _searchSummonerByGameNameAndTagLineAndRegionQueryValidator.ValidateAsync(query)
-            .Bind(() => _riotClient.GetSummonerByGameNameAndTaglineAsync(query.GameName,
-                query.TagLine,
-                query.Region))
+        CancellationToken cancellationToken) => 
+        _riotClient.GetSummonerByGameNameAndTaglineAsync(query.GameName, query.TagLine, query.Region)
             .Bind(summonerFromRiotApi => _summonerDomainService.GetByPuuidAsync(summonerFromRiotApi.Puuid)
                 .Match(
                     summoner => Task.FromResult(Result.Success(summoner)),

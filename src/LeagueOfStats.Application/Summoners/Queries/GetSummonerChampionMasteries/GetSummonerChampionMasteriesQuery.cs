@@ -14,16 +14,13 @@ public record GetSummonerChampionMasteriesQuery(
 public class GetSummonerChampionMasteriesQueryHandler
     : IRequestHandler<GetSummonerChampionMasteriesQuery, Result<IEnumerable<SummonerChampionMasteryDto>>>
 {
-    private readonly IValidator<GetSummonerChampionMasteriesQuery> _getSummonerChampionMasteriesQueryValidator;
     private readonly ISummonerDomainService _summonerDomainService;
     private readonly IChampionRepository _championRepository;
 
     public GetSummonerChampionMasteriesQueryHandler(
-        IValidator<GetSummonerChampionMasteriesQuery> getSummonerChampionMasteriesQueryValidator,
         ISummonerDomainService summonerDomainService,
         IChampionRepository championRepository)
     { 
-        _getSummonerChampionMasteriesQueryValidator = getSummonerChampionMasteriesQueryValidator;
         _summonerDomainService = summonerDomainService;
         _championRepository = championRepository;
     }
@@ -31,8 +28,7 @@ public class GetSummonerChampionMasteriesQueryHandler
     public Task<Result<IEnumerable<SummonerChampionMasteryDto>>> Handle(
         GetSummonerChampionMasteriesQuery query,
         CancellationToken cancellationToken) =>
-        _getSummonerChampionMasteriesQueryValidator.ValidateAsync(query)
-            .Bind(() => _summonerDomainService.GetByIdAsync(query.SummonerId))
+        _summonerDomainService.GetByIdAsync(query.SummonerId)
             .Bind(summoner => MapToSummonerChampionMasteryDtos(summoner.SummonerChampionMasteries));
     
     private async Task<Result<IEnumerable<SummonerChampionMasteryDto>>> MapToSummonerChampionMasteryDtos(

@@ -1,5 +1,6 @@
 using System.Reflection;
 using FluentValidation;
+using LeagueOfStats.Application.Common.Behaviors;
 using LeagueOfStats.Application.Common.Validators;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,7 +16,13 @@ public static class DependencyInjection
 
     private static void AddMediatR(IServiceCollection services)
     {
-        services.AddMediatR(cfg=>cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
+        services.AddMediatR(cfg=>
+        {
+            cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly());
+            cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+            cfg.AddOpenBehavior(typeof(UnitOfWorkBehavior<,>));
+        });
+        
     }
 
     private static void AddValidation(IServiceCollection services)

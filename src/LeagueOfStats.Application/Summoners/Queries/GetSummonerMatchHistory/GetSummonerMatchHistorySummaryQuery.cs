@@ -1,7 +1,6 @@
 using Camille.RiotGames.MatchV5;
 using LeagueOfStats.Application.ApiClients.RiotClient;
 using LeagueOfStats.Application.Common.Errors;
-using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.Extensions;
 using LeagueOfStats.Application.Summoners.Enums;
 using LeagueOfStats.Domain.Champions;
@@ -29,7 +28,6 @@ public record GetSummonerMatchHistorySummaryQuery(
 public class GetSummonerMatchHistorySummaryQueryHandler
     : IRequestHandler<GetSummonerMatchHistorySummaryQuery, Result<IEnumerable<MatchHistorySummaryDto>>>
 {
-    private readonly IValidator<GetSummonerMatchHistorySummaryQuery> _getSummonerMatchHistoryQueryValidator;
     private readonly ISummonerDomainService _summonerDomainService;
     private readonly ISummonerRepository _summonerRepository;
     private readonly IRiotClient _riotClient;
@@ -37,14 +35,12 @@ public class GetSummonerMatchHistorySummaryQueryHandler
     private readonly IChampionRepository _championRepository;
 
     public GetSummonerMatchHistorySummaryQueryHandler(
-        IValidator<GetSummonerMatchHistorySummaryQuery> getSummonerMatchHistoryQueryValidator,
         ISummonerDomainService summonerDomainService,
         ISummonerRepository summonerRepository,
         IRiotClient riotClient,
         IMatchDomainService matchDomainService,
         IChampionRepository championRepository)
     {
-        _getSummonerMatchHistoryQueryValidator = getSummonerMatchHistoryQueryValidator;
         _summonerDomainService = summonerDomainService;
         _summonerRepository = summonerRepository;
         _riotClient = riotClient;
@@ -55,8 +51,8 @@ public class GetSummonerMatchHistorySummaryQueryHandler
     public Task<Result<IEnumerable<MatchHistorySummaryDto>>> Handle(
         GetSummonerMatchHistorySummaryQuery query,
         CancellationToken cancellationToken) =>
-        _getSummonerMatchHistoryQueryValidator.ValidateAsync(query)
-            .Bind(() => _summonerDomainService.GetByIdAsync(query.SummonerId))
+        
+        _summonerDomainService.GetByIdAsync(query.SummonerId)
             .Bind(summoner => _riotClient.GetSummonerMatchHistorySummary(new GetSummonerMatchHistoryDto(
                     summoner.Region,
                     summoner.Puuid,

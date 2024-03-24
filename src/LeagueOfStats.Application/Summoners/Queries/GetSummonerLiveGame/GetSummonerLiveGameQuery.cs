@@ -1,6 +1,5 @@
 using Camille.RiotGames.SpectatorV4;
 using LeagueOfStats.Application.ApiClients.RiotClient;
-using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Application.Extensions;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Rails.Results;
@@ -17,18 +16,15 @@ public record GetSummonerLiveGameQuery(
 public class GetSummonerLiveGameQueryHandler
     : IRequestHandler<GetSummonerLiveGameQuery, Result<LiveGameDto>>
 {
-    private readonly IValidator<GetSummonerLiveGameQuery> _getSummonerLiveGameQueryValidator;
     private readonly ISummonerDomainService _summonerDomainService;
     private readonly IRiotClient _riotClient;
     private readonly IChampionRepository _championRepository;
 
     public GetSummonerLiveGameQueryHandler(
-        IValidator<GetSummonerLiveGameQuery> getSummonerLiveGameQueryValidator,
         ISummonerDomainService summonerDomainService,
         IRiotClient riotClient,
         IChampionRepository championRepository)
     {
-        _getSummonerLiveGameQueryValidator = getSummonerLiveGameQueryValidator;
         _summonerDomainService = summonerDomainService;
         _riotClient = riotClient;
         _championRepository = championRepository;
@@ -37,8 +33,7 @@ public class GetSummonerLiveGameQueryHandler
     public Task<Result<LiveGameDto>> Handle(
         GetSummonerLiveGameQuery query,
         CancellationToken cancellationToken) =>
-        _getSummonerLiveGameQueryValidator.ValidateAsync(query)
-            .Bind(() => _summonerDomainService.GetByIdAsync(query.Id))
+        _summonerDomainService.GetByIdAsync(query.Id)
             .Bind(summoner => _riotClient.GetSummonerLiveGame(new GetSummonerLiveGameDto(
                     summoner.SummonerName,
                     summoner.SummonerId,
