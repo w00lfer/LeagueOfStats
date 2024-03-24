@@ -1,7 +1,6 @@
 using LeagueOfStats.Application.ApiClients.RiotClient;
 using LeagueOfStats.Application.Common;
 using LeagueOfStats.Application.Common.Errors;
-using LeagueOfStats.Application.Common.Validators;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using LeagueOfStats.Domain.Summoners;
@@ -18,7 +17,6 @@ public record RefreshSummonerCommand(
 
 public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerCommand, Result>
 {
-    private readonly IValidator<RefreshSummonerCommand> _refreshSummonerCommandValidator;
     private readonly ISummonerDomainService _summonerDomainService;
     private readonly IRiotClient _riotClient;
     private readonly IEntityUpdateLockoutService _entityUpdateLockoutService;
@@ -27,14 +25,12 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
 
 
     public RefreshSummonerCommandHandler(
-        IValidator<RefreshSummonerCommand> refreshSummonerCommandValidator,
         ISummonerDomainService summonerDomainService,
         IRiotClient riotClient,
         IEntityUpdateLockoutService entityUpdateLockoutService,
         IClock clock,
         IChampionRepository championRepository)
     {
-        _refreshSummonerCommandValidator = refreshSummonerCommandValidator;
         _summonerDomainService = summonerDomainService;
         _riotClient = riotClient;
         _entityUpdateLockoutService = entityUpdateLockoutService;
@@ -43,8 +39,7 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
     }
 
     public Task<Result> Handle(RefreshSummonerCommand command, CancellationToken cancellationToken) =>
-        _refreshSummonerCommandValidator.ValidateAsync(command)
-            .Bind(() => _summonerDomainService.GetByIdAsync(command.Id))
+        _summonerDomainService.GetByIdAsync(command.Id)
             .Bind(summoner =>
                 CanSummonerCanBeUpdatedWithRiotData(summoner)
                     ? UpdateSummonerDataWithDataFromRiotApiAsync(summoner)

@@ -14,25 +14,21 @@ public record GetSummonerByIdQuery(
 public class GetSummonerByIdRequestQueryHandler
     : IRequestHandler<GetSummonerByIdQuery, Result<SummonerDto>>
 {
-    private readonly IValidator<GetSummonerByIdQuery> _getSummonerByIdQueryValidator;
     private readonly ISummonerDomainService _summonerDomainService;
     private readonly IEntityUpdateLockoutService _entityUpdateLockoutService;
 
     public GetSummonerByIdRequestQueryHandler(
-        IValidator<GetSummonerByIdQuery> getSummonerByIdQueryValidator,
         ISummonerDomainService summonerDomainService,
         IEntityUpdateLockoutService entityUpdateLockoutService)
     {
-        _getSummonerByIdQueryValidator = getSummonerByIdQueryValidator;
         _summonerDomainService = summonerDomainService;
         _entityUpdateLockoutService = entityUpdateLockoutService;
     }
 
     public Task<Result<SummonerDto>> Handle(
         GetSummonerByIdQuery query,
-        CancellationToken cancellationToken) =>
-        _getSummonerByIdQueryValidator.ValidateAsync(query)
-            .Bind(() => _summonerDomainService.GetByIdAsync(query.Id))
+        CancellationToken cancellationToken) => 
+        _summonerDomainService.GetByIdAsync(query.Id)
             .Map(MapToSummonerDto);
 
         private SummonerDto MapToSummonerDto(Summoner summoner) => 

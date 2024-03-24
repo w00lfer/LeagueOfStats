@@ -33,9 +33,7 @@ public class SummonerMatchHistoryController : ControllerBase
                 summonerId,
                 gameEndedAt ?? _clock.GetCurrentInstant(),
                 matchHistoryQueueFilter,
-                limit > 5 
-                    ? 5 
-                    : limit))
+                limit))
             .ToIActionResult(this);
     
     [HttpGet("{id:guid}")]
