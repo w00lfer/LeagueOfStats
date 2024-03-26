@@ -29,7 +29,13 @@ public static class DependencyInjection
                         .GetSection(nameof(DatabaseOptions))
                         .GetSection(nameof(DatabaseOptions.DatabaseConnectionString)).Value;
                     
-                    sqlServerOptions.ConnectionString = dbConnectionString;
+                    var dbAdminPassword = configuration
+                        .GetSection(nameof(DatabaseOptions))
+                        .GetSection(nameof(DatabaseOptions.DatabaseAdminPassword)).Value;
+                    
+                    var connectionString = string.Format(dbConnectionString, dbAdminPassword);
+                    
+                    sqlServerOptions.ConnectionString = connectionString;
                 });
                 
                 c.UseNewtonsoftJsonSerializer();
