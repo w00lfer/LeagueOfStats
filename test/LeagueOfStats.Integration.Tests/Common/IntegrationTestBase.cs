@@ -1,8 +1,9 @@
 using LeagueOfStats.Infrastructure.ApplicationDbContexts;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
-namespace LeagueOfStats.Integration.Tests;
+namespace LeagueOfStats.Integration.Tests.Common;
 
 [TestFixture]
 public abstract class IntegrationTestBase
@@ -19,12 +20,14 @@ public abstract class IntegrationTestBase
         _scope = _factory.Services.CreateScope();
         
         ApplicationDbContext = _scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        ApplicationDbContext.Database.Migrate();
     }
 
     [OneTimeTearDown]
-    public void OneTimeTearDown()
+    public async Task OneTimeTearDown()
     {
         _scope.Dispose();
         ApplicationDbContext.Dispose();
+        await _factory.DisposeAsync();
     }
 }

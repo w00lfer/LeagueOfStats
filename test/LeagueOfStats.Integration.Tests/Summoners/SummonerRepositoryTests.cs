@@ -1,14 +1,10 @@
-using DotNet.Testcontainers.Builders;
-using DotNet.Testcontainers.Containers;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Summoners;
 using LeagueOfStats.Domain.Summoners.Dtos;
-using LeagueOfStats.Infrastructure.ApplicationDbContexts;
 using LeagueOfStats.Infrastructure.Summoners;
-using Microsoft.AspNetCore.Mvc.Testing;
+using LeagueOfStats.Integration.Tests.Common;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using NodaTime;
 using NUnit.Framework;
@@ -16,76 +12,18 @@ using NUnit.Framework;
 namespace LeagueOfStats.Integration.Tests.Summoners;
 
 [TestFixture]
-public class SummonerRepositoryTests
+public class SummonerRepositoryTests : IntegrationTestBase
 {
-        private const string Database = "master";
-        private const string Username = "sa";
-        private const string Password = "$trongPassword";
-        private const ushort MsSqlPort = 1433;
-
-        private WebApplicationFactory<Program> _factory;
-        private IContainer _container;
-        private ApplicationDbContext _applicationDbContext;
-    
-        private SummonerRepository _summonerRepository;
-
-        [OneTimeSetUp]
-        public async Task OneTimeSetUp()
-        {
-            // Set up Testcontainers SQL Server container
-            _container = new ContainerBuilder()
-                .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
-                .WithPortBinding(MsSqlPort, true)
-                .WithEnvironment("ACCEPT_EULA", "Y")
-                .WithEnvironment("SQLCMDUSER", Username)
-                .WithEnvironment("SQLCMDPASSWORD", Password)
-                .WithEnvironment("MSSQL_SA_PASSWORD", Password)
-                .WithResourceMapping(Array.Empty<byte>(), "/var/lib/mysql-files/gh-issue-1142")
-                .WithWaitStrategy(Wait.ForUnixContainer().UntilPortIsAvailable(MsSqlPort))
-                .Build();
-
-            //Start Container
-            await _container.StartAsync();
-
-            var host = _container.Hostname;
-            var port = _container.GetMappedPublicPort(MsSqlPort);
-
-            // Replace connection string in DbContext
-            var connectionString = $"Server={host},{port};Database={Database};User Id={Username};Password={Password};TrustServerCertificate=True";
-            _factory = new WebApplicationFactory<Program>()
-                .WithWebHostBuilder(builder =>
-                {
-                    builder.ConfigureServices(services =>
-                    {
-                        services.AddDbContext<ApplicationDbContext>(options =>
-                            options.UseSqlServer(connectionString));
-                    });
-                });
-
-            // Initialize database
-            using var scope = _factory.Services.CreateScope();
-            var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            dbContext.Database.Migrate();
-
-            _applicationDbContext = dbContext;
-        }
-
-        [OneTimeTearDown]
-        public async Task OneTimeTearDown()
-        {
-            await _container.StopAsync();
-            await _container.DisposeAsync();
-            _factory.Dispose();
-        }
+   private SummonerRepository _summonerRepository;
 
     [SetUp]
     public void SetUp()
     {
-        _summonerRepository = new SummonerRepository(_applicationDbContext);
+        _summonerRepository = new SummonerRepository(ApplicationDbContext);
     }
     
     [Test]
-    public async Task s()
+    public async Task AddAsync_AllValid_AddsSummoner()
     {
         const string summonerId = "summonerId";
         const string accountId = "accountId";
@@ -134,8 +72,8 @@ public class SummonerRepositoryTests
             lastUpdated);
 
         await _summonerRepository.AddAsync(summoner);
-
-        IEnumerable<Summoner> summonersInDb = await _applicationDbContext.Summoners.ToListAsync();
+        
+        IEnumerable<Summoner> summonersInDb = await ApplicationDbContext.Summoners.ToListAsync();
         
         Assert.That(summonersInDb.Count(), Is.EqualTo(1));
         Assert.That(summonersInDb.Single(), Is.EqualTo(summoner));
