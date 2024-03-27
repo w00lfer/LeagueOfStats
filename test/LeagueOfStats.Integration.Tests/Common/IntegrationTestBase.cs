@@ -23,11 +23,23 @@ public abstract class IntegrationTestBase
         ApplicationDbContext.Database.Migrate();
     }
 
+    [SetUp]
+    public async Task ClearDatabaseBeforeTest()
+    {
+        await ClearTables();
+    }
+
     [OneTimeTearDown]
     public async Task OneTimeTearDown()
     {
         _scope.Dispose();
-        ApplicationDbContext.Dispose();
+        await ApplicationDbContext.DisposeAsync();
         await _factory.DisposeAsync();
+    }
+
+    private async Task ClearTables()
+    {
+        await ApplicationDbContext.Database.ExecuteSqlRawAsync(
+            "EXEC sp_MSforeachtable N'ALTER TABLE ? NOCHECK CONSTRAINT ALL;'EXEC sp_MSforeachtable N'DELETE FROM ?;'EXEC sp_MSforeachtable N'ALTER TABLE ? CHECK CONSTRAINT ALL;'");
     }
 }
