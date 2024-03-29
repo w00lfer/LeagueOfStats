@@ -1,11 +1,9 @@
-using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Domain.Common.Enums;
 using LeagueOfStats.Domain.Summoners;
 using LeagueOfStats.Domain.Summoners.Dtos;
 using LeagueOfStats.Infrastructure.Summoners;
-using LeagueOfStats.Integration.Tests.Common;
+using LeagueOfStats.Integration.Tests.TestCommons;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using NodaTime;
 using NUnit.Framework;
 
@@ -43,6 +41,95 @@ public class SummonerRepositoryTests : IntegrationTestBase
         Summoner? summonerFromRepo = await _summonerRepository.GetByIdAsync(Guid.NewGuid());
         
         Assert.That(summonerFromRepo, Is.Null);
+    }
+    
+    [Test]
+    public async Task GetAllAsync_IdsAreEmpty_ReturnsAllSummoners()
+    {
+        Summoner summoner1 = CreateSummoner();
+        Summoner summoner2 = CreateSummoner();
+
+        await ApplicationDbContext.AddRangeAsync(summoner1, summoner2);
+        await ApplicationDbContext.SaveChangesAsync();
+        
+        List<Summoner> summonerFromRepo = (await _summonerRepository.GetAllAsync()).ToList();
+        
+        Assert.That(summonerFromRepo.Count(), Is.EqualTo(2));
+        Assert.That(summonerFromRepo.Contains(summoner1), Is.True);
+        Assert.That(summonerFromRepo.Contains(summoner2), Is.True);
+        Assert.That(ApplicationDbContext.Entry(summonerFromRepo.ElementAt(0)).Collection(s => s.SummonerChampionMasteries).IsLoaded, Is.False);
+        Assert.That(ApplicationDbContext.Entry(summonerFromRepo.ElementAt(1)).Collection(s => s.SummonerChampionMasteries).IsLoaded, Is.False);
+    }
+    
+    [Test]
+    public async Task GetAllAsync_IdsNotEmptyAndAllSummonersWithGivenIdsExist_ReturnsAllSummonersWithGivenIds()
+    {
+        Summoner summoner1 = CreateSummoner();
+        Summoner summoner2 = CreateSummoner();
+        Summoner summoner3 = CreateSummoner();
+
+        await ApplicationDbContext.AddRangeAsync(summoner1, summoner2, summoner3);
+        await ApplicationDbContext.SaveChangesAsync();
+
+        Guid[] summonerIds =
+        {
+            summoner1.Id,
+            summoner3.Id
+        };
+        List<Summoner> summonerFromRepo = (await _summonerRepository.GetAllAsync(summonerIds)).ToList();
+        
+        Assert.That(summonerFromRepo.Count(), Is.EqualTo(2));
+        Assert.That(summonerFromRepo.Contains(summoner1), Is.True);
+        Assert.That(summonerFromRepo.Contains(summoner3), Is.True);
+        Assert.That(summonerFromRepo.Contains(summoner2), Is.False);
+        Assert.That(ApplicationDbContext.Entry(summonerFromRepo.ElementAt(0)).Collection(s => s.SummonerChampionMasteries).IsLoaded, Is.False);
+        Assert.That(ApplicationDbContext.Entry(summonerFromRepo.ElementAt(1)).Collection(s => s.SummonerChampionMasteries).IsLoaded, Is.False);
+    }
+    
+    [Test]
+    public async Task GetAllAsync_IdsNotEmptyAndSomeSummonersWithGivenIdsExist_ReturnsSomeSummonersWithGivenIds()
+    {
+        Summoner summoner1 = CreateSummoner();
+        Summoner summoner2 = CreateSummoner();
+        Summoner summoner3 = CreateSummoner();
+
+        await ApplicationDbContext.AddRangeAsync(summoner1, summoner2, summoner3);
+        await ApplicationDbContext.SaveChangesAsync();
+
+        Guid[] summonerIds =
+        {
+            summoner1.Id,
+            summoner2.Id,
+            Faker.Random.Guid()
+        };
+        List<Summoner> summonerFromRepo = (await _summonerRepository.GetAllAsync(summonerIds)).ToList();
+        
+        Assert.That(summonerFromRepo.Count(), Is.EqualTo(2));
+        Assert.That(summonerFromRepo.Contains(summoner1), Is.True);
+        Assert.That(summonerFromRepo.Contains(summoner2), Is.True);
+        Assert.That(summonerFromRepo.Contains(summoner3), Is.False);
+        Assert.That(ApplicationDbContext.Entry(summonerFromRepo.ElementAt(0)).Collection(s => s.SummonerChampionMasteries).IsLoaded, Is.False);
+        Assert.That(ApplicationDbContext.Entry(summonerFromRepo.ElementAt(1)).Collection(s => s.SummonerChampionMasteries).IsLoaded, Is.False);
+    }
+    
+    [Test]
+    public async Task GetAllAsync_IdsNotEmptyAndNoneSummonersWithGivenIdsExist_ReturnsEmptyListOfSummoners()
+    {
+        Summoner summoner1 = CreateSummoner();
+        Summoner summoner2 = CreateSummoner();
+        Summoner summoner3 = CreateSummoner();
+
+        await ApplicationDbContext.AddRangeAsync(summoner1, summoner2, summoner3);
+        await ApplicationDbContext.SaveChangesAsync();
+
+        Guid[] summonerIds =
+        {
+            Faker.Random.Guid(),
+            Faker.Random.Guid()
+        };
+        List<Summoner> summonerFromRepo = (await _summonerRepository.GetAllAsync(summonerIds)).ToList();
+        
+        Assert.That(summonerFromRepo, Is.Empty);
     }
     
     [Test]
@@ -161,7 +248,7 @@ public class SummonerRepositoryTests : IntegrationTestBase
     }
     
     [Test]
-    public async Task GetByPuuidsAsync_SummonersWithPuuidsExists_ReturnsAllSummoner()
+    public async Task GetByPuuidsAsync_SummonersWithPuuidsExists_ReturnsAllSummoners()
     {
         Summoner summoner1 = CreateSummoner();
         Summoner summoner2 = CreateSummoner();
@@ -184,7 +271,7 @@ public class SummonerRepositoryTests : IntegrationTestBase
     }
     
     [Test]
-    public async Task GetByPuuidsAsync_SummonerWithSomePuuidsExists_ReturnsSomeSummoner()
+    public async Task GetByPuuidsAsync_SummonerWithSomePuuidsExists_ReturnsSomeSummoners()
     {
         Summoner summoner1 = CreateSummoner();
         Summoner summoner2 = CreateSummoner();
@@ -228,38 +315,16 @@ public class SummonerRepositoryTests : IntegrationTestBase
     
     private Summoner CreateSummoner()
     {
-        const string summonerId = "summonerId";
-        const string accountId = "accountId";
-        const string name = "name";
-        const int profileIconId = 1000;
-        const string puuid = "puuid";
-        const long summonerLevel = 500;
-        const string gameName = "gameName";
-        const string tagLine = "tagLine";
+        string summonerId = Faker.Lorem.Word();
+        string accountId = Faker.Lorem.Word();
+        string name = Faker.Lorem.Word();
+        int profileIconId = Faker.Random.Int();
+        string puuid = Faker.Lorem.Word();
+        long summonerLevel = Faker.Random.Long();
+        string gameName = Faker.Lorem.Word();
+        string tagLine = Faker.Lorem.Word();
         const Region region = Region.EUNE;
         Instant lastUpdated = Instant.MaxValue;
-
-        Guid championId = Guid.NewGuid();
-        Champion champion = Mock.Of<Champion>(c => c.Id == championId);
-        const int championLevel = 5;
-        const int championPoints = 100000;
-        const long championPointsSinceLastLevel = 10000;
-        const long championPointsUntilNextLevel = 0;
-        const bool chestGranted = true;
-        const long lastPlayTime = 10;
-        const int tokensEarned = 2;
-        UpdateChampionMasteryDto updateChampionMasteryDto = new(
-            champion,
-            championLevel,
-            championPoints,
-            championPointsSinceLastLevel,
-            championPointsUntilNextLevel,
-            chestGranted, lastPlayTime,
-            tokensEarned);
-        List<UpdateChampionMasteryDto> updateChampionMasteryDtos = new()
-        {
-            updateChampionMasteryDto
-        };
         
         Summoner summoner = new Summoner(
             summonerId,
@@ -271,7 +336,7 @@ public class SummonerRepositoryTests : IntegrationTestBase
             gameName,
             tagLine,
             region,
-            updateChampionMasteryDtos,
+            Enumerable.Empty<UpdateChampionMasteryDto>(),
             lastUpdated);
 
         return summoner;

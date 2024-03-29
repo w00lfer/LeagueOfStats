@@ -1,21 +1,24 @@
+using AutoBogus;
+using Bogus;
 using LeagueOfStats.Infrastructure.ApplicationDbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 
-namespace LeagueOfStats.Integration.Tests.Common;
+namespace LeagueOfStats.Integration.Tests.TestCommons;
 
 [TestFixture]
 public abstract class IntegrationTestBase
 {
-    private IntegrationTestWebAppFactory _factory;
+    private readonly IntegrationTestWebAppFactory _factory = new();
     private IServiceScope _scope;
+    
     protected ApplicationDbContext ApplicationDbContext;
+    protected readonly Faker Faker = new();
     
     [OneTimeSetUp]
     public async Task OneTimeSetup()
     {
-        _factory = new();
         await _factory.InitializeAsync();
         _scope = _factory.Services.CreateScope();
         

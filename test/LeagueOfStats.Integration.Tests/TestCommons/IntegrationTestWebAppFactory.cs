@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Testcontainers.MsSql;
 
-namespace LeagueOfStats.Integration.Tests.Common;
+namespace LeagueOfStats.Integration.Tests.TestCommons;
 
 public class IntegrationTestWebAppFactory : WebApplicationFactory<Program>
 {

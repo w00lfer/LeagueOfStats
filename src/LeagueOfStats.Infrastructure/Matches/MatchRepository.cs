@@ -19,7 +19,7 @@ public class MatchRepository : AsyncRepositoryBase<Match>, IMatchRepository
             .Include(m => m.Participants).ThenInclude(p => p.Perks.Styles).ThenInclude(s => s.Selections)
             .SingleOrDefaultAsync(m => m.Id == id);
     
-    public async Task<IEnumerable<Match>> GetAllByRiotMatchIdsIncludingRelatedEntitiesAsync(IEnumerable<string> riotMatchIds)
+    public async Task<IEnumerable<Match>> GetAllByRiotMatchIdsWithAllIncludesAsync(IEnumerable<string> riotMatchIds)
     {
         IQueryable<Match> matchesQueryable = 
             riotMatchIds.Any() 
