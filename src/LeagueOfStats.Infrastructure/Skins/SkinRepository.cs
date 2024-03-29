@@ -12,8 +12,8 @@ public class SkinRepository : AsyncRepositoryBase<Skin>, ISkinRepository
     {
     } 
     
-    public async Task<IEnumerable<Skin>> GetByRiotIdsAsync(int[] riotIds) =>
-        riotIds.Length > 0
-            ? await _applicationDbContext.Skins.Where(c => riotIds.Contains(c.RiotSkinId)).AsNoTracking().ToListAsync()
+    public async Task<IEnumerable<Skin>> GetByRiotSkinIdsAsync(IEnumerable<int> riotSkinIds) =>
+        riotSkinIds.Any()
+            ? await _applicationDbContext.Skins.Where(c => riotSkinIds.Contains(c.RiotSkinId)).AsNoTracking().ToListAsync()
             : await _applicationDbContext.Skins.AsNoTracking().ToListAsync();
 }
