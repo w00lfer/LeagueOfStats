@@ -1,4 +1,3 @@
-using AutoBogus;
 using LeagueOfStats.Domain.Champions;
 using LeagueOfStats.Infrastructure.Champions;
 using LeagueOfStats.Integration.Tests.TestCommons;

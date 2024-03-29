@@ -1,4 +1,3 @@
-using AutoBogus;
 using LeagueOfStats.Domain.Skins;
 using LeagueOfStats.Infrastructure.Skins;
 using LeagueOfStats.Integration.Tests.TestCommons;
@@ -241,11 +240,28 @@ public class SkinRepositoryTests : IntegrationTestBase
 
     private Skin CreateSkin()
     {
-        AddSkinDto addSkinDto = AutoFaker.Generate<AddSkinDto>();
-        addSkinDto = addSkinDto with
-        {
-            AddSkinChromaDtos = Enumerable.Empty<AddSkinChromaDto>()
-        };
+        int riotSkinId = Faker.Random.Int();
+        bool isBase = Faker.Random.Bool();
+        string name = Faker.Lorem.Word();
+        string description = Faker.Lorem.Word();
+        string splashUrl = Faker.Lorem.Word();
+        string uncenteredSplashUrl = Faker.Lorem.Word();
+        string tileUrl = Faker.Lorem.Word();
+        string rarity = Faker.Lorem.Word();
+        bool isLegacy = Faker.Random.Bool();
+        string chromaPath = Faker.Lorem.Word();
+        AddSkinDto addSkinDto = new(
+            riotSkinId,
+            isBase,
+            name,
+            description,
+            splashUrl,
+            uncenteredSplashUrl,
+            tileUrl,
+            rarity,
+            isLegacy,
+            chromaPath,
+            Enumerable.Empty<AddSkinChromaDto>());
 
         Skin skin = new(addSkinDto);
 

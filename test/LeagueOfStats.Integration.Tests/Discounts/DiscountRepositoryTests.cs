@@ -1,6 +1,4 @@
-using AutoBogus;
 using LeagueOfStats.Domain.Discounts;
-using LeagueOfStats.Domain.Matches;
 using LeagueOfStats.Infrastructure.Discounts;
 using LeagueOfStats.Integration.Tests.TestCommons;
 using Microsoft.EntityFrameworkCore;

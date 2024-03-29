@@ -1,4 +1,3 @@
-using AutoBogus;
 using Bogus;
 using LeagueOfStats.Infrastructure.ApplicationDbContexts;
 using Microsoft.EntityFrameworkCore;

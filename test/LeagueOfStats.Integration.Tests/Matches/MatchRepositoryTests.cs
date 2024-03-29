@@ -1,10 +1,12 @@
-using AutoBogus;
 using LeagueOfStats.Domain.Matches;
+using LeagueOfStats.Domain.Matches.Enums;
 using LeagueOfStats.Domain.Matches.Participants.Dtos;
 using LeagueOfStats.Domain.Matches.Teams.Dtos;
 using LeagueOfStats.Infrastructure.Matches;
 using LeagueOfStats.Integration.Tests.TestCommons;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer.NodaTime.Extensions;
+using NodaTime;
 using NUnit.Framework;
 
 namespace LeagueOfStats.Integration.Tests.Matches;
@@ -277,12 +279,33 @@ public class MatchRepositoryTests : IntegrationTestBase
 
     private Match CreateMatch()
     {
-        AddMatchDto addMatchDto = AutoFaker.Generate<AddMatchDto>();
-        addMatchDto = addMatchDto with
-        {
-            AddParticipantDtos = Enumerable.Empty<AddParticipantDto>(),
-            AddTeamDtos = Enumerable.Empty<AddTeamDto>()
-        };
+        string riotMatchId = Faker.Lorem.Word();
+        string gameVersion = Faker.Lorem.Word();
+        Duration gameDuration = Duration.FromHours(1);
+        Instant gameStartTimeStamp = Instant.FromDateTimeUtc(Faker.Date.Between(new DateTime(2000, 1, 1), new DateTime(2020, 1, 1)).ToUniversalTime());
+        Instant gameEndTimeStamp = gameStartTimeStamp.PlusDays(7);
+        GameMode gameMode = Faker.Random.Enum<GameMode>();
+        GameType gameType = Faker.Random.Enum<GameType>();
+        Map map = Faker.Random.Enum<Map>();
+        string platformId = Faker.Lorem.Word();
+        Queue queue = Faker.Random.Enum<Queue>();
+        string? tournamentCode = Faker.Lorem.Word();
+
+        AddMatchDto addMatchDto = new(
+            riotMatchId,
+            gameVersion,
+            gameDuration,
+            gameStartTimeStamp,
+            gameEndTimeStamp,
+            gameMode,
+            gameType,
+            map,
+            platformId,
+            queue,
+            tournamentCode,
+            Enumerable.Empty<AddParticipantDto>(),
+            Enumerable.Empty<AddTeamDto>());
+
 
         Match match = new Match(addMatchDto);
 
