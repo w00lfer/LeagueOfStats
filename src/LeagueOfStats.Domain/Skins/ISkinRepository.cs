@@ -5,5 +5,5 @@ namespace LeagueOfStats.Domain.Skins;
 
 public interface ISkinRepository : IAsyncRepository<Skin>
 {
-    Task<IEnumerable<Skin>> GetByRiotIdsAsync(int[] riotIds);
+    Task<IEnumerable<Skin>> GetByRiotSkinIdsAsync(IEnumerable<int> riotSkinIds);
 }

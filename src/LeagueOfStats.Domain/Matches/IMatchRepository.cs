@@ -6,5 +6,5 @@ public interface IMatchRepository : IAsyncRepository<Match>
 {
     Task<Match?> GetByIdWithAllIncludesAsync(Guid id);
     
-    Task<IEnumerable<Match>> GetAllByRiotMatchIdsIncludingRelatedEntitiesAsync(IEnumerable<string> riotMatchIds);
+    Task<IEnumerable<Match>> GetAllByRiotMatchIdsWithAllIncludesAsync(IEnumerable<string> riotMatchIds);
 }

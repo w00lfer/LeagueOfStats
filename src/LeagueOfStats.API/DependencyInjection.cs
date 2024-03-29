@@ -36,7 +36,9 @@ public static class DependencyInjection
 
         AddSwagger(builder.Services);
 
+#if !TEST
         AddKeyVault(builder);
+#endif
 
         services
             .AddFluentValidationAutoValidation()

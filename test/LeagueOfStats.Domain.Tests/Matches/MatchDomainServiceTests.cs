@@ -84,7 +84,7 @@ public class MatchDomainServiceTests
         Match existingMatch = new Match(addMatchDtoForExistingMatch);
         IEnumerable<Match> existingMatches = new List<Match> { existingMatch } ;
         _matchRepository
-            .Setup(x => x.GetAllByRiotMatchIdsIncludingRelatedEntitiesAsync(
+            .Setup(x => x.GetAllByRiotMatchIdsWithAllIncludesAsync(
                 It.Is<IEnumerable<string>>(e => e.Any(riotMatchId => riotMatchId == existingRiotMatchId || riotMatchId == notExistingRiotMatchId))))
             .ReturnsAsync(existingMatches);
 
@@ -94,7 +94,7 @@ public class MatchDomainServiceTests
         Assert.That(result.Value.Any(m => m.RiotMatchId == existingRiotMatchId));
         Assert.That(result.Value.Any(m => m.RiotMatchId == notExistingRiotMatchId));
         
-        _matchRepository.Verify(x => x.GetAllByRiotMatchIdsIncludingRelatedEntitiesAsync(
+        _matchRepository.Verify(x => x.GetAllByRiotMatchIdsWithAllIncludesAsync(
             It.Is<IEnumerable<string>>(e => e.Any(riotMatchId => riotMatchId == existingRiotMatchId || riotMatchId == notExistingRiotMatchId))), Times.Once);
         _matchRepository.Verify(x => x.AddRangeAsync(
             It.Is<IEnumerable<Match>>(e => e.Single(m => m.RiotMatchId == notExistingRiotMatchId) != null)), Times.Once);

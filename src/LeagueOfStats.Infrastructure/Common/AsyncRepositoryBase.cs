@@ -22,8 +22,12 @@ public abstract class AsyncRepositoryBase<T> : IAsyncRepository<T> where T : Agg
             ? await _applicationDbContext.Set<T>().Where(c => ids.Contains(c.Id)).AsNoTracking().ToListAsync()
             : await _applicationDbContext.Set<T>().AsNoTracking().ToListAsync();
 
-    public virtual async Task AddAsync(T entity) => 
+    public virtual async Task AddAsync(T entity)
+    {
         await _applicationDbContext.Set<T>().AddAsync(entity);
+        
+        await _applicationDbContext.SaveChangesAsync();
+    }
 
     public virtual async Task AddRangeAsync(IEnumerable<T> entities)
     {

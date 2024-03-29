@@ -41,7 +41,7 @@ namespace LeagueOfStats.Infrastructure;
                 var connectionString = string.Format(
                     databaseOptions.DatabaseConnectionString,
                     databaseOptions.DatabaseAdminPassword);
-
+                
                 optionsBuilder.UseSqlServer(connectionString, sqlServerOptionsAction =>
                 {
                     sqlServerOptionsAction.UseNodaTime();
