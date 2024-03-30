@@ -125,7 +125,7 @@ public class SyncDiscountsDataJobTests
         
         _riotGamesShopClientMock
             .Setup(x => x.GetCurrentDiscountsAsync())
-            .ReturnsAsync(Result.Success(Enumerable.Empty<RiotGamesShopDiscount>()));
+            .ReturnsAsync(Result.Success(Enumerable.Empty<RiotGamesShopDiscountDto>()));
         
         await _syncDiscountsDataJob.Execute(Mock.Of<IJobExecutionContext>());
         
@@ -157,9 +157,9 @@ public class SyncDiscountsDataJobTests
             .Setup(x => x.DoesDiscountInGivenLocalDateTimeExistAsync(currentDateTime))
             .ReturnsAsync(false);
 
-        RiotGamesShopDiscount riotGamesShopDiscount1 = new(1, DiscountType.Champion, 10, 5, new LocalDateTime(2024, 3, 17, 12, 0), LocalDateTime.MaxIsoValue);
-        RiotGamesShopDiscount riotGamesShopDiscount2 = new(2, DiscountType.Champion, 10, 5, new LocalDateTime(2024, 3, 18, 12, 0), LocalDateTime.MaxIsoValue);
-        IEnumerable<RiotGamesShopDiscount> riotGamesShopDiscounts = new List<RiotGamesShopDiscount>
+        RiotGamesShopDiscountDto riotGamesShopDiscount1 = new(1, DiscountType.Champion, 10, 5, new LocalDateTime(2024, 3, 17, 12, 0), LocalDateTime.MaxIsoValue);
+        RiotGamesShopDiscountDto riotGamesShopDiscount2 = new(2, DiscountType.Champion, 10, 5, new LocalDateTime(2024, 3, 18, 12, 0), LocalDateTime.MaxIsoValue);
+        IEnumerable<RiotGamesShopDiscountDto> riotGamesShopDiscounts = new List<RiotGamesShopDiscountDto>
         {
             riotGamesShopDiscount1,
             riotGamesShopDiscount2
@@ -197,9 +197,9 @@ public class SyncDiscountsDataJobTests
             .Setup(x => x.DoesDiscountInGivenLocalDateTimeExistAsync(currentDateTime))
             .ReturnsAsync(false);
 
-        RiotGamesShopDiscount riotGamesShopDiscount1 = new(1, DiscountType.Champion, 10, 5, LocalDateTime.MaxIsoValue, new LocalDateTime(2024, 3, 17, 12, 0));
-        RiotGamesShopDiscount riotGamesShopDiscount2 = new(2, DiscountType.Champion, 10, 5, LocalDateTime.MaxIsoValue , new LocalDateTime(2024, 3, 18, 12, 0));
-        IEnumerable<RiotGamesShopDiscount> riotGamesShopDiscounts = new List<RiotGamesShopDiscount>
+        RiotGamesShopDiscountDto riotGamesShopDiscount1 = new(1, DiscountType.Champion, 10, 5, LocalDateTime.MaxIsoValue, new LocalDateTime(2024, 3, 17, 12, 0));
+        RiotGamesShopDiscountDto riotGamesShopDiscount2 = new(2, DiscountType.Champion, 10, 5, LocalDateTime.MaxIsoValue , new LocalDateTime(2024, 3, 18, 12, 0));
+        IEnumerable<RiotGamesShopDiscountDto> riotGamesShopDiscounts = new List<RiotGamesShopDiscountDto>
         {
             riotGamesShopDiscount1,
             riotGamesShopDiscount2
@@ -237,9 +237,9 @@ public class SyncDiscountsDataJobTests
             .Setup(x => x.DoesDiscountInGivenLocalDateTimeExistAsync(currentDateTime))
             .ReturnsAsync(false);
 
-        RiotGamesShopDiscount riotGamesShopDiscount1 = new(1, DiscountType.Champion, 10, 5, LocalDateTime.MinIsoValue, LocalDateTime.MaxIsoValue);
-        RiotGamesShopDiscount riotGamesShopDiscount2 = new(2, DiscountType.Champion, 10, 5, LocalDateTime.MinIsoValue , LocalDateTime.MaxIsoValue);
-        IEnumerable<RiotGamesShopDiscount> riotGamesShopDiscounts = new List<RiotGamesShopDiscount>
+        RiotGamesShopDiscountDto riotGamesShopDiscount1 = new(1, DiscountType.Champion, 10, 5, LocalDateTime.MinIsoValue, LocalDateTime.MaxIsoValue);
+        RiotGamesShopDiscountDto riotGamesShopDiscount2 = new(2, DiscountType.Champion, 10, 5, LocalDateTime.MinIsoValue , LocalDateTime.MaxIsoValue);
+        IEnumerable<RiotGamesShopDiscountDto> riotGamesShopDiscounts = new List<RiotGamesShopDiscountDto>
         {
             riotGamesShopDiscount1,
             riotGamesShopDiscount2
@@ -287,9 +287,9 @@ public class SyncDiscountsDataJobTests
             .Setup(x => x.DoesDiscountInGivenLocalDateTimeExistAsync(currentDateTime))
             .ReturnsAsync(false);
 
-        RiotGamesShopDiscount riotGamesShopDiscount1 = new(1, DiscountType.ChampionSkin, 10, 5, LocalDateTime.MinIsoValue, LocalDateTime.MaxIsoValue);
-        RiotGamesShopDiscount riotGamesShopDiscount2 = new(2, DiscountType.ChampionSkin, 10, 5, LocalDateTime.MinIsoValue , LocalDateTime.MaxIsoValue);
-        IEnumerable<RiotGamesShopDiscount> riotGamesShopDiscounts = new List<RiotGamesShopDiscount>
+        RiotGamesShopDiscountDto riotGamesShopDiscount1 = new(1, DiscountType.ChampionSkin, 10, 5, LocalDateTime.MinIsoValue, LocalDateTime.MaxIsoValue);
+        RiotGamesShopDiscountDto riotGamesShopDiscount2 = new(2, DiscountType.ChampionSkin, 10, 5, LocalDateTime.MinIsoValue , LocalDateTime.MaxIsoValue);
+        IEnumerable<RiotGamesShopDiscountDto> riotGamesShopDiscounts = new List<RiotGamesShopDiscountDto>
         {
             riotGamesShopDiscount1,
             riotGamesShopDiscount2
@@ -349,11 +349,11 @@ public class SyncDiscountsDataJobTests
             .Setup(x => x.DoesDiscountInGivenLocalDateTimeExistAsync(currentDateTime))
             .ReturnsAsync(false);
 
-        RiotGamesShopDiscount riotGamesShopDiscount1 = new(1, DiscountType.Champion, 10, 5, LocalDateTime.MinIsoValue, LocalDateTime.MaxIsoValue);
-        RiotGamesShopDiscount riotGamesShopDiscount2 = new(2, DiscountType.Champion, 10, 5, LocalDateTime.MinIsoValue , LocalDateTime.MaxIsoValue);
-        RiotGamesShopDiscount riotGamesShopDiscount3 = new(3, DiscountType.ChampionSkin, 10, 5, LocalDateTime.MinIsoValue, LocalDateTime.MaxIsoValue);
-        RiotGamesShopDiscount riotGamesShopDiscount4 = new(4, DiscountType.ChampionSkin, 10, 5, LocalDateTime.MinIsoValue , LocalDateTime.MaxIsoValue);
-        IEnumerable<RiotGamesShopDiscount> riotGamesShopDiscounts = new List<RiotGamesShopDiscount>
+        RiotGamesShopDiscountDto riotGamesShopDiscount1 = new(1, DiscountType.Champion, 10, 5, LocalDateTime.MinIsoValue, LocalDateTime.MaxIsoValue);
+        RiotGamesShopDiscountDto riotGamesShopDiscount2 = new(2, DiscountType.Champion, 10, 5, LocalDateTime.MinIsoValue , LocalDateTime.MaxIsoValue);
+        RiotGamesShopDiscountDto riotGamesShopDiscount3 = new(3, DiscountType.ChampionSkin, 10, 5, LocalDateTime.MinIsoValue, LocalDateTime.MaxIsoValue);
+        RiotGamesShopDiscountDto riotGamesShopDiscount4 = new(4, DiscountType.ChampionSkin, 10, 5, LocalDateTime.MinIsoValue , LocalDateTime.MaxIsoValue);
+        IEnumerable<RiotGamesShopDiscountDto> riotGamesShopDiscounts = new List<RiotGamesShopDiscountDto>
         {
             riotGamesShopDiscount1,
             riotGamesShopDiscount2,

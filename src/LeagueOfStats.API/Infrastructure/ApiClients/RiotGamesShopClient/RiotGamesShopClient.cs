@@ -17,7 +17,7 @@ public class RiotGamesShopClient : IRiotGamesShopClient
         _httpClient = httpClient;
     }
 
-    public async Task<Result<IEnumerable<RiotGamesShopDiscount>>> GetCurrentDiscountsAsync()
+    public async Task<Result<IEnumerable<RiotGamesShopDiscountDto>>> GetCurrentDiscountsAsync()
     {
         var riotGamesShopClientResponse = await _httpClient.GetFromJsonAsync<List<RiotGamesShopClientGetCollectionsResponseItemDto>>("collections/");
 
@@ -36,7 +36,9 @@ public class RiotGamesShopClient : IRiotGamesShopClient
         return Result.Success(championDiscounts.Concat(skinDiscounts));
     }
 
-    private static IEnumerable<RiotGamesShopDiscount> GetSkinDiscounts(List<RiotGamesShopClientGetCollectionsResponseItemDto> currentDiscounts, LocalDateTimePattern localDateTimePattern) =>
+    private static IEnumerable<RiotGamesShopDiscountDto> GetSkinDiscounts(
+        List<RiotGamesShopClientGetCollectionsResponseItemDto> currentDiscounts,
+        LocalDateTimePattern localDateTimePattern) =>
         currentDiscounts
             .Select(c => c.DynamicCollection.DiscountedProductsByProductType.ChampionSkin)
             .Where(skinDiscounts => skinDiscounts is not null)
@@ -47,7 +49,7 @@ public class RiotGamesShopClient : IRiotGamesShopClient
                 var salesStart = localDateTimePattern.Parse(price.Discount.SaleStart).Value; 
                 var salesEnd = localDateTimePattern.Parse(price.Discount.SaleEnd).Value;    
                 
-                return new RiotGamesShopDiscount(
+                return new RiotGamesShopDiscountDto(
                     int.Parse(skinDiscount.Id),
                     DiscountType.ChampionSkin,
                     price.OriginalPrice.Cost,
@@ -57,7 +59,9 @@ public class RiotGamesShopClient : IRiotGamesShopClient
             })
             .Distinct();
 
-    private static IEnumerable<RiotGamesShopDiscount> GetChampionDiscounts(List<RiotGamesShopClientGetCollectionsResponseItemDto> currentDiscounts, LocalDateTimePattern localDateTimePattern) =>
+    private static IEnumerable<RiotGamesShopDiscountDto> GetChampionDiscounts(
+        List<RiotGamesShopClientGetCollectionsResponseItemDto> currentDiscounts,
+        LocalDateTimePattern localDateTimePattern) =>
         currentDiscounts
             .Select(c => c.DynamicCollection.DiscountedProductsByProductType.Champions)
             .Where(championDiscounts => championDiscounts is not null)
@@ -68,7 +72,7 @@ public class RiotGamesShopClient : IRiotGamesShopClient
                 var salesStart = localDateTimePattern.Parse(price.Discount.SaleStart).Value;
                 var salesEnd = localDateTimePattern.Parse(price.Discount.SaleEnd).Value;
 
-                return new RiotGamesShopDiscount(
+                return new RiotGamesShopDiscountDto(
                     int.Parse(championDiscount.Id),
                     DiscountType.Champion,
                     price.OriginalPrice.Cost,

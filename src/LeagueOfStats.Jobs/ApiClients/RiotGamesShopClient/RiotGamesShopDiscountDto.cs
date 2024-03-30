@@ -3,7 +3,7 @@ using NodaTime;
 
 namespace LeagueOfStats.Jobs.ApiClients.RiotGamesShopClient;
 
-public record RiotGamesShopDiscount(
+public record RiotGamesShopDiscountDto(
     int RiotId,
     DiscountType DiscountType,
     int OriginalPrice,

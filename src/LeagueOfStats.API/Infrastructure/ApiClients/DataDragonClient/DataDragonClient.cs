@@ -20,19 +20,19 @@ public class DataDragonClient : IDataDragonClient
 
         if (dataDragonGetVersionsReponse is null || dataDragonGetVersionsReponse.Count == 0)
         {
-            return new ApiError("Data Dragon can't be accessed.");
+            return new ApiError("Data Dragon versions can't be accessed.");
         }
 
         string currentVersion = dataDragonGetVersionsReponse.First();
         
-        var communityDragonGetSkinsResponse = await _httpClient.GetFromJsonAsync<DataDragonChampionDto>($"cdn/{currentVersion}/data/en_US/champion.json");
+        var dataDragonGetChampionsResponse = await _httpClient.GetFromJsonAsync<DataDragonChampionDto>($"cdn/{currentVersion}/data/en_US/champion.json");
 
-        if (communityDragonGetSkinsResponse is null)
+        if (dataDragonGetChampionsResponse is null)
         {
-            return new ApiError("Data Dragon can't be accessed.");
+            return new ApiError("Data Dragon champion can't be accessed.");
         }
         
-        var championDtos = communityDragonGetSkinsResponse.ChampionDataConfigurationModels.Select(c =>
+        var championDtos = dataDragonGetChampionsResponse.ChampionDataConfigurationModels.Select(c =>
            new ChampionDto(
                int.Parse(c.Value.Id),
                c.Value.Name,
