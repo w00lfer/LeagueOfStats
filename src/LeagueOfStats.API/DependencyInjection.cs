@@ -54,6 +54,7 @@ public static class DependencyInjection
     private static void AddExternalApiClients(IServiceCollection services)
     {
         services.AddScoped<IRiotClient, RiotClient>();
+        services.AddScoped<IRiotGamesApiWrapper, RiotGamesApiWrapper>();
         services.ConfigureRiotGamesShopClient();
         services.ConfigureDataDragonClient();
         services.ConfigureCommunityDragonClient();

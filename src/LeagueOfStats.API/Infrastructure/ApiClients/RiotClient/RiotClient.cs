@@ -54,7 +54,7 @@ public class RiotClient : IRiotClient
 
             if (account is null)
             {
-                return new ApiError($"There is no such account: {gameName}#{tagLine}");
+                return new ApiError($"There is no such account: {gameName}#{tagLine}.");
             }
 
             Summoner? summoner = await _riotGamesApiWrapper.GetSummonerByPuuidAsync(
@@ -71,7 +71,7 @@ public class RiotClient : IRiotClient
         }
     }
 
-    public async Task<Result<ChampionMastery[]>> GetSummonerChampionMasteryByPuuid(
+    public async Task<Result<ChampionMastery[]>> GetSummonerChampionMasteryByPuuidAsync(
         string puuid,
         Region region)
     {
@@ -87,11 +87,11 @@ public class RiotClient : IRiotClient
         }
         catch (RiotResponseException)
         {
-            return new ApiError("There are problems on Riot API side");
+            return new ApiError("There are problems on Riot API side.");
         }
     }
 
-    public async Task<Result<IEnumerable<Match>>> GetSummonerMatchHistorySummary(
+    public async Task<Result<IEnumerable<Match>>> GetSummonerMatchHistorySummaryAsync(
         GetSummonerMatchHistoryDto getSummonerMatchHistoryDto)
     {
         try
@@ -105,18 +105,19 @@ public class RiotClient : IRiotClient
 
             var matches = await Task.WhenAll(
                 matchHistoryIds.Select(matchId =>
-                    _riotGamesApiWrapper.GetMatchByIdAsync(getSummonerMatchHistoryDto.Region.ToRegionalRoute(),
+                    _riotGamesApiWrapper.GetMatchByIdAsync(
+                        getSummonerMatchHistoryDto.Region.ToRegionalRoute(),
                         matchId)));
 
             return Result.Success<IEnumerable<Match>>(matches.Where(m => m is not null));
         }
         catch (RiotResponseException)
         {
-            return new ApiError("There are problems on Riot API side");
+            return new ApiError("There are problems on Riot API side.");
         }
     }
 
-    public async Task<Result<CurrentGameInfo>> GetSummonerLiveGame(
+    public async Task<Result<CurrentGameInfo>> GetSummonerLiveGameAsync(
         GetSummonerLiveGameDto getSummonerLiveGameDto)
     {
         try
@@ -131,7 +132,7 @@ public class RiotClient : IRiotClient
         }
         catch (RiotResponseException)
         {
-            return new ApiError("There are problems on Riot API side");
+            return new ApiError("There are problems on Riot API side.");
         }
     }
 }

@@ -54,7 +54,7 @@ public class SearchSummonerByGameNameAndTagLineAndRegionQueryHandler
         string gameName,
         string tagLine,
         Region region) => 
-            _riotClient.GetSummonerChampionMasteryByPuuid(summonerFromRiotApi.Puuid, region)
+            _riotClient.GetSummonerChampionMasteryByPuuidAsync(summonerFromRiotApi.Puuid, region)
                 .Bind(async summonerChampionMasteriesFromRiotApi =>
                 {
                     var champions = (await _championRepository.GetAllAsync()).ToList();

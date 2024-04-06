@@ -18,13 +18,13 @@ public interface IRiotClient
         string tagLine,
         Region region);
         
-    Task<Result<ChampionMastery[]>> GetSummonerChampionMasteryByPuuid(
+    Task<Result<ChampionMastery[]>> GetSummonerChampionMasteryByPuuidAsync(
         string puuid,
         Region region);
 
-    Task<Result<IEnumerable<Match>>> GetSummonerMatchHistorySummary(
+    Task<Result<IEnumerable<Match>>> GetSummonerMatchHistorySummaryAsync(
         GetSummonerMatchHistoryDto getSummonerMatchHistoryDto);
 
-    Task<Result<CurrentGameInfo>> GetSummonerLiveGame(
+    Task<Result<CurrentGameInfo>> GetSummonerLiveGameAsync(
         GetSummonerLiveGameDto getSummonerLiveGameDto);
 }

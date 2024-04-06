@@ -53,7 +53,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler
         CancellationToken cancellationToken) =>
         
         _summonerDomainService.GetByIdAsync(query.SummonerId)
-            .Bind(summoner => _riotClient.GetSummonerMatchHistorySummary(new GetSummonerMatchHistoryDto(
+            .Bind(summoner => _riotClient.GetSummonerMatchHistorySummaryAsync(new GetSummonerMatchHistoryDto(
                     summoner.Region,
                     summoner.Puuid,
                     query.Limit,
@@ -133,7 +133,7 @@ public class GetSummonerMatchHistorySummaryQueryHandler
         List<Champion> champions,
         Region region) =>
         _riotClient.GetSummonerByPuuidAsync(summonerInfoDto.Puuid, region)
-            .Bind(summonerFromRiotApi => _riotClient.GetSummonerChampionMasteryByPuuid(
+            .Bind(summonerFromRiotApi => _riotClient.GetSummonerChampionMasteryByPuuidAsync(
                     summonerFromRiotApi.Puuid,
                     region)
                 .Map(async summonerChampionMasteriesFromRiotApi =>

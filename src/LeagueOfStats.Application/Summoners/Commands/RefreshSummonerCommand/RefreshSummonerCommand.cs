@@ -55,7 +55,7 @@ public class RefreshSummonerCommandHandler : IRequestHandler<RefreshSummonerComm
     private Task<Result> UpdateSummonerDataWithDataFromRiotApiAsync(Summoner summoner) =>
         _riotClient.GetSummonerByPuuidAsync(summoner.Puuid, summoner.Region)
             .Bind(summonerFromRiotApi => _riotClient
-                .GetSummonerChampionMasteryByPuuid(summonerFromRiotApi.Puuid, summoner.Region)
+                .GetSummonerChampionMasteryByPuuidAsync(summonerFromRiotApi.Puuid, summoner.Region)
                 .Tap(async summonerChampionMasteriesFromRiotApi =>
                 {
                     var champions = (await _championRepository.GetAllAsync()).ToList();

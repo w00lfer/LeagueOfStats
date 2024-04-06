@@ -34,7 +34,7 @@ public class GetSummonerLiveGameQueryHandler
         GetSummonerLiveGameQuery query,
         CancellationToken cancellationToken) =>
         _summonerDomainService.GetByIdAsync(query.Id)
-            .Bind(summoner => _riotClient.GetSummonerLiveGame(new GetSummonerLiveGameDto(
+            .Bind(summoner => _riotClient.GetSummonerLiveGameAsync(new GetSummonerLiveGameDto(
                     summoner.SummonerName,
                     summoner.SummonerId,
                     summoner.Region)))
