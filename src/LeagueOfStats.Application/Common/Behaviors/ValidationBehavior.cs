@@ -30,7 +30,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         }
 
         ValidationResult[] validationResults = await Task.WhenAll(
-            _validators.Select(async validator => await validator.ValidateAsync(request)));
+            _validators.Select(async validator => await validator.ValidateAsync(request, cancellationToken)));
 
         ValidationError[] errors = validationResults
             .SelectMany(vr => vr.Errors)

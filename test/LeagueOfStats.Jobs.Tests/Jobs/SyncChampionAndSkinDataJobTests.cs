@@ -57,7 +57,9 @@ public class SyncChampionAndSkinDataJobTests
         dbTransactionMock.Verify(x => x.Rollback(), Times.Once);
         dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
         _dataDragonClientMock.Verify(x => x.GetChampionsAsync(), Times.Once);
+        
         VerifyNoOtherCalls();
+        dbTransactionMock.VerifyNoOtherCalls();
     }
     
     [Test]
@@ -102,7 +104,9 @@ public class SyncChampionAndSkinDataJobTests
         _communityDragonClientMock.Verify(x => x.GetSkinsAsync(), Times.Once);
         dbTransactionMock.Verify(x => x.Rollback(), Times.Once);
         dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
+        
         VerifyNoOtherCalls();
+        dbTransactionMock.VerifyNoOtherCalls();
     }
     
     [Test]
@@ -167,7 +171,9 @@ public class SyncChampionAndSkinDataJobTests
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(default), Times.Once);
         dbTransactionMock.Verify(x => x.Commit(), Times.Once);
         dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
+        
         VerifyNoOtherCalls();
+        dbTransactionMock.VerifyNoOtherCalls();
     }
 
     private void VerifyNoOtherCalls()

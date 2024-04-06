@@ -3,6 +3,7 @@ using NUnit.Framework;
 
 namespace LeagueOfStats.Domain.Tests.Common.Rails.Errors;
 
+[TestFixture]
 public class DomainErrorTests
 {
     [Test]
