@@ -1,5 +1,7 @@
 using System.Reflection;
-using LeagueOfStats.Application.Common.Validators;
+using FluentValidation;
+using FluentValidation.Results;
+using LeagueOfStats.Application.Common.Errors;
 using LeagueOfStats.Domain.Common.Rails.Errors;
 using LeagueOfStats.Domain.Common.Rails.Results;
 using MediatR;
@@ -27,12 +29,13 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
             return await next();
         }
 
-        Result[] validationResults = await Task.WhenAll(
+        ValidationResult[] validationResults = await Task.WhenAll(
             _validators.Select(async validator => await validator.ValidateAsync(request)));
 
-        Error[] errors = validationResults
-            .Where(vr => vr.IsFailure)
+        ValidationError[] errors = validationResults
             .SelectMany(vr => vr.Errors)
+            .Where(vf => vf is not null)
+            .Select(vf => new ValidationError(vf))
             .Distinct()
             .ToArray();
 
@@ -44,7 +47,7 @@ public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TReques
         return await next();
     }
 
-    private static TResult CreateValidationResult<TResult>(Error[] errors)
+    private static TResult CreateValidationResult<TResult>(ValidationError[] errors)
         where TResult : Result
     {
         if (typeof(TResult) == typeof(Result))

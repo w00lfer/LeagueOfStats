@@ -1,7 +1,6 @@
 using System.Reflection;
 using FluentValidation;
 using LeagueOfStats.Application.Common.Behaviors;
-using LeagueOfStats.Application.Common.Validators;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LeagueOfStats.Application;
@@ -29,7 +28,5 @@ public static class DependencyInjection
     {
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         ValidatorOptions.Global.LanguageManager.Enabled = false;
-
-        services.AddScoped(typeof(Common.Validators.IValidator<>), typeof(Validator<>));
     }
 }
