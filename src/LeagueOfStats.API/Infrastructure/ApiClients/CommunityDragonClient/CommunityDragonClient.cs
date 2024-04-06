@@ -16,11 +16,11 @@ public class CommunityDragonClient : ICommunityDragonClient
 
     public async Task<Result<IEnumerable<SkinDto>>> GetSkinsAsync()
     {
-        var communityDragonGetSkinsResponse = await _httpClient.GetFromJsonAsync<Dictionary<String, CommunityDragonSkinDataDto>>("skins.json");
+        var communityDragonGetSkinsResponse = await _httpClient.GetFromJsonAsync<Dictionary<string, CommunityDragonSkinDataDto>>("skins.json");
 
         if (communityDragonGetSkinsResponse is null)
         {
-            return new ApiError("Community Dragon can't be accessed.");
+            return new ApiError("Community Dragon skins can't be accessed.");
         }
         
         var skinDtos = communityDragonGetSkinsResponse.Values.Select(s =>

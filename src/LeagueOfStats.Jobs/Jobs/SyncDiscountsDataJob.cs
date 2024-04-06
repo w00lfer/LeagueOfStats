@@ -70,7 +70,7 @@ public class SyncDiscountsDataJob : IJob
 
     private async Task<Result> AddNewDiscount()
     {
-        Result<IEnumerable<RiotGamesShopDiscount>> getCurrentDiscountsResult = await _riotGamesShopClient.GetCurrentDiscountsAsync();
+        Result<IEnumerable<RiotGamesShopDiscountDto>> getCurrentDiscountsResult = await _riotGamesShopClient.GetCurrentDiscountsAsync();
 
         if (getCurrentDiscountsResult.IsFailure)
         {
@@ -135,7 +135,7 @@ public class SyncDiscountsDataJob : IJob
         return Result.Success();
     }
     
-    private static bool ValidateSkinsInDiscountAreAllPersisted(List<Skin> skins, List<RiotGamesShopDiscount> listOfRiotgamesShopDiscounts)
+    private static bool ValidateSkinsInDiscountAreAllPersisted(List<Skin> skins, List<RiotGamesShopDiscountDto> listOfRiotgamesShopDiscounts)
     {
         var skinRiotIds = skins.Select(c => c.RiotSkinId);
 
@@ -145,7 +145,7 @@ public class SyncDiscountsDataJob : IJob
         return allSkinIdsFromRiotGamesShopDiscountsMatchPersistedSkins;
     }
 
-    private static bool ValidateChampionsInDiscountAreAllPersisted(List<Champion> champions, List<RiotGamesShopDiscount> listOfRiotgamesShopDiscounts)
+    private static bool ValidateChampionsInDiscountAreAllPersisted(List<Champion> champions, List<RiotGamesShopDiscountDto> listOfRiotgamesShopDiscounts)
     {
         var championRiotIds = champions.Select(c => c.RiotChampionId);
 
@@ -155,9 +155,9 @@ public class SyncDiscountsDataJob : IJob
         return allChampionIdsFromRiotGamesShopDiscountsMatchPersistedChampions;
     }
 
-    private static bool ValidateDiscountsStartDate(List<RiotGamesShopDiscount> listOfRiotgamesShopDiscounts) => 
+    private static bool ValidateDiscountsStartDate(List<RiotGamesShopDiscountDto> listOfRiotgamesShopDiscounts) => 
         listOfRiotgamesShopDiscounts.DistinctBy(rd => rd.SalesStart).Count() == 1;
     
-    private static bool ValidateDiscountsEndDate(List<RiotGamesShopDiscount> listOfRiotgamesShopDiscounts) => 
+    private static bool ValidateDiscountsEndDate(List<RiotGamesShopDiscountDto> listOfRiotgamesShopDiscounts) => 
         listOfRiotgamesShopDiscounts.DistinctBy(rd => rd.SalesEnd).Count() == 1;
 }
