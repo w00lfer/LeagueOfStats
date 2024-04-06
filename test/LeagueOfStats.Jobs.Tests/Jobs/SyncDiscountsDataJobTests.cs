@@ -69,7 +69,9 @@ public class SyncDiscountsDataJobTests
         _discountRepositoryMock.Verify(x => x.DoesDiscountInGivenLocalDateTimeExistAsync(currentDateTime), Times.Once);
         dbTransactionMock.Verify(x => x.Commit(), Times.Once);
         dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
+        
         VerifyNoOtherCalls();
+        dbTransactionMock.VerifyNoOtherCalls();
     }
     
     [Test]
@@ -102,7 +104,9 @@ public class SyncDiscountsDataJobTests
         _riotGamesShopClientMock.Verify(x => x.GetCurrentDiscountsAsync(), Times.Once);
         dbTransactionMock.Verify(x => x.Rollback(), Times.Once);
         dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
+        
         VerifyNoOtherCalls();
+        dbTransactionMock.VerifyNoOtherCalls();
     }
     
     [Test]
@@ -136,7 +140,9 @@ public class SyncDiscountsDataJobTests
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(default));
         dbTransactionMock.Verify(x => x.Commit(), Times.Once);
         dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
+        
         VerifyNoOtherCalls();
+        dbTransactionMock.VerifyNoOtherCalls();
     }
     
     [Test]
@@ -176,7 +182,9 @@ public class SyncDiscountsDataJobTests
         _riotGamesShopClientMock.Verify(x => x.GetCurrentDiscountsAsync(), Times.Once);
         dbTransactionMock.Verify(x => x.Rollback(), Times.Once);
         dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
+        
         VerifyNoOtherCalls();
+        dbTransactionMock.VerifyNoOtherCalls();
     }
     
     [Test]
@@ -216,7 +224,9 @@ public class SyncDiscountsDataJobTests
         _riotGamesShopClientMock.Verify(x => x.GetCurrentDiscountsAsync(), Times.Once);
         dbTransactionMock.Verify(x => x.Rollback(), Times.Once);
         dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
+        
         VerifyNoOtherCalls();
+        dbTransactionMock.VerifyNoOtherCalls();
     }
     
     [Test]
@@ -266,7 +276,9 @@ public class SyncDiscountsDataJobTests
         _championRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
         dbTransactionMock.Verify(x => x.Rollback(), Times.Once);
         dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
+        
         VerifyNoOtherCalls();
+        dbTransactionMock.VerifyNoOtherCalls();
     }
     
     [Test]
@@ -328,7 +340,9 @@ public class SyncDiscountsDataJobTests
         _skinRepositoryMock.Verify(x => x.GetAllAsync(), Times.Once);
         dbTransactionMock.Verify(x => x.Rollback(), Times.Once);
         dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
+        
         VerifyNoOtherCalls();
+        dbTransactionMock.VerifyNoOtherCalls();
     }
     
          [Test]
@@ -399,7 +413,9 @@ public class SyncDiscountsDataJobTests
         _unitOfWorkMock.Verify(x => x.SaveChangesAsync(default));
         dbTransactionMock.Verify(x => x.Commit(), Times.Once);
         dbTransactionMock.Verify(x => x.Dispose(), Times.Once);
+        
         VerifyNoOtherCalls();
+        dbTransactionMock.VerifyNoOtherCalls();
     }
     
     private void VerifyNoOtherCalls()
